@@ -1,0 +1,65 @@
+// Fonts
+// @import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
+@import 'mixins';
+
+html,
+body,
+#app {
+    height: 100%;
+}
+
+.has-gradient {
+    background: $gradient-left;
+    /* fallback for old browsers */
+    background-image: -webkit-linear-gradient($gradient-left, $gradient-right);
+    /* Chrome 10-25, Safari 5.1-6 */
+    background-image: linear-gradient($gradient-left, $gradient-right);
+    background-repeat: no-repeat;
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px $body-bg inset !important;
+}
+
+// .overlay {
+//     z-index: 1;
+//     height: 100%;
+//     width: 100%;
+//     position: absolute;
+//     overflow: auto;
+//     top: 0px;
+//     left: 0px;
+// }
+
+// #overlayLogin {
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: flex-end;
+//     padding-bottom: 5%;
+//     padding-left: 5%;
+//     padding-right: 10%;
+// }
+
+// #loginFormContainer {
+//     box-shadow: -1px 0px 7px 2px rgba(darken($primary, 20%), .3);
+// }
+
+// .has-bg {
+//     &__auth {
+//         position: relative;
+//         // background-image: url("/images/bg-auth.jpg");
+//         // background-repeat: no-repeat;
+//         // background-size: cover;
+//         @include background-tint($primary, "/images/bg-auth.jpg");
+//     }
+// }
+
+// Bootstrap
+// @import '~bootstrap/scss/bootstrap';
