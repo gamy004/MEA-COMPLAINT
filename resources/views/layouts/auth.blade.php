@@ -20,6 +20,9 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/auth.css') }}" rel="stylesheet">
+
+    <!-- Routes Register -->
+    @routes
 </head>
 <body>
     <main id="app">

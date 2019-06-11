@@ -5,6 +5,15 @@ import 'babel-polyfill';
  * for JavaScript based Bootstrap features such as modals and tabs. This
  * code may be modified to fit the specific needs of your application.
  */
+import {
+    param
+} from 'jquery';
+
+window.$paramSerializer = param;
+
+import Api from './models/Api';
+
+window.api = new Api;
 
 // try {
 //     window.Popper = require('popper.js').default;

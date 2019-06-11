@@ -18,6 +18,9 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    
+    <!-- Routes Register -->
+    @routes
 </head>
 <body>
     <div id="app">
