@@ -6,6 +6,8 @@
 
 import './bootstrap';
 import router from './routes';
+import store from './store';
+import wait from './wait';
 import Vuetify from 'vuetify/lib';
 import 'vuetify/src/stylus/app.styl';
 import {
@@ -38,5 +40,7 @@ Vue.use(Vuetify, {
 
 const app = new Vue({
     el: '#app',
-    router
+    router,
+    store,
+    wait
 });

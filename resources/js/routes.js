@@ -10,15 +10,15 @@ const routes = [{
         path: '/login',
         component: views.login
     },
-    // {
-    //     path: '/',
-    //     beforeEnter: multiguard([checkAuth]),
-    //     children: [{
-    //         path: '',
-    //         name: constants.views.COMPLAINT.INDEX,
-    //         component: views.complaint.index
-    //     }]
-    // },
+    {
+        path: '/',
+        beforeEnter: multiguard([checkAuth]),
+        children: [{
+            path: '',
+            name: constants.views.COMPLAINT.INDEX,
+            component: views.complaint.index
+        }]
+    },
 
     // {
     //     path: '/reset-password',

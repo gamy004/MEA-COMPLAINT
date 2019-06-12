@@ -1,9 +1,6 @@
 {
-    "/js/app.js": "/js/app.js?id=31ef15e5e97dd6e2c093",
-    "/css/auth.css": "/css/auth.css?id=d41d8cd98f00b204e980",
-    "/css/app.css": "/css/app.css?id=d41d8cd98f00b204e980",
-    "/js/auth.js": "/js/auth.js?id=7a5caf3bec268e244452",
-    "/js/chunks/mea-complaint-index.js": "/js/chunks/mea-complaint-index.js?id=fdcef2fff92c060940bf",
-    "/js/chunks/mea-login.js": "/js/chunks/mea-login.js?id=4e2b89128484d5346d14",
-    "/js/chunks/vendors~mea-login.js": "/js/chunks/vendors~mea-login.js?id=b2b9e0a75876ca8d43b2"
+    "/js/app.js": "/js/app.js?id=5ff5064f14d631882e33",
+    "/css/app.css": "/css/app.css?id=c8c357d3bef0a4715a6d",
+    "/js/chunks/v-login.js": "/js/chunks/v-login.js?id=e1d37dc535d1b03a59de",
+    "/js/chunks/v-complaint-index.js": "/js/chunks/v-complaint-index.js?id=a45c394e3ef38d84d5d3"
 }

@@ -16,20 +16,21 @@ const userStore = {
 
     actions: {
         async [vuex.actions.USER.AUTHORIZE]({
+            state,
             commit
         }, {
             username,
             password
         } = {}) {
+            console.log(username,
+                password);
 
             let response;
 
             try {
-                response = await state.$api.post({
-                    params: {
-                        username,
-                        password
-                    }
+                response = await api.post('login', {
+                    username,
+                    password
                 });
             } catch (error) {
                 throw error;

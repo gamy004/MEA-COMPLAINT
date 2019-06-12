@@ -95,9 +95,9 @@ mix.disableNotifications()
             new VuetifyLoaderPlugin()
         ],
     })
-    .js('resources/js/auth.js', 'public/js/auth.js')
+    // .js('resources/js/auth.js', 'public/js/auth.js')
     .js('resources/js/app.js', 'public/js/app.js')
-    .sass('resources/sass/auth.scss', 'public/css/auth.css')
+    // .sass('resources/sass/auth.scss', 'public/css/auth.css')
     .sass('resources/sass/app.scss', 'public/css/app.css')
     .sourceMaps()
     .browserSync({

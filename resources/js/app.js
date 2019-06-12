@@ -8,7 +8,17 @@ import './bootstrap';
 import router from './routes';
 import store from './store';
 import wait from './wait';
+import Vuetify from 'vuetify/lib';
+import 'vuetify/src/stylus/app.styl';
+import {
+    Ripple
+} from 'vuetify/lib/directives';
 
+Vue.use(Vuetify, {
+    directives: {
+        Ripple
+    }
+})
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -30,7 +40,7 @@ import wait from './wait';
 
 const app = new Vue({
     el: '#app',
-    // router,
-    // store,
-    // wait
+    router,
+    store,
+    wait
 });

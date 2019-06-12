@@ -59,4 +59,14 @@ class LoginController extends Controller
     {
         return response()->json(compact('user'));
     }
+
+    /**
+     * Show the application's login form.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function showLoginForm()
+    {
+        return view('layouts.app');
+    }
 }

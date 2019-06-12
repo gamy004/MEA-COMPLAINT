@@ -148,15 +148,7 @@ class Form extends BaseModel {
                 routeParam
             });
         } catch (error) {
-            if (error.data) {
-                const {
-                    data
-                } = error;
-
-                this.errors.record(data);
-                console.log(this.errors);
-
-            }
+            this.$handleError(error);
 
             throw error;
         } finally {
@@ -166,22 +158,25 @@ class Form extends BaseModel {
         return res;
     }
 
-    async persist(cb) {
+    async persist(cb, {
+        params = {},
+        routeParam = {}
+    } = {}) {
         let res;
 
         try {
+            const data = this.getData(params);
+
             this.errors.clear();
 
             this.toggle('$isSubmitting');
 
-            res = await cb;
+            res = await cb({
+                ...data,
+                routeParam
+            });
         } catch (error) {
-            console.error(error);
-
-            if (error.response) {
-                const data = error.response.data;
-                this.errors.record(data);
-            }
+            this.$handleError(error);
 
             throw error;
         } finally {
@@ -189,6 +184,14 @@ class Form extends BaseModel {
         }
 
         return res;
+    }
+
+    $handleError({
+        data
+    } = {}) {
+        if (data) {
+            this.errors.record(data);
+        }
     }
 }
 

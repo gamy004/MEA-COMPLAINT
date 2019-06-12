@@ -9,15 +9,6 @@
             <div class="headline">Welcome back</div>
           </div>
         </v-layout>
-        <!-- <v-img transition="fade-transition" src="/images/bg-auth.jpg">
-                    <v-layout pa-2 column fill-height class="lightbox white--text">
-                        <v-spacer></v-spacer>
-                        <v-flex shrink>
-                            <div class="subheading">Jonathan Lee</div>
-                            <div class="body-1">heyfromjonathan@gmail.com</div>
-                        </v-flex>
-                    </v-layout>
-        </v-img>-->
       </v-flex>
       <v-flex xs6 id="loginFormContainer">
         <v-layout align-center justify-center fill-height>
@@ -53,65 +44,23 @@
                 @keydown.enter="signIn"
               ></v-text-field>
 
-              <v-btn
-                :loading="form.isSubmitting"
-                raised
-                large
-                round
-                class="has-gradient white--text btn__sign-in"
-                @click="signIn"
-              >Sign in</v-btn>
-              <!-- <v-btn :disabled="!valid" color="success" @click="validate">Validate</v-btn>
+              <v-layout align-center>
+                <v-btn
+                  :loading="isAuthorizing"
+                  raised
+                  large
+                  round
+                  class="has-gradient white--text btn__sign-in"
+                  @click="signIn"
+                >Sign in</v-btn>
 
-                            <v-btn color="error" @click="reset">Reset Form</v-btn>
-
-              <v-btn color="warning" @click="resetValidation">Reset Validation</v-btn>-->
+                <transition name="slide-x-transition" appear>
+                  <div v-show="form.success" class="subheading">Sign in success</div>
+                </transition>
+              </v-layout>
             </v-form>
           </v-flex>
         </v-layout>
-        <!-- <v-container fill-height>
-                    <v-layout align-center justify-center fill-height>
-                        <v-flex xs8>
-                            <v-form ref="form" v-model="valid" lazy-validation>
-                                <v-text-field
-                                    v-model="name"
-                                    :counter="10"
-                                    :rules="nameRules"
-                                    label="Name"
-                                    required
-                                ></v-text-field>
-
-                                <v-text-field
-                                    v-model="username"
-                                    :rules="usernameRules"
-                                    label="E-mail"
-                                    required
-                                ></v-text-field>
-
-                                <v-select
-                                    v-model="select"
-                                    :items="items"
-                                    :rules="[v => !!v || 'Item is required']"
-                                    label="Item"
-                                    required
-                                ></v-select>
-
-                                <v-checkbox
-                                    v-model="checkbox"
-                                    :rules="[v => !!v || 'You must agree to continue!']"
-                                    label="Do you agree?"
-                                    required
-                                ></v-checkbox>
-
-                                <v-btn :disabled="!valid" color="success" @click="validate">Validate</v-btn>
-
-                                <v-btn color="error" @click="reset">Reset Form</v-btn>
-
-                                <v-btn color="warning" @click="resetValidation">Reset Validation</v-btn>
-                            </v-form>
-                        </v-flex>
-                    </v-layout>
-        </v-container>-->
       </v-flex>
     </v-layout>
   </layout-full-screen>
@@ -120,6 +69,8 @@
 <script>
 import LayoutFullScreen from "../../layouts/FullScreen";
 import Form from "../../models/Form";
+import { vuex } from "../../mixins/vuexable";
+import { views } from "../../constants";
 
 export default {
   components: {
@@ -132,20 +83,26 @@ export default {
         username: "",
         password: "",
         valid: false,
-        showPassword: false
+        showPassword: false,
+        success: false
       })
     };
   },
 
+  computed: {
+    ...vuex.mapWaitingGetters({
+      isAuthorizing: [vuex.actions.USER.AUTHORIZE]
+    })
+  },
+
   methods: {
+    ...vuex.mapWaitingActions(vuex.modules.USER, [vuex.actions.USER.AUTHORIZE]),
+
     async signIn() {
-      let v,
-        { username, password } = this.form;
+      let v;
 
       try {
-        v = await this.form.post("login", {
-          params: ["username", "password"]
-        });
+        v = await this.form.persist(this[vuex.actions.USER.AUTHORIZE]);
       } catch (error) {
         throw error;
       }
@@ -153,8 +110,24 @@ export default {
       return this.onSignInSuccess(v);
     },
 
-    onSignInSuccess(response) {
-      console.log(response);
+    onSignInSuccess({ id = null, username = "" } = {}) {
+      if (id) {
+        this.form.set("success", true);
+
+        setTimeout(() => {
+          this.form.set("success", false);
+
+          this.goToComplaintPage();
+        }, 700);
+      }
+    },
+
+    goToComplaintPage() {
+      return setTimeout(() => {
+        this.$router.push({
+          name: views.COMPLAINT.INDEX
+        });
+      }, 300);
     }
   }
 };
@@ -193,15 +166,6 @@ export default {
 .btn__sign-in {
   left: -10px;
 }
-// .has-bg {
-//     &__auth {
-//         position: relative;
-//         // background-image: url("/images/bg-auth.jpg");
-//         // background-repeat: no-repeat;
-//         // background-size: cover;
-//         @include background-tint($primary, "/images/bg-auth.jpg");
-//     }
-// }
 </style>
 
 

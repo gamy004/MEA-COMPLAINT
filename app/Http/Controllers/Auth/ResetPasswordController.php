@@ -36,4 +36,14 @@ class ResetPasswordController extends Controller
     {
         $this->middleware('guest');
     }
+
+    /**
+     * Show the application reset form.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function showResetForm()
+    {
+        return view('layouts.app');
+    }
 }

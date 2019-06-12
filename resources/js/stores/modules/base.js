@@ -2,14 +2,12 @@ import Vue from 'vue';
 import {
     vuex
 } from '../../mixins/vuexable';
-import Api from '../../models/Api';
 // import parsers from "../parsers";
 // import models from "../models";
 
 export default {
     state() {
         return {
-            $api: new Api,
             collection: {},
             mapping: {},
             sortedIndex: [],
