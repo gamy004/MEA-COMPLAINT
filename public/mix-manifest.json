@@ -1,8 +1,9 @@
 {
-    "/js/app.js": "/js/app.js?id=75a5d0effb6ba157a0a6",
-    "/js/auth.js": "/js/auth.js?id=0703c60e5a47b1cfbe0b",
-    "/css/auth.css": "/css/auth.css?id=c8c357d3bef0a4715a6d",
-    "/css/app.css": "/css/app.css?id=7b2007ff97d2d1131b74",
-    "/js/chunks/v-login.js": "/js/chunks/v-login.js?id=dd037bf2a4ed8eac8475",
-    "/js/chunks/vendors~v-login.js": "/js/chunks/vendors~v-login.js?id=4aa28f27ef006d339f1d"
+    "/js/app.js": "/js/app.js?id=31ef15e5e97dd6e2c093",
+    "/css/auth.css": "/css/auth.css?id=d41d8cd98f00b204e980",
+    "/css/app.css": "/css/app.css?id=d41d8cd98f00b204e980",
+    "/js/auth.js": "/js/auth.js?id=7a5caf3bec268e244452",
+    "/js/chunks/mea-complaint-index.js": "/js/chunks/mea-complaint-index.js?id=fdcef2fff92c060940bf",
+    "/js/chunks/mea-login.js": "/js/chunks/mea-login.js?id=4e2b89128484d5346d14",
+    "/js/chunks/vendors~mea-login.js": "/js/chunks/vendors~mea-login.js?id=b2b9e0a75876ca8d43b2"
 }

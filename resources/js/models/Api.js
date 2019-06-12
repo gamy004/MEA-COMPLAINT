@@ -62,7 +62,6 @@ class Api extends BaseModel {
                 paramsSerializer: window.$paramSerializer
             };
         }
-        console.log(options);
 
         try {
             v = await axios[method](url, options);
