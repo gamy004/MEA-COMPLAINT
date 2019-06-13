@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api;
+namespace App\Api\Providers;
 
 use Exception;
 use App\IOCs\Data;
@@ -9,9 +9,8 @@ use App\Api\BaseApi;
 use App\Models\File;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Issue;
 use App\Models\UserRole;
-use App\Traits\HasAvatar;
-use App\Services\FileMaker;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Contracts\ApiInterface;
@@ -20,74 +19,61 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
 
-class UserApi extends BaseApi implements ApiInterface
+class IssueApi extends BaseApi implements ApiInterface
 {
     use HasAvatar;
     
-    public function __construct(User $q)
+    public function __construct(Issue $model)
     {
-        parent::__construct($q);
+        parent::__construct($model);
     }
 
-    public function index()
-    {
-        return $this->setCustomQuery(
-            $this->queryIndex()
-        )->get();
-    }
+    // public function index()
+    // {
+    //     return $this->setCustomQuery(
+    //         $this->queryIndex()
+    //     )->get();
+    // }
 
-    private function queryIndex()
-    {
-        $baseModel = $this->getOriginalModel();
-        $baseTable = model_table(User::class);
-        $roleTable = model_table(Role::class);
-        $fileTable = model_table(File::class);
-        $intermediateTable = model_table(UserRole::class);
+    // private function queryIndex()
+    // {
+    //     $baseModel = $this->getOriginalModel();
+    //     $baseTable = model_table(User::class);
+    //     $roleTable = model_table(Role::class);
+    //     $fileTable = model_table(File::class);
+    //     $intermediateTable = model_table(UserRole::class);
 
-        return $this->getOriginalModel()
-            ->join(
-                $intermediateTable,
-                sprintf("%s.%s", $baseTable, DBCol::ID),
-                "=",
-                sprintf("%s.%s", $intermediateTable, User::FK)
-            )->join(
-            $roleTable,
-            sprintf("%s.%s", $roleTable, DBCol::ID),
-            "=",
-            sprintf("%s.%s", $intermediateTable, Role::FK)
-        )->join(
-            $fileTable,
-            sprintf("%s.%s", $fileTable, DBCol::ID),
-            "=",
-            sprintf("%s.%s", $baseTable, DBCol::AVATAR),
-            "left"
-        )->select(
-            [
-                sprintf("%s.%s", $baseTable, DBCol::ID),
-                sprintf("%s.%s", $baseTable, DBCol::NAME),
-                sprintf("%s.%s", $baseTable, DBCol::EMAIL),
-                sprintf("%s.%s", $baseTable, DBCol::PHONE),
-                sprintf("%s.%s", $baseTable, DBCol::AVAILABLE),
-                sprintf("%s.%s", $baseTable, DBCol::EXPIRE_AT),
-                sprintf("%s.%s", $intermediateTable, Role::FK),
-                sprintf("%s.%s as %s", $roleTable, DBCol::NAME, Data::ROLE),
-                sprintf("%s.%s as %s", $fileTable, DBCol::PATH, DBCol::AVATAR),
-            ]
-        );
-    }
-
-    public function find($id)
-    {
-        return $this->queryIndex()
-            ->where(
-                sprintf(
-                    "%s.%s",
-                    model_table(User::class),
-                    DBCol::ID
-                ), $id
-            )
-            ->first();
-    }
+    //     return $this->getOriginalModel()
+    //         ->join(
+    //             $intermediateTable,
+    //             sprintf("%s.%s", $baseTable, DBCol::ID),
+    //             "=",
+    //             sprintf("%s.%s", $intermediateTable, User::FK)
+    //         )->join(
+    //         $roleTable,
+    //         sprintf("%s.%s", $roleTable, DBCol::ID),
+    //         "=",
+    //         sprintf("%s.%s", $intermediateTable, Role::FK)
+    //     )->join(
+    //         $fileTable,
+    //         sprintf("%s.%s", $fileTable, DBCol::ID),
+    //         "=",
+    //         sprintf("%s.%s", $baseTable, DBCol::AVATAR),
+    //         "left"
+    //     )->select(
+    //         [
+    //             sprintf("%s.%s", $baseTable, DBCol::ID),
+    //             sprintf("%s.%s", $baseTable, DBCol::NAME),
+    //             sprintf("%s.%s", $baseTable, DBCol::EMAIL),
+    //             sprintf("%s.%s", $baseTable, DBCol::PHONE),
+    //             sprintf("%s.%s", $baseTable, DBCol::AVAILABLE),
+    //             sprintf("%s.%s", $baseTable, DBCol::EXPIRE_AT),
+    //             sprintf("%s.%s", $intermediateTable, Role::FK),
+    //             sprintf("%s.%s as %s", $roleTable, DBCol::NAME, Data::ROLE),
+    //             sprintf("%s.%s as %s", $fileTable, DBCol::PATH, DBCol::AVATAR),
+    //         ]
+    //     );
+    // }
 
     public function store(array $raw)
     {
@@ -148,7 +134,7 @@ class UserApi extends BaseApi implements ApiInterface
                     DBCol::EMAIL,
                     DBCol::PHONE,
                     DBCol::AVAILABLE,
-                    DBCol::EXPIRE_AT,
+                    DBCol::EXPIRE_AT
                 ]
             )
         );

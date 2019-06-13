@@ -27,7 +27,9 @@ Route::group([
         Route::get('/auth', 'UserController@auth')->name('auth');
 
         Route::middleware(['auth'])->group(function () {
-        
+            Route::resources([
+                'issues' => 'IssueController'
+            ]);
         });
     }
 );
