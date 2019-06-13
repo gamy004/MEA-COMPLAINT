@@ -91,18 +91,18 @@ export default {
 
   computed: {
     ...vuex.mapWaitingGetters({
-      isAuthorizing: [vuex.actions.USER.AUTHORIZE]
+      isAuthorizing: [vuex.actions.USER.SIGN_IN]
     })
   },
 
   methods: {
-    ...vuex.mapWaitingActions(vuex.modules.USER, [vuex.actions.USER.AUTHORIZE]),
+    ...vuex.mapWaitingActions(vuex.modules.USER, [vuex.actions.USER.SIGN_IN]),
 
     async signIn() {
       let v;
 
       try {
-        v = await this.form.persist(this[vuex.actions.USER.AUTHORIZE]);
+        v = await this.form.persist(this[vuex.actions.USER.SIGN_IN]);
       } catch (error) {
         throw error;
       }

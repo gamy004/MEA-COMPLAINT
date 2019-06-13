@@ -6,5 +6,6 @@ export const UPDATE = 'update';
 export const DELETE = 'delete';
 
 export const USER = {
-    AUTHORIZE: 'userAuthorize'
+    SIGN_IN: 'userSignIn',
+    GET_AUTH: 'userGetAuth'
 }

@@ -2,6 +2,7 @@ import base from './base';
 import {
     vuex
 } from '../../mixins/vuexable';
+import User from '../../models/User';
 
 const userStore = {
     state() {
@@ -15,43 +16,27 @@ const userStore = {
     },
 
     actions: {
-        async [vuex.actions.USER.AUTHORIZE]({
+        async [vuex.actions.USER.SIGN_IN]({
             state,
             commit
         }, {
             username,
             password
         } = {}) {
-            console.log(username,
-                password);
-
-            let response;
+            let authUser;
 
             try {
-                response = await api.post('login', {
-                    username,
-                    password
-                });
+                authUser = await User[vuex.actions.USER.SIGN_IN](username, password);
             } catch (error) {
                 throw error;
             }
 
-            const {
-                user
-            } = response.data;
-            // authUsers = users.map(user => new Auth(user));
+            commit(vuex.mutations.SET_STATE, {
+                key: 'auth',
+                value: authUser
+            });
 
-            return user;
-            // commit(vuex.mutations.STORE, {
-            //     value: authUsers
-            // });
-
-            // commit(`${vuex.mutations.SET_PAGINATION}`, {
-            //     ...pagination,
-            //     totalItems: !total ? authUsers.length : total
-            // });
-
-            // return authUsers;
+            return authUser;
         },
 
         async [vuex.actions.STORE]({

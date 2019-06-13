@@ -11,13 +11,14 @@ const routes = [{
         component: views.login
     },
     {
-        path: '/',
+        path: '/complaint',
         beforeEnter: multiguard([checkAuth]),
-        children: [{
-            path: '',
-            name: constants.views.COMPLAINT.INDEX,
-            component: views.complaint.index
-        }]
+        component: views.complaint.index
+        // children: [{
+        //     path: 'complaint',
+        //     name: constants.views.COMPLAINT.INDEX,
+        //     component: views.complaint.index
+        // }]
     },
 
     // {

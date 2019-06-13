@@ -17,4 +17,23 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::group([
+    'as' => 'api:',
+    'prefix' => 'api',
+    'namespace' => 'Api',
+    'middleware' => ['parse.api'],
+], function () {
+        // Controllers Within The "App\Http\Controllers\Admin" Namespace
+        Route::get('/auth', 'UserController@auth')->name('auth');
+
+        Route::middleware(['auth'])->group(function () {
+        
+        });
+    }
+);
+
+Route::get('/{vue_capture?}', 'HomeController@index')
+    ->where('vue_capture', '[\/\w\.-]*')
+    ->name('magicRoute');
+    
+// Route::get('/home', 'HomeController@index')->name('home');
