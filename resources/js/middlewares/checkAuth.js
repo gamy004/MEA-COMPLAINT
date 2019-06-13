@@ -6,7 +6,7 @@ import * as mutations from '../stores/mutation-types';
 import User from '../models/User';
 
 async function checkAuth(to, from, next) {
-    let authUser = store.getters[`${modules.USER}/${getters.GET_STATE}`]('auth');
+    let authUser = store.state.auth;
 
     if (!authUser) {
         try {

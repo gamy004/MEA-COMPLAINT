@@ -8,17 +8,17 @@ Vue.use(VueRouter);
 
 const routes = [{
         path: '/login',
-        component: views.login
+        component: views.auth.login
     },
     {
-        path: '/complaint',
+        path: '/',
         beforeEnter: multiguard([checkAuth]),
-        component: views.complaint.index
-        // children: [{
-        //     path: 'complaint',
-        //     name: constants.views.COMPLAINT.INDEX,
-        //     component: views.complaint.index
-        // }]
+        component: views.auth.index,
+        children: [{
+            path: 'complaint',
+            name: constants.views.COMPLAINT.INDEX,
+            component: views.complaint.index
+        }]
     },
 
     // {

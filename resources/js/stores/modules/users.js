@@ -34,6 +34,8 @@ const userStore = {
             commit(vuex.mutations.SET_STATE, {
                 key: 'auth',
                 value: authUser
+            }, {
+                root: true
             });
 
             return authUser;

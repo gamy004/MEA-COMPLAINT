@@ -1,92 +1,84 @@
 <template>
-  <layout-default>
-    <v-layout row wrap>
-      <v-flex xs12>
-        <v-toolbar id="complaintToolbar" tabs dense class="elevation-0">
-          <template v-for="(item, i) in items">
-            <v-btn-toggle
-              v-if="item.select"
-              v-model="item.selected"
-              :key="i"
-              id="complaintSelectController"
-              class="bg-transparent"
-            >
-              <v-checkbox
-                id="complaintSelectAll"
-                v-model="item.selectedAll"
-                color="deep-orange"
-                hide-details
-              ></v-checkbox>
-              <v-menu offset-y bottom min-width="200" id="complaintSelectTypeMenu">
-                <template v-slot:activator="{ on }">
-                  <v-icon v-on="on" id="complaintSelectTypeMenuActivator">arrow_drop_down</v-icon>
-                </template>
-                <v-list dense>
-                  <v-list-tile
-                    v-for="(menu, menuIndex) in item.menus"
-                    :key="`menu-${menuIndex}`"
-                    @click
-                  >
-                    <v-list-tile-title class="pl-4">{{ menu.text }}</v-list-tile-title>
-                  </v-list-tile>
-                </v-list>
-              </v-menu>
-            </v-btn-toggle>
-
-            <v-spacer v-else-if="item.spacer" :key="i"/>
-
-            <v-tooltip v-else-if="item.text" :key="i" bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn v-on="on" icon small>
-                  <v-icon>{{ item.icon }}</v-icon>
-                </v-btn>
-              </template>
-              <span>{{ item.text }}</span>
-            </v-tooltip>
-
-            <v-btn v-else :key="i" icon small>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-btn>
-          </template>
-
-          <template v-slot:extension>
-            <v-tabs v-model="tab" v-if="showTab" slider-color="deep-orange">
-              <v-tab
-                v-for="(tab, tabIndex) in tabs"
-                :key="`tab-${tabIndex}`"
-                :href="`#tab-${tabIndex}`"
-              >
-                <v-icon v-if="tab.icon">{{ tab.icon }}</v-icon>
-                <span v-if="tab.text" class="ml-3">{{ tab.text }}</span>
-              </v-tab>
-            </v-tabs>
-          </template>
-        </v-toolbar>
-
-        <v-tabs-items v-model="tab">
-          <v-tab-item
-            v-for="(tab, tabIndex) in tabs"
-            :key="`tabItem-${tabIndex}`"
-            :value="`tab-${tabIndex}`"
+  <v-layout row wrap>
+    <v-flex xs12>
+      <v-toolbar id="complaintToolbar" tabs dense class="elevation-0">
+        <template v-for="(item, i) in items">
+          <v-btn-toggle
+            v-if="item.select"
+            v-model="item.selected"
+            :key="i"
+            id="complaintSelectController"
+            class="bg-transparent"
           >
-            <v-card flat>
-              <v-card-text v-text="tab.content"></v-card-text>
-            </v-card>
-          </v-tab-item>
-        </v-tabs-items>
-      </v-flex>
-    </v-layout>
-  </layout-default>
+            <v-checkbox
+              id="complaintSelectAll"
+              v-model="item.selectedAll"
+              color="deep-orange"
+              hide-details
+            ></v-checkbox>
+            <v-menu offset-y bottom min-width="200" id="complaintSelectTypeMenu">
+              <template v-slot:activator="{ on }">
+                <v-icon v-on="on" id="complaintSelectTypeMenuActivator">arrow_drop_down</v-icon>
+              </template>
+              <v-list dense>
+                <v-list-tile
+                  v-for="(menu, menuIndex) in item.menus"
+                  :key="`menu-${menuIndex}`"
+                  @click
+                >
+                  <v-list-tile-title class="pl-4">{{ menu.text }}</v-list-tile-title>
+                </v-list-tile>
+              </v-list>
+            </v-menu>
+          </v-btn-toggle>
+
+          <v-spacer v-else-if="item.spacer" :key="i"/>
+
+          <v-tooltip v-else-if="item.text" :key="i" bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn v-on="on" icon small>
+                <v-icon>{{ item.icon }}</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ item.text }}</span>
+          </v-tooltip>
+
+          <v-btn v-else :key="i" icon small>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-btn>
+        </template>
+
+        <template v-slot:extension>
+          <v-tabs v-model="tab" v-if="showTab" slider-color="deep-orange">
+            <v-tab
+              v-for="(tab, tabIndex) in tabs"
+              :key="`tab-${tabIndex}`"
+              :href="`#tab-${tabIndex}`"
+            >
+              <v-icon v-if="tab.icon">{{ tab.icon }}</v-icon>
+              <span v-if="tab.text" class="ml-3">{{ tab.text }}</span>
+            </v-tab>
+          </v-tabs>
+        </template>
+      </v-toolbar>
+
+      <v-tabs-items v-model="tab">
+        <v-tab-item
+          v-for="(tab, tabIndex) in tabs"
+          :key="`tabItem-${tabIndex}`"
+          :value="`tab-${tabIndex}`"
+        >
+          <v-card flat>
+            <v-card-text v-text="tab.content"></v-card-text>
+          </v-card>
+        </v-tab-item>
+      </v-tabs-items>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
-import LayoutDefault from "../../layouts/Default";
-
 export default {
-  components: {
-    LayoutDefault
-  },
-
   data() {
     return {
       source: "",
