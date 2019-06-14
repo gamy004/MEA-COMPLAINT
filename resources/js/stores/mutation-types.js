@@ -15,6 +15,7 @@ export const CLEAR_PAGINATION = 'clearPagination';
 export const SET_ACTIVE = 'setActive';
 export const SET_STATE = 'setState';
 export const SET_PAGINATION = 'setPagination';
+export const UPDATE_PAGINATION = 'updatePagination';
 export const SET_MAPPING = 'setMapping';
 export const TOGGLE_STATE = 'toggleState';
 export const MAP_PAGINATION = 'mapPagination';

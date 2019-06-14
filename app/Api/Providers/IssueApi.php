@@ -19,9 +19,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
 
+
 class IssueApi extends BaseApi implements ApiInterface
 {
-    use HasAvatar;
     
     public function __construct(Issue $model)
     {
@@ -77,48 +77,48 @@ class IssueApi extends BaseApi implements ApiInterface
 
     public function store(array $raw)
     {
-        try {
-            DB::beginTransaction();
+        // try {
+        //     DB::beginTransaction();
 
-            $record = [];
-            $record[DBCol::PASSWORD] = Hash::make(Str::uuid()->toString());
-            $record = $this->parseGeneralFields($record, $raw);
-            $record = $this->parseAvatar($record, $raw);
-            $user = User::firstOrCreate($record);
-            $this->syncRole($user, $raw);
+        //     $record = [];
+        //     $record[DBCol::PASSWORD] = Hash::make(Str::uuid()->toString());
+        //     $record = $this->parseGeneralFields($record, $raw);
+        //     $record = $this->parseAvatar($record, $raw);
+        //     $user = User::firstOrCreate($record);
+        //     $this->syncRole($user, $raw);
 
-            DB::commit();
-        } catch (Exception $exception) {
-            DB::rollback();
-            Log::error($exception);
-            throw new Exception("Error Creating User Request", 1);
-        }
+        //     DB::commit();
+        // } catch (Exception $exception) {
+        //     DB::rollback();
+        //     Log::error($exception);
+        //     throw new Exception("Error Creating User Request", 1);
+        // }
 
-        return $this->find($user->id);
+        // return $this->find($user->id);
     }
 
-    public function update(Model $user, array $raw)
+    public function update(Model $model, array $raw)
     {
-        try {
-            DB::beginTransaction();
+        // try {
+        //     DB::beginTransaction();
 
-            $record = [];
-            $record = $this->parseGeneralFields($record, $raw);
-            $record = $this->parseAvatar($record, $raw);
-            $user->update($record);
-            $this->syncRole($user, $raw);
+        //     $record = [];
+        //     $record = $this->parseGeneralFields($record, $raw);
+        //     $record = $this->parseAvatar($record, $raw);
+        //     $model->update($record);
+        //     $this->syncRole($model, $raw);
 
-            DB::commit();
-        } catch (Exception $exception) {
-            DB::rollback();
-            Log::error($exception);
-            throw new Exception("Error Updating User Request", 1);
-        }
+        //     DB::commit();
+        // } catch (Exception $exception) {
+        //     DB::rollback();
+        //     Log::error($exception);
+        //     throw new Exception("Error Updating model Request", 1);
+        // }
 
-        return $this->find($user->id);
+        // return $this->find($model->id);
     }
 
-    public function destroy(Model $user)
+    public function destroy(Model $model)
     {
 
     }
@@ -140,12 +140,5 @@ class IssueApi extends BaseApi implements ApiInterface
         );
 
         return $record;
-    }
-
-    private function syncRole(Model $user, $raw)
-    {
-        if (isset($raw[Data::ROLE])) {
-            $user->roles()->sync($raw[Data::ROLE]);
-        }
     }
 }

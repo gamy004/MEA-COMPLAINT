@@ -14,7 +14,6 @@ export function getAxiosHeader() {
 class User extends BaseModel {
     constructor(data) {
         super({
-            id: null,
             name: '',
             email: null,
             phone: null,

@@ -224,8 +224,6 @@ export default {
                 Vue.set(state.mapping[module], key, {});
             }
 
-            value = _.cloneDeep(value);
-
             let objKey = `${module}`;
 
             if (key) {
@@ -272,8 +270,6 @@ export default {
             strategy = 'replace'
         }) {
             if (value.length) {
-                value = _.cloneDeep(value);
-
                 const {
                     pagination
                 } = state,
@@ -334,6 +330,13 @@ export default {
                     ...pagination
                 });
             }
+        },
+
+        [vuex.mutations.UPDATE_PAGINATION](state, {
+            key,
+            value
+        }) {
+            Vue.set(state.pagination, key, value);
         },
 
         [vuex.mutations.MAP_PAGINATION](state, {

@@ -9,7 +9,7 @@ use Illuminate\Support\ServiceProvider;
 class ApiServiceProvider extends ServiceProvider
 {
     protected $controllers = [
-        \Omagma\Http\Controllers\Api\IssueController::class => \App\Api\Providers\IssueApi::class
+        \App\Http\Controllers\Api\IssueController::class => \App\Api\Providers\IssueApi::class
     ];
 
     /**

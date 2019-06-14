@@ -56,8 +56,6 @@ export const vuexable = {
         },
 
         $_vuexable_setPagination(pagination, module = '') {
-            console.log(this.$_vuexable_shouldUpdatePagination(pagination, module));
-
             this.$_vuexable_commit(
                 mutations.SET_PAGINATION,
                 module,
@@ -65,6 +63,29 @@ export const vuexable = {
             );
 
             return this;
+        },
+
+        $_vuexable_updatePagination({
+            key,
+            value
+        }, module = '') {
+            this.$_vuexable_commit(
+                mutations.UPDATE_PAGINATION,
+                module, {
+                    key,
+                    value
+                }
+            );
+
+            return this;
+        },
+
+        $_vuexable_getPaginatedValues(page = null, module = '') {
+            return this.$_vuexable_getter(
+                getters.PAGINATED_VALUES,
+                module,
+                page
+            );
         },
 
         // $_vuexable_shouldUpdatePagination({
@@ -127,6 +148,8 @@ export const vuexable = {
 
         $_vuexable_getter(fn, module = '', ...props) {
             if (props.length) {
+                console.log(this.$store.getters, this.$_vuexable_storeModule(fn, module), fn, module);
+
                 return this.$store.getters[
                     this.$_vuexable_storeModule(fn, module)
                 ](...props);

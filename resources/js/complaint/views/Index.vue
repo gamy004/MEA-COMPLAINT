@@ -68,9 +68,7 @@
           :key="`tabItem-${tabIndex}`"
           :value="`tab-${tabIndex}`"
         >
-          <v-card flat>
-            <v-card-text v-text="tab.content"></v-card-text>
-          </v-card>
+          <complaint-list :type="tab.type" :active="isTabActive(`tab-${tabIndex}`)"></complaint-list>
         </v-tab-item>
       </v-tabs-items>
     </v-flex>
@@ -78,10 +76,17 @@
 </template>
 
 <script>
+import ComplaintList from "../components/ComplaintList";
+import { vuex } from "../../mixins/vuexable";
+import complaintModule from "../../stores/modules/complaints";
+
 export default {
+  components: {
+    ComplaintList
+  },
+
   data() {
     return {
-      source: "",
       items: [
         {
           select: true,
@@ -110,8 +115,7 @@ export default {
         {
           icon: "inbox",
           text: "Primary",
-          content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+          type: "primary"
         }
       ]
     };
@@ -126,6 +130,20 @@ export default {
         }, 200);
       }
     }
+  },
+
+  methods: {
+    isTabActive(key) {
+      return this.tab === key;
+    }
+  },
+
+  beforeCreate() {
+    this.$store.registerModule(vuex.modules.COMPLAINT, complaintModule);
+  },
+
+  beforeDestroy() {
+    this.$store.unregisterModule(vuex.modules.COMPLAINT);
   }
 };
 </script>

@@ -13,7 +13,7 @@ use InvalidArgumentException;
 use App\Api\Parsers\BaseParser;
 use App\Api\Parsers\SelectParser;
 use Illuminate\Support\Facades\DB;
-use Omagma\Helpers\DateTimeHelper;
+use App\Helpers\DateTimeHelper;
 use App\Api\Parsers\PaginateParser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -84,7 +84,7 @@ abstract class BaseApi
     /**
      * DateTimeHelper Instance
      *
-     * @var Omagma\Helpers\DateTimeHelper
+     * @var App\Helpers\DateTimeHelper
      */
     protected $dateTimeHelper;
 
@@ -144,7 +144,7 @@ abstract class BaseApi
             throw $e;
         }
 
-        return $this->get();
+        return $data;
     }
 
     public function show(Model $model)

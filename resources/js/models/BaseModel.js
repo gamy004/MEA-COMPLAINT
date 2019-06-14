@@ -8,14 +8,23 @@ class BaseModel {
     constructor({
         ...props
     } = {}) {
-        this.$original = {
+        let data = {
+            id: null,
+            created_at: null,
+            updated_at: null,
+            deleted_at: null,
             ...props
         };
+
+        this.$original = {
+            ...data
+        };
+
         this.$data = {};
         this.$backup = {};
 
         this.data = {
-            ...props
+            ...data
         };
     }
 

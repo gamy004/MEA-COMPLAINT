@@ -1,5 +1,150 @@
 import BaseModel from "./BaseModel";
 
+function parseFilters(filters) {
+    return _.transform(filters, (result, value, key) => {
+        result.push({
+            key,
+            value
+        });
+    }, []);
+}
+
+function parse({
+    filter_groups = [],
+    filters = {},
+    includes = [],
+    map = [],
+    sort = [],
+    pagination = {},
+    ...props
+}) {
+    let template = {
+        params: {
+            ...props
+        }
+    };
+
+    if (!_.isEmpty(filter_groups)) {
+        // Vue.set(
+        //     template.params,
+        //     'filter_groups',
+        //     _.map(filter_groups, ({
+        //         filters,
+        //         or = false
+        //     }) => {
+        //         return {
+        //             filters: parseFilterGroups(filters),
+        //             or
+        //         };
+        //     })
+        // );
+        Vue.set(
+            template.params,
+            'filter_groups',
+            filter_groups
+        );
+    }
+
+    if (!_.isEmpty(filters)) {
+        Vue.set(
+            template.params,
+            'filters',
+            parseFilters(filters)
+        );
+    }
+
+    if (!_.isEmpty(includes)) {
+        Vue.set(
+            template.params,
+            'includes',
+            includes
+        );
+    }
+
+    if (!_.isEmpty(map)) {
+        Vue.set(
+            template.params,
+            'map',
+            map
+        );
+    }
+
+    if (!_.isEmpty(sort)) {
+        Vue.set(
+            template.params,
+            'sort',
+            sort
+        );
+    }
+
+    if (!_.isEmpty(pagination)) {
+        template = parsePagination(template, pagination);
+    }
+
+    return template;
+}
+
+function parsePagination(template, {
+    search = {
+        keyword: '',
+        fields: []
+    },
+    descending = false,
+    rowsPerPage = 10,
+    page = 1,
+    sortBy = "id"
+}) {
+    const sortSym = descending ? "-" : "";
+
+    const inSortArr = template.params.sort &&
+        (
+            template.params.sort.indexOf(`${sortSym}${sortBy}`) !== -1 ||
+            template.params.sort.indexOf(`${sortBy}${sortSym}`) !== -1
+        );
+
+    if (!inSortArr) {
+        let {
+            sort = []
+        } = template.params;
+
+        sort.push(`${sortSym}${sortBy}`);
+
+        Vue.set(
+            template.params,
+            'sort',
+            sort
+        );
+    }
+
+    if (rowsPerPage !== -1) {
+        Vue.set(
+            template.params,
+            'page',
+            page
+        );
+
+        Vue.set(
+            template.params,
+            'limit',
+            rowsPerPage
+        );
+    }
+
+    if (search.keyword &&
+        search.keyword.length &&
+        search.fields &&
+        search.fields.length
+    ) {
+        Vue.set(
+            template.params,
+            'search',
+            search
+        );
+    }
+
+    return template;
+}
+
 class Api extends BaseModel {
     constructor() {
         super();
@@ -18,7 +163,7 @@ class Api extends BaseModel {
         routeName,
         properties = {}
     ) {
-        return this.call('get', routeName, properties);
+        return this.call('get', routeName, parse(properties));
     }
 
     put(

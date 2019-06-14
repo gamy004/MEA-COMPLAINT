@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Issue;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
-class IssueController extends Controller
+class IssueController extends BaseApiController
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +14,7 @@ class IssueController extends Controller
      */
     public function index()
     {
-        //
+        return $this->api->index();
     }
 
     /**

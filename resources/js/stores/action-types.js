@@ -8,4 +8,8 @@ export const DELETE = 'delete';
 export const USER = {
     SIGN_IN: 'userSignIn',
     GET_AUTH: 'userGetAuth'
-}
+};
+
+export const COMPLAINT = {
+    FETCH: 'complaintFetch'
+};
