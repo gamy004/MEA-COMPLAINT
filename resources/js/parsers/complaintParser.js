@@ -29,12 +29,13 @@ function parseFetch(context, {
             value: issues.map(issue => new models.COMPLAINT({
                 ...issue,
                 context
-            }))
+            })),
+            strategy: 'merge'
         }
     )
 
     rootCommit(
-        vuex.mutations.UPDATE_PAGINATION,
+        vuex.mutations.SET_STATE,
         vuex.modules.COMPLAINT, {
             key: 'totalItems',
             value: !total ? issues.length : total

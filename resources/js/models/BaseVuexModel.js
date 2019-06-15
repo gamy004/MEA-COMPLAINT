@@ -11,6 +11,22 @@ class BaseVuexModel extends BaseModel {
 
         this.$context = context;
     }
+
+    update(key, value) {
+        const {
+            id = null
+        } = this;
+
+        if (id) {
+            this.$context.commit(
+                this.$context.vuex.mutations.UPDATE, {
+                    id,
+                    key,
+                    value
+                }
+            );
+        }
+    }
 }
 
 export default BaseVuexModel;

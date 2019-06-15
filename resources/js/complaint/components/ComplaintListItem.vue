@@ -6,12 +6,12 @@
 
     <v-list-tile-action class="complaint-list__action">
       <!-- action selected -->
-      <v-checkbox id="complaintSelectAll" v-model="item.selected" color="deep-orange" hide-details></v-checkbox>
+      <v-checkbox v-model="itemSelected" color="deep-orange" hide-details></v-checkbox>
     </v-list-tile-action>
 
     <v-list-tile-action class="complaint-list__action">
       <!-- action starred -->
-      <v-btn icon @click="item.starred = !item.starred">
+      <v-btn icon @click="item.markStarred()">
         <v-icon
           :color="item.starred ? 'deep-orange' : 'grey lignten-2'"
         >{{ item.starred ? 'star' : 'star_border' }}</v-icon>
@@ -75,6 +75,18 @@ export default {
 
     issuer() {
       return this.$_vuexable_getByKey(this.item.issued_by, vuex.modules.GROUP);
+    },
+
+    itemSelected: {
+      get() {
+        const { selected = false } = this.item;
+
+        return selected;
+      },
+
+      set(value) {
+        this.item.update("selected", value);
+      }
     }
   }
 };

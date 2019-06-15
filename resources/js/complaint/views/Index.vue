@@ -3,7 +3,7 @@
     <v-flex xs12>
       <v-toolbar id="complaintToolbar" tabs dense class="elevation-0">
         <template v-for="(item, i) in items">
-          <v-btn-toggle
+          <!-- <v-btn-toggle
             v-if="item.select"
             v-model="item.selected"
             :key="i"
@@ -16,36 +16,70 @@
               color="deep-orange"
               hide-details
             ></v-checkbox>
-            <v-menu offset-y bottom min-width="200" id="complaintSelectTypeMenu">
-              <template v-slot:activator="{ on }">
-                <v-icon v-on="on" id="complaintSelectTypeMenuActivator">arrow_drop_down</v-icon>
-              </template>
-              <v-list dense>
-                <v-list-tile
-                  v-for="(menu, menuIndex) in item.menus"
-                  :key="`menu-${menuIndex}`"
-                  @click
-                >
-                  <v-list-tile-title class="pl-4">{{ menu.text }}</v-list-tile-title>
-                </v-list-tile>
-              </v-list>
-            </v-menu>
-          </v-btn-toggle>
+          </v-btn-toggle>-->
+
+          <v-checkbox
+            v-if="item.select"
+            :key="i"
+            v-model="item.selected"
+            class="shrink"
+            :color="getColor(item)"
+            :indeterminate="item.selected && !$_paginatable_isSelectedAll"
+            hide-details
+            @change="onEmit('onChange', $event, item, i)"
+          ></v-checkbox>
+
+          <v-menu
+            v-else-if="item.menu"
+            :key="i"
+            :open-on-hover="item.hover"
+            min-width="200"
+            offset-y
+          >
+            <template v-slot:activator="{ on }">
+              <v-icon v-if="hasIcon(item)" v-text="item.icon" :class="getClasses(item)" v-on="on"></v-icon>
+
+              <v-btn v-else-if="item.customActivator" flat :class="getClasses(item)" v-on="on">
+                <div class="caption text-lowercase" v-html="item.customActivator()"></div>
+              </v-btn>
+
+              <div v-else v-html="item.text" :class="getClasses(item)" v-on="on"></div>
+            </template>
+
+            <v-list v-if="item.menuItems" dense>
+              <v-list-tile
+                v-for="(menuItem, menuIndex) in item.menuItems"
+                :key="`menuItem-${i}--${menuIndex}`"
+                :disabled="getDisabledAttribute(menuItem)"
+                @click="onEmit('onClick', $event, menuItem, i, menuIndex)"
+              >
+                <v-list-tile-title class="pl-4">{{ menuItem.text }}</v-list-tile-title>
+              </v-list-tile>
+            </v-list>
+          </v-menu>
 
           <v-spacer v-else-if="item.spacer" :key="i"/>
 
-          <v-tooltip v-else-if="item.text" :key="i" bottom>
+          <v-tooltip v-else-if="item.icon && item.text" :key="i" bottom>
             <template v-slot:activator="{ on }">
-              <v-btn v-on="on" icon small>
+              <v-btn
+                v-on="on"
+                icon
+                small
+                :disabled="getDisabledAttribute(item)"
+                @click="onEmit('onClick', $event, item, i)"
+              >
                 <v-icon>{{ item.icon }}</v-icon>
               </v-btn>
             </template>
             <span>{{ item.text }}</span>
           </v-tooltip>
 
-          <v-btn v-else :key="i" icon small>
+          <v-btn v-else-if="item.icon" :key="i" icon small>
             <v-icon>{{ item.icon }}</v-icon>
           </v-btn>
+
+          <span v-else :key="i" v-text="item.text"></span>
         </template>
 
         <template v-slot:extension>
@@ -78,11 +112,13 @@
 <script>
 import ComplaintList from "../components/ComplaintList";
 import { vuex } from "../../mixins/vuexable";
+import paginatable from "../../mixins/paginatable";
 import complaintModule from "../../stores/modules/complaints";
 import groupModule from "../../stores/modules/groups";
 import statusModule from "../../stores/modules/statuses";
-
 export default {
+  mixins: [paginatable],
+
   components: {
     ComplaintList
   },
@@ -92,9 +128,41 @@ export default {
       items: [
         {
           select: true,
-          selected: null,
-          selectedAll: false,
-          menus: [
+          selected: false,
+          color: "deep-orange",
+          onChange: value => {
+            this.$_paginatable_selectAll(value);
+          },
+
+          onPaginatedListChange: (value, item, indexes) => {
+            const itemIndex = indexes[0];
+
+            this.$set(
+              this.items[itemIndex],
+              "selected",
+              this.$_paginatable_someSelected
+            );
+          }
+
+          // onPageChange: (page, item, indexes) => {
+          //   const itemIndex = indexes[0];
+
+          //   this.items[itemIndex].updateSeleted(itemIndex);
+          // },
+
+          // onDescendingChange: (page, item, indexes) => {
+          //   const itemIndex = indexes[0];
+
+          //   this.items[itemIndex].updateSeleted(itemIndex);
+          // }
+        },
+        {
+          menu: true,
+          icon: "arrow_drop_down",
+          classes: {
+            "complaint-selection-menu": true
+          },
+          menuItems: [
             { text: "All" },
             { text: "None" },
             { text: "Read" },
@@ -106,8 +174,49 @@ export default {
         { icon: "replay", text: "Refresh" },
         { icon: "more_vert" },
         { spacer: true },
-        { icon: "keyboard_arrow_left", text: "Newer" },
-        { icon: "keyboard_arrow_right", text: "Older" },
+        {
+          menu: true,
+          hover: true,
+          customActivator: () => {
+            return this.$_paginatable_currentPageRange;
+          },
+          menuItems: [
+            {
+              text: "Newest",
+              disabled: () => {
+                return this.$_paginatable_descending;
+              },
+              onClick: () => {
+                this.$_paginatable_descending = true;
+              }
+            },
+            {
+              text: "Oldest",
+              disabled: () => {
+                return !this.$_paginatable_descending;
+              },
+              onClick: () => {
+                this.$_paginatable_descending = false;
+              }
+            }
+          ]
+        },
+        {
+          icon: "keyboard_arrow_left",
+          text: "Newer",
+          disabled: () => this.$_paginatable_isFirstPage,
+          onClick: () => {
+            this.$_paginatable_toPrevPage();
+          }
+        },
+        {
+          icon: "keyboard_arrow_right",
+          text: "Older",
+          disabled: () => this.$_paginatable_isLastPage,
+          onClick: () => {
+            this.$_paginatable_toNextPage();
+          }
+        },
         { icon: "settings", text: "Settings" }
       ],
 
@@ -131,12 +240,58 @@ export default {
           this.showTab = true; // slider problem
         }, 200);
       }
+    },
+
+    $_paginatable_currentPaginatedList(paginatedList) {
+      this.items.forEach((item, index) => {
+        this.onEmit("onPaginatedListChange", paginatedList, item, index);
+      });
+    }
+
+    // $_paginatable_currentPage(page) {
+    //   this.items.forEach((item, index) => {
+    //     this.onEmit("onPageChange", page, item, index);
+    //   });
+    // },
+
+    // $_paginatable_descending(descending) {
+    //   this.items.forEach((item, index) => {
+    //     this.onEmit("onDescendingChange", descending, item, index);
+    //   });
+    // }
+  },
+
+  computed: {
+    $_paginatable_module() {
+      return vuex.modules.COMPLAINT;
     }
   },
 
   methods: {
     isTabActive(key) {
       return this.tab === key;
+    },
+
+    getColor({ color = "accent" }) {
+      return color;
+    },
+
+    hasIcon({ icon = "" } = {}) {
+      return icon.length !== 0;
+    },
+
+    getClasses({ classes = {} } = {}) {
+      return classes;
+    },
+
+    getDisabledAttribute(item) {
+      return item.disabled ? item.disabled() : false;
+    },
+
+    onEmit(eventName, $event, item, ...indexes) {
+      return item[eventName]
+        ? item[eventName]($event, item, indexes)
+        : () => ({});
     }
   },
 
@@ -183,7 +338,7 @@ export default {
   }
 }
 
-#complaintSelectTypeMenuActivator {
+.complaint-selection-menu {
   width: 30px;
   margin-left: -0.5rem;
 }

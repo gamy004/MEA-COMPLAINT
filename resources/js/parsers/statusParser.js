@@ -23,7 +23,7 @@ function parseFetch(context, {
     );
 
     rootCommit(
-        vuex.mutations.UPDATE_PAGINATION,
+        vuex.mutations.SET_STATE,
         vuex.modules.STATUS, {
             key: 'totalItems',
             value: !total ? statuses.length : total

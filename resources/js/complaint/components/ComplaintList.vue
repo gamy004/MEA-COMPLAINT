@@ -1,14 +1,15 @@
 <template>
   <v-layout class="complaint-list" row wrap>
-    <v-flex v-if="isFetchingComplaint" xs12>
-      <v-progress-linear :indeterminate="true"></v-progress-linear>
-    </v-flex>
-    <v-flex v-else xs12>
-      <v-list class="py-0">
-        <template v-for="(item, itemIndex) in $_paginatable_currentPaginatedList">
-          <complaint-list-item :key="`complaint-${itemIndex}`" :item="item"/>
-        </template>
-      </v-list>
+    <v-flex xs12>
+      <transition name="slide-y-transition" mode="out-in">
+        <v-progress-linear v-if="isFetchingComplaint" key="complaintLoading" :indeterminate="true"></v-progress-linear>
+
+        <v-list v-else key="complaintList" class="py-0">
+          <template v-for="(item, itemIndex) in $_paginatable_currentPaginatedList">
+            <complaint-list-item :key="`complaint-${itemIndex}`" :item="item"/>
+          </template>
+        </v-list>
+      </transition>
     </v-flex>
   </v-layout>
 </template>
@@ -34,10 +35,22 @@ export default {
   },
 
   watch: {
-    active: {
+    // active: {
+    //   immediate: true,
+    //   async handler(active) {
+    //     if (active) {
+    //       await this[vuex.actions.COMPLAINT.FETCH]();
+    //     }
+    //   }
+    // },
+
+    $_paginatable_pagination: {
       immediate: true,
-      async handler(active) {
-        if (active) {
+      deep: true,
+      async handler(v, ov) {
+        if (this.active) {
+          console.log("ComplaintList pagination changed: ", v);
+
           await this[vuex.actions.COMPLAINT.FETCH]();
         }
       }
@@ -58,6 +71,13 @@ export default {
     ...vuex.mapWaitingActions(vuex.modules.COMPLAINT, [
       vuex.actions.COMPLAINT.FETCH
     ])
+  },
+
+  created() {
+    this.$_paginatable_pagination = {
+      sortBy: "updated_at",
+      descending: true
+    };
   }
 };
 </script>

@@ -78,6 +78,12 @@ class Complaint extends BaseVuexModel {
 
         return currentStatus;
     }
+
+    async markStarred() {
+        this.update('starred', !this.starred);
+
+        // send request update
+    }
 }
 
 export default Complaint;

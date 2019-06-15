@@ -20,9 +20,9 @@ export default {
                 descending: false,
                 rowsPerPage: 10,
                 page: 1,
-                sortBy: "id",
-                totalItems: 0
+                sortBy: "id"
             },
+            totalItems: 0,
             active: null
         };
     },
@@ -199,9 +199,10 @@ export default {
                 descending: false,
                 rowsPerPage: 10,
                 page: 1,
-                sortBy: "id",
-                totalItems: 0
+                sortBy: "id"
             });
+
+            Vue.set(state, 'totalItems', 0);
         },
 
         [vuex.mutations.SET](state, {
@@ -285,10 +286,12 @@ export default {
                                 sortedIndex: oldSortedIndex
                         } = state;
 
-                        Vue.set(state, 'collection', {
-                            ...oldCollection,
-                            ...collection
-                        });
+                        // Vue.set(state, 'collection', {
+                        //     ...oldCollection,
+                        //     ...collection
+                        // });
+
+                        Vue.set(state, 'collection', _.merge(collection, oldCollection));
 
                         Vue.set(state, 'sortedIndex', _.union(oldSortedIndex, sortedIndex));
 
@@ -315,12 +318,8 @@ export default {
             key,
             value
         }) {
-            let item = state.collection[id];
-
-            if (item) {
-                Vue.set(item, key, value);
-
-                Vue.set(state.collection, id, item);
+            if (state.collection.hasOwnProperty(id)) {
+                Vue.set(state.collection[id], key, value);
             }
         },
 

@@ -76,10 +76,29 @@ export const vuexable = {
             return this;
         },
 
+        $_vuexable_update({
+            id,
+            key,
+            value
+        }, module = '') {
+            this.$_vuexable_commit(
+                mutations.UPDATE,
+                module, {
+                    id,
+                    key,
+                    value
+                }
+            );
+
+            return this;
+        },
+
         $_vuexable_updatePagination({
             key,
             value
         }, module = '') {
+            console.log(key);
+
             this.$_vuexable_commit(
                 mutations.UPDATE_PAGINATION,
                 module, {
