@@ -1,4 +1,5 @@
 export const QUERY = 'query';
+export const REQUEST = 'request';
 export const FIND = 'find';
 export const FETCH = 'fetch';
 export const CREATE = 'create';
@@ -12,4 +13,8 @@ export const USER = {
 
 export const COMPLAINT = {
     FETCH: 'complaintFetch'
+};
+
+export const GROUP = {
+    FETCH: 'groupFetch'
 };

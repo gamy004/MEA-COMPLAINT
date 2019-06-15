@@ -23,35 +23,9 @@
         </template>
       </v-data-iterator>-->
       <v-list class="py-0">
-        <v-list-tile
-          v-for="(item, itemIndex) in $_paginatable_currentPaginatedList"
-          :key="`complaint-${itemIndex}`"
-          class="complaint-list__item"
-        >
-          <v-list-tile-action class="complaint-list__action">
-            <!-- action selected -->
-            <v-checkbox
-              id="complaintSelectAll"
-              v-model="item.selected"
-              color="deep-orange"
-              hide-details
-            ></v-checkbox>
-          </v-list-tile-action>
-
-          <v-list-tile-action class="complaint-list__action">
-            <!-- action starred -->
-            <v-btn icon @click="item.starred = !item.starred">
-              <v-icon
-                :color="item.starred ? 'deep-orange' : 'grey lignten-2'"
-              >{{ item.starred ? 'star' : 'star_border' }}</v-icon>
-            </v-btn>
-          </v-list-tile-action>
-
-          <v-list-tile-content>
-            <v-list-tile-sub-title class="font-weight-bold" v-text="item.subject"></v-list-tile-sub-title>
-          </v-list-tile-content>
-          <!-- <v-list-tile-content class="align-end">{{ props.item.calories }}</v-list-tile-content> -->
-        </v-list-tile>
+        <template v-for="(item, itemIndex) in $_paginatable_currentPaginatedList">
+          <complaint-list-item :key="`complaint-${itemIndex}`" :item="item"/>
+        </template>
       </v-list>
     </v-flex>
   </v-layout>
@@ -60,6 +34,7 @@
 <script>
 import paginatable from "../../mixins/paginatable";
 import { vuex, vuexable } from "../../mixins/vuexable";
+import ComplaintListItem from "./ComplaintListItem";
 
 export default {
   props: {
@@ -72,10 +47,8 @@ export default {
 
   mixins: [paginatable],
 
-  data() {
-    return {
-      //
-    };
+  components: {
+    ComplaintListItem
   },
 
   watch: {
@@ -84,8 +57,6 @@ export default {
       async handler(active) {
         if (active) {
           await this[vuex.actions.COMPLAINT.FETCH]();
-
-          console.log(this.paginatedComplaintList);
         }
       }
     }
@@ -108,17 +79,5 @@ export default {
   }
 };
 </script>
-
-<style lang="scss" scoped>
-.complaint-list {
-  &__item {
-    border-bottom: 1px solid #e0e0e0;
-  }
-
-  &__action {
-    min-width: 36px !important;
-  }
-}
-</style>
 
 

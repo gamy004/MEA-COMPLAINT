@@ -2,8 +2,8 @@ import Vue from 'vue';
 import {
     vuex
 } from '../../mixins/vuexable';
-// import parsers from "../parsers";
-// import models from "../models";
+import parsers from "../../parsers";
+import models from "../../models";
 
 export default {
     state() {
@@ -28,56 +28,57 @@ export default {
     },
 
     actions: {
-        // async [vuex.actions.QUERY](context, {
-        //     query,
-        //     args,
-        //     payload
-        // }) {
-        //     const gql = await context.dispatch(
-        //         `${vuex.modules.GATEWAYS}/${vuex.actions.GET_GQL}`,
-        //         null, {
-        //             root: true
-        //         }
-        //     );
+        async [vuex.actions.REQUEST](context, {
+            model,
+            action,
+            params = {}
+        }) {
+            const requestModel = models[model];
 
-        //     let response;
+            if (!requestModel) {
+                throw `Please Register model ${model}`;
+            }
 
-        //     try {
-        //         response = await gql.query(
-        //             query,
-        //             args,
-        //             payload
-        //         );
-        //     } catch (error) {
-        //         console.log(error);
-        //         throw "Cannot fetch data, please try again"
-        //     }
+            const requestAction = vuex.actions[model][action];
 
-        //     if (parsers.hasOwnProperty(query)) {
-        //         parsers[query]({
-        //             ...context,
-        //             rootCommit: (fn, module = "", props = {}) => {
-        //                 fn = vuex.mutations[fn];
+            if (!requestModel.hasOwnProperty(requestAction)) {
+                throw `Model doesn't have required method ${action}`;
+            }
 
-        //                 if (module.length) {
-        //                     fn = `${vuex.modules[module]}/${fn}`;
-        //                 }
+            let response;
 
-        //                 return context.commit(fn, {
-        //                     ...props
-        //                 }, {
-        //                     root: true
-        //                 });
-        //             },
-        //             args,
-        //             vuex,
-        //             models,
-        //             parsers
-        //         }, response.data);
-        //     }
+            try {
+                response = await requestModel[requestAction](params);
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
 
-        //     return response;
-        // }
+            if (parsers.hasOwnProperty(model) &&
+                parsers[model].hasOwnProperty(requestAction)
+            ) {
+                parsers[model][requestAction]({
+                    ...context,
+                    rootCommit: (fn, module = "", props = {}) => {
+                        if (module.length) {
+                            fn = `${module}/${fn}`;
+                        }
+
+                        return context.commit(fn, {
+                            ...props
+                        }, {
+                            root: true
+                        });
+                    },
+                    params,
+                    vuex,
+                    models,
+                    parsers
+                }, response.data);
+            }
+
+            return response;
+        }
     },
 
     getters: {

@@ -1,9 +1,12 @@
-import BaseModel from './BaseModel';
+import BaseVuexModel from './BaseVuexModel';
 import {
     actions
 } from '../constants';
+import {
+    formatShortDateTime
+} from '../helpers'
 
-class Complaint extends BaseModel {
+class Complaint extends BaseVuexModel {
     constructor(data) {
         super({
             subject: '',
@@ -21,21 +24,22 @@ class Complaint extends BaseModel {
 
         try {
             response = await api.get('api:issues.index', {
-                pagination
+                pagination,
+                includes: ['issuer:sideload']
             });
         } catch (error) {
             throw error;
         }
 
-        const {
-            issues = [],
-                ...props
-        } = response.data;
+        return response;
+    }
 
-        return {
-            ...props,
-            issues: issues.map(issue => new Complaint(issue))
-        }
+    get topic() {
+        return `<strong style="color:#333;">${this.subject}</strong>&nbsp;-&nbsp;<span>${this.description}</span>`
+    }
+
+    get shortUpdatedAt() {
+        return formatShortDateTime(this.updated_at);
     }
 }
 

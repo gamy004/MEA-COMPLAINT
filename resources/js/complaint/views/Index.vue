@@ -79,6 +79,7 @@
 import ComplaintList from "../components/ComplaintList";
 import { vuex } from "../../mixins/vuexable";
 import complaintModule from "../../stores/modules/complaints";
+import groupModule from "../../stores/modules/groups";
 
 export default {
   components: {
@@ -140,10 +141,12 @@ export default {
 
   beforeCreate() {
     this.$store.registerModule(vuex.modules.COMPLAINT, complaintModule);
+    this.$store.registerModule(vuex.modules.GROUP, groupModule);
   },
 
   beforeDestroy() {
     this.$store.unregisterModule(vuex.modules.COMPLAINT);
+    this.$store.unregisterModule(vuex.modules.GROUP);
   }
 };
 </script>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\IOCs\DBCol;
 use App\Helpers\DateTimeHelper;
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,7 +24,7 @@ class Issue extends Model
     
     public function issuer()
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsTo(Group::class, DBCol::ISSUED_BY);
     }
 
     public function recipients()

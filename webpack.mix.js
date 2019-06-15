@@ -90,7 +90,8 @@ mix.disableNotifications()
             new webpack.ProvidePlugin({
                 axios: 'axios',
                 _: 'lodash',
-                Vue: 'vue'
+                Vue: 'vue',
+                moment: 'moment'
             }),
             new VuetifyLoaderPlugin()
         ],

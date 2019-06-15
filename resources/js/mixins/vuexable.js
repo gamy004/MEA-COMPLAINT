@@ -16,6 +16,8 @@ import {
     actions
 } from "../constants";
 
+import * as models from "../models";
+
 export const vuex = {
     mapState,
     mapGetters,
@@ -25,13 +27,22 @@ export const vuex = {
     modules,
     getters,
     mutations,
-    actions
+    actions,
+    models
 };
 
 export const vuexable = {
     methods: {
         $_vuexable_getState(key, module = '') {
             return this.$_vuexable_getter(getters.GET_STATE, module, key);
+        },
+
+        $_vuexable_getByKey(key, module = '') {
+            return this.$_vuexable_getter(getters.BY_KEY, module, key);
+        },
+
+        $_vuexable_getByKeys(key, module = '') {
+            return this.$_vuexable_getter(getters.BY_KEYS, module, key);
         },
 
         $_vuexable_getMapping(mapModule, {
@@ -148,8 +159,6 @@ export const vuexable = {
 
         $_vuexable_getter(fn, module = '', ...props) {
             if (props.length) {
-                console.log(this.$store.getters, this.$_vuexable_storeModule(fn, module), fn, module);
-
                 return this.$store.getters[
                     this.$_vuexable_storeModule(fn, module)
                 ](...props);

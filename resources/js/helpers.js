@@ -23,3 +23,23 @@ export function toggle(data, key = '') {
 
     return data;
 }
+
+export function formatShortDateTime(date, {
+    transform = true
+} = {}) {
+    let today = moment();
+
+    // let yesterday = moment().subtract(1, 'days');
+
+    date = moment(date);
+
+    if (transform && today.isSame(date, 'd')) {
+        return date.format('h:mm A');
+    }
+
+    // if (transform && yesterday.isSame(date, 'd')) {
+    //     return _.upperCase('yesterday');
+    // }
+
+    return date.format('MMM D');
+}
