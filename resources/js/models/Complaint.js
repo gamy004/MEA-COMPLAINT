@@ -25,7 +25,7 @@ class Complaint extends BaseVuexModel {
         try {
             response = await api.get('api:issues.index', {
                 pagination,
-                includes: ['issuer:sideload']
+                includes: ['recipients:sideload', 'status:sideload']
             });
         } catch (error) {
             throw error;
@@ -40,6 +40,43 @@ class Complaint extends BaseVuexModel {
 
     get shortUpdatedAt() {
         return formatShortDateTime(this.updated_at);
+    }
+
+    get joinedRecipientName() {
+        const {
+            vuex,
+            rootGetters
+        } = this.$context, {
+                recipients = []
+            } = this,
+            allNames = _.map(
+                rootGetters[`${vuex.modules.GROUP}/${vuex.getters.BY_KEYS}`](recipients),
+                'name'
+            );
+
+
+        return allNames.join(', ');
+    }
+
+    get currentStatus() {
+        let currentStatus = '';
+
+        const {
+            vuex,
+            rootGetters
+        } = this.$context, {
+            status = null
+        } = this;
+
+        if (status) {
+            currentStatus = rootGetters[
+                `${vuex.modules.STATUS}/${vuex.getters.BY_KEY}`
+            ](status);
+
+            currentStatus = currentStatus.status;
+        }
+
+        return currentStatus;
     }
 }
 

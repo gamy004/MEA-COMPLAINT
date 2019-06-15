@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Issue extends Model
 {
+    const FK = 'issue_id';
+
     public function getCreatedAtAttribute($timestamp)
     {
         $dateTimeHelper = app(DateTimeHelper::class);
@@ -30,7 +32,11 @@ class Issue extends Model
     public function recipients()
     {
         return $this->belongsToMany(
-            Group::class, 'issue_recipient', 'issue_id', 'recipient_id'
+            Group::class, 'issue_recipient', self::FK, 'recipient_id'
         )->using(IssueRecipient::class);
+    }
+
+    public function status() {
+        return $this->belongsTo(IssueStatus::class, IssueStatus::FK);
     }
 }

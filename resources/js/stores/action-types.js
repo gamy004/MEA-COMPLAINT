@@ -18,3 +18,7 @@ export const COMPLAINT = {
 export const GROUP = {
     FETCH: 'groupFetch'
 };
+
+export const STATUS = {
+    FETCH: 'statusFetch'
+};

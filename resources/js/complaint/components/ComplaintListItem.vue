@@ -1,6 +1,10 @@
 <template>
   <v-list-tile class="complaint-list__item">
     <v-list-tile-action class="complaint-list__action">
+      <v-avatar color="indigo accent-3" size="14"></v-avatar>
+    </v-list-tile-action>
+
+    <v-list-tile-action class="complaint-list__action">
       <!-- action selected -->
       <v-checkbox id="complaintSelectAll" v-model="item.selected" color="deep-orange" hide-details></v-checkbox>
     </v-list-tile-action>
@@ -15,11 +19,33 @@
     </v-list-tile-action>
 
     <v-list-tile-content class="complaint-list__content">
-      <v-list-tile-sub-title class="complaint-list__title font-weight-bold" v-text="issuer.name"></v-list-tile-sub-title>
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <v-list-tile-sub-title
+            v-on="on"
+            class="complaint-list__title font-weight-bold"
+            v-text="title"
+          ></v-list-tile-sub-title>
+        </template>
+        <span v-html="title"></span>
+      </v-tooltip>
+
+      <v-chip
+        class="complaint-list__status"
+        small
+        color="indigo accent-3"
+        dark
+      >{{ item.currentStatus }}</v-chip>
+
       <v-list-tile-sub-title class="complaint-list__sub-title" v-html="item.topic"></v-list-tile-sub-title>
     </v-list-tile-content>
 
     <v-list-tile-action class="complaint-list__action-right">
+      <!-- <v-list-tile-sub-title class="complaint-list__status font-weight-bold">
+        <v-avatar class="info" size="10"></v-avatar>
+        <span class="info--text">{{ item.currentStatus }}</span>
+      </v-list-tile-sub-title>-->
+
       <v-list-tile-sub-title
         class="complaint-list__action-right-content font-weight-bold"
         v-text="item.shortUpdatedAt"
@@ -43,9 +69,9 @@ export default {
   mixins: [vuexable],
 
   computed: {
-    // แนทยสฟรืะ() {
-    //   return this.$_vuexable_getByKey(this.item.id, vuex.modules.COMPLAINT);
-    // },
+    title() {
+      return this.item.joinedRecipientName;
+    },
 
     issuer() {
       return this.$_vuexable_getByKey(this.item.issued_by, vuex.modules.GROUP);
@@ -65,9 +91,17 @@ export default {
   }
 
   &__content {
-    align-items: center;
     justify-content: flex-start;
+  }
+
+  &__action-right {
+    justify-content: flex-end;
+  }
+
+  &__content,
+  &__action-right {
     flex-direction: row;
+    align-items: center;
   }
 
   &__title,
@@ -76,11 +110,15 @@ export default {
   }
 
   &__action-right {
-    min-width: 75px;
+    min-width: 100px;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-left: 16px;
   }
 
   &__action-right-content {
     width: auto;
+    margin-left: 16px;
   }
 
   &__title {
@@ -91,6 +129,10 @@ export default {
 
   &__sub-title {
     width: auto;
+  }
+
+  &__status {
+    margin-right: 12px;
   }
 }
 </style>

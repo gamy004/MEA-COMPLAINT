@@ -47,7 +47,7 @@
     </v-toolbar>
 
     <v-content>
-      <v-container fluid fill-height pa-0 class="grey lighten-4">
+      <v-container fluid fill-height pa-0 class="grey lighten-4" v-resize="onResize">
         <slot/>
       </v-container>
     </v-content>
@@ -55,9 +55,12 @@
 </template>
 
 <script>
+import layoutable from "../mixins/layoutable";
+
 export default {
+  mixins: [layoutable],
+
   data: () => ({
-    drawer: null,
     items: [
       { icon: "inbox", text: "Inbox" },
       { icon: "start", text: "Starred" },
@@ -77,10 +80,7 @@ export default {
       //   { icon: "phonelink", text: "App downloads" },
       //   { icon: "keyboard", text: "Keyboard shortcuts" }
     ]
-  }),
-  props: {
-    source: String
-  }
+  })
 };
 </script>
 

@@ -8,7 +8,6 @@ export const getMeta = state => rel => {
 };
 
 export function isMobile(state) {
-    return false;
     const {
         mobileBreakPoint,
         windowSize

@@ -3,7 +3,7 @@ import {
 } from '../constants';
 
 function parseFetch(context, {
-    issuer = [],
+    groups = [],
     total = 0
 } = {}) {
     const {
@@ -15,7 +15,7 @@ function parseFetch(context, {
     rootCommit(
         vuex.mutations.STORE,
         vuex.modules.GROUP, {
-            value: issuer.map(x => new models.GROUP({
+            value: groups.map(x => new models.GROUP({
                 ...x,
                 context
             }))
@@ -26,7 +26,7 @@ function parseFetch(context, {
         vuex.mutations.UPDATE_PAGINATION,
         vuex.modules.GROUP, {
             key: 'totalItems',
-            value: !total ? issuer.length : total
+            value: !total ? groups.length : total
         }
     );
 

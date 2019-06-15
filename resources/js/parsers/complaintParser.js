@@ -4,8 +4,9 @@ import {
 
 function parseFetch(context, {
     issues = [],
-    total = 0,
-    ...props
+    recipients: groups = [],
+    status: statuses = [],
+    total = 0
 } = {}) {
     const {
         rootCommit,
@@ -15,7 +16,11 @@ function parseFetch(context, {
     } = context;
 
     parsers.GROUP[vuex.actions.GROUP.FETCH](context, {
-        ...props
+        groups
+    });
+
+    parsers.STATUS[vuex.actions.STATUS.FETCH](context, {
+        statuses
     });
 
     rootCommit(

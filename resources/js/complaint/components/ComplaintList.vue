@@ -4,24 +4,6 @@
       <v-progress-linear :indeterminate="true"></v-progress-linear>
     </v-flex>
     <v-flex v-else xs12>
-      <!-- <v-data-iterator
-        :items="$_paginatable_currentPaginatedList"
-        :rows-per-page-items="paginatable_rowsPerPage"
-        :pagination.sync="$_paginatable_pagination"
-        hide-actions
-        row
-        wrap
-      >
-        <template v-slot:item="props">
-          <v-flex xs12>
-            <v-card class="complaint-list__card">
-              <v-card-title>
-                <h4>{{ props.item.subject }}</h4>
-              </v-card-title>
-            </v-card>
-          </v-flex>
-        </template>
-      </v-data-iterator>-->
       <v-list class="py-0">
         <template v-for="(item, itemIndex) in $_paginatable_currentPaginatedList">
           <complaint-list-item :key="`complaint-${itemIndex}`" :item="item"/>
