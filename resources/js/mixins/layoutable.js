@@ -8,7 +8,7 @@ const menuable = {
 
     data() {
         return {
-            drawer: false,
+            drawer: true,
             items: [],
         };
     },

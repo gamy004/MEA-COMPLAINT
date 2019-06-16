@@ -1,15 +1,15 @@
 <template>
   <v-list-tile class="complaint-list__item">
-    <v-list-tile-action class="complaint-list__action">
-      <v-avatar color="indigo accent-3" size="14"></v-avatar>
+    <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
+      <v-avatar color="indigo accent-3" size="10" class="status-indicator"></v-avatar>
     </v-list-tile-action>
 
-    <v-list-tile-action class="complaint-list__action">
+    <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
       <!-- action selected -->
       <v-checkbox v-model="itemSelected" color="deep-orange" hide-details></v-checkbox>
     </v-list-tile-action>
 
-    <v-list-tile-action class="complaint-list__action">
+    <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
       <!-- action starred -->
       <v-btn icon @click="item.markStarred()">
         <v-icon
@@ -18,12 +18,13 @@
       </v-btn>
     </v-list-tile-action>
 
-    <v-list-tile-content class="complaint-list__content">
+    <v-list-tile-content class="complaint-list__content" :class="isMobileClasses">
       <v-tooltip top>
         <template v-slot:activator="{ on }">
           <v-list-tile-sub-title
             v-on="on"
             class="complaint-list__title font-weight-bold"
+            :class="isMobileClasses"
             v-text="title"
           ></v-list-tile-sub-title>
         </template>
@@ -37,10 +38,31 @@
         dark
       >{{ item.currentStatus }}</v-chip>
 
-      <v-list-tile-sub-title class="complaint-list__sub-title" v-html="item.topic"></v-list-tile-sub-title>
+      <!-- Merge line on desktop and tablet -->
+      <v-list-tile-sub-title
+        v-if="!isMobile"
+        class="complaint-list__sub-title"
+        :class="isMobileClasses"
+        v-html="item.topic"
+      ></v-list-tile-sub-title>
+
+      <!-- Seperate line on mobile -->
+      <v-list-tile-sub-title
+        v-if="isMobile"
+        class="complaint-list__title font-weight-bold"
+        :class="isMobileClasses"
+        v-text="item.subject"
+      ></v-list-tile-sub-title>
+
+      <v-list-tile-sub-title
+        v-if="isMobile"
+        class="complaint-list__sub-title"
+        :class="isMobileClasses"
+        v-html="item.description"
+      ></v-list-tile-sub-title>
     </v-list-tile-content>
 
-    <v-list-tile-action class="complaint-list__action-right">
+    <v-list-tile-action class="complaint-list__action-right" :class="isMobileClasses">
       <!-- <v-list-tile-sub-title class="complaint-list__status font-weight-bold">
         <v-avatar class="info" size="10"></v-avatar>
         <span class="info--text">{{ item.currentStatus }}</span>
@@ -69,6 +91,8 @@ export default {
   mixins: [vuexable],
 
   computed: {
+    ...vuex.mapGetters(["isMobile", "isMobileClasses"]),
+
     title() {
       return this.item.joinedRecipientName;
     },
@@ -100,6 +124,15 @@ export default {
 
   &__action {
     min-width: 36px !important;
+
+    &.is-mobile {
+      align-items: flex-start;
+    }
+
+    .status-indicator {
+      margin-top: 4px;
+      margin-left: 4px;
+    }
   }
 
   &__content {
@@ -114,6 +147,11 @@ export default {
   &__action-right {
     flex-direction: row;
     align-items: center;
+
+    &.is-mobile {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 
   &__title,
@@ -122,10 +160,15 @@ export default {
   }
 
   &__action-right {
-    min-width: 100px;
+    min-width: 80px;
     padding-top: 0;
     padding-bottom: 0;
     margin-left: 16px;
+
+    &.is-mobile {
+      min-width: auto;
+      justify-content: flex-start;
+    }
   }
 
   &__action-right-content {
@@ -137,10 +180,10 @@ export default {
     max-width: 168px;
     min-width: 125px;
     padding-right: 32px;
-  }
 
-  &__sub-title {
-    width: auto;
+    &.is-mobile {
+      max-width: 100%;
+    }
   }
 
   &__status {

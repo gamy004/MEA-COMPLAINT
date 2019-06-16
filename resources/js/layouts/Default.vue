@@ -1,7 +1,11 @@
 <template>
   <v-app id="meaDefault">
+    <add-complaint-btn v-if="isMobile"/>
+
     <v-navigation-drawer v-model="drawer" fixed clipped class="grey lighten-4" app>
       <v-list dense class="grey lighten-4">
+        <add-complaint-btn v-if="!isMobile"/>
+
         <template v-for="(item, i) in items">
           <v-layout v-if="item.heading" :key="i" row align-center>
             <v-flex xs6>
@@ -49,6 +53,8 @@
     <v-content>
       <v-container fluid fill-height pa-0 class="grey lighten-4" v-resize="onResize">
         <slot/>
+
+        <complaint-form/>
       </v-container>
     </v-content>
   </v-app>
@@ -56,9 +62,16 @@
 
 <script>
 import layoutable from "../mixins/layoutable";
-
+import { vuex } from "../mixins/vuexable";
+import AddComplaintBtn from "../complaint/components/AddComplaintBtn";
+import ComplaintForm from "../complaint/components/ComplaintForm";
 export default {
   mixins: [layoutable],
+
+  components: {
+    AddComplaintBtn,
+    ComplaintForm
+  },
 
   data: () => ({
     items: [

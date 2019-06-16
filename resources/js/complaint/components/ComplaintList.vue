@@ -4,7 +4,7 @@
       <transition name="slide-y-transition" mode="out-in">
         <v-progress-linear v-if="isFetchingComplaint" key="complaintLoading" :indeterminate="true"></v-progress-linear>
 
-        <v-list v-else key="complaintList" class="py-0">
+        <v-list v-else key="complaintList" :three-line="isMobile" :class="isMobileClasses">
           <template v-for="(item, itemIndex) in $_paginatable_currentPaginatedList">
             <complaint-list-item :key="`complaint-${itemIndex}`" :item="item"/>
           </template>
@@ -62,6 +62,8 @@ export default {
       return vuex.modules.COMPLAINT;
     },
 
+    ...vuex.mapGetters(["isMobile", "isMobileClasses"]),
+
     ...vuex.mapWaitingGetters({
       isFetchingComplaint: [vuex.actions.COMPLAINT.FETCH]
     })
@@ -81,5 +83,29 @@ export default {
   }
 };
 </script>
+
+<style lang="scss">
+.complaint-list {
+  .v-list {
+    padding-top: 0;
+    padding-bottom: 0;
+
+    &--three-line {
+      &.is-mobile {
+        .v-list__tile {
+          align-items: flex-start;
+          height: 110px;
+          padding-top: 8px;
+
+          &__sub-title {
+            white-space: nowrap;
+            display: block;
+          }
+        }
+      }
+    }
+  }
+}
+</style>
 
 

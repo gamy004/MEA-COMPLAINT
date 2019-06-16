@@ -16,6 +16,12 @@ export function isMobile(state) {
     return windowSize.x <= mobileBreakPoint;
 };
 
+export function isMobileClasses(state, getters) {
+    return {
+        'is-mobile': getters.isMobile
+    };
+};
+
 export function showOverlay(state, getters) {
     return !state.mini && getters.isMobile;
 }
