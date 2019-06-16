@@ -1,8 +1,8 @@
 <template>
-  <v-card>
-    <v-toolbar card color="pink" dark>
+  <v-card class="complaint-form">
+    <v-toolbar card dense color="blue-grey darken-2" dark>
       <v-icon>arrow_back</v-icon>
-      <v-toolbar-title>Compose</v-toolbar-title>
+      <v-toolbar-title>Complaint</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-icon>send</v-icon>
     </v-toolbar>
@@ -28,13 +28,27 @@
         hide-details
       ></v-text-field>
       <v-divider></v-divider>
-      <v-textarea v-model="title" label="Message" counter maxlength="120" full-width single-line></v-textarea>
+      <!-- <v-textarea
+        v-model="title"
+        class="complaint__description"
+        label="Message"
+        full-width
+        single-line
+        no-resize
+      ></v-textarea>-->
+      <custom-editor/>
     </v-form>
   </v-card>
 </template>
 
 <script>
+import CustomEditor from "../../components/CustomEditor";
+
 export default {
+  components: {
+    CustomEditor
+  },
+
   data() {
     return {
       selected: ["Trevor Handsen"],
@@ -45,3 +59,15 @@ export default {
   }
 };
 </script>
+
+<style lang="scss">
+.complaint-form {
+  .mce-content-body {
+    min-height: 266px;
+    height: 30vw;
+    overflow: auto;
+  }
+}
+</style>
+
+

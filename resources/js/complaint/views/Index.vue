@@ -1,33 +1,18 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <v-toolbar id="complaintToolbar" tabs dense class="elevation-0">
+      <!-- <v-toolbar id="complaintToolbar" tabs dense class="elevation-0">
         <template v-for="(item, i) in items">
-          <!-- <v-btn-toggle
-            v-if="item.select"
-            v-model="item.selected"
-            :key="i"
-            id="complaintSelectController"
-            class="bg-transparent"
-          >
-            <v-checkbox
-              id="complaintSelectAll"
-              v-model="item.selectedAll"
-              color="deep-orange"
-              hide-details
-            ></v-checkbox>
-          </v-btn-toggle>-->
-
           <v-checkbox
             v-if="item.select"
             :key="i"
             v-model="item.selected"
             class="shrink"
             :color="getColor(item)"
-            :indeterminate="item.selected && !$_paginatable_isSelectedAll"
+            :indeterminate="item.indeterminate(item)"
             hide-details
             @change="onEmit('onChange', $event, item, i)"
-          ></v-checkbox>
+          ><span v-if="item.text" v-html="item.text"></span></v-checkbox>
 
           <v-menu
             v-else-if="item.menu"
@@ -94,7 +79,21 @@
             </v-tab>
           </v-tabs>
         </template>
-      </v-toolbar>
+      </v-toolbar>-->
+      <custom-toolbar :items="items">
+        <template v-slot:extension>
+          <v-tabs v-model="tab" v-if="showTab" slider-color="deep-orange">
+            <v-tab
+              v-for="(tab, tabIndex) in tabs"
+              :key="`tab-${tabIndex}`"
+              :href="`#tab-${tabIndex}`"
+            >
+              <v-icon v-if="tab.icon">{{ tab.icon }}</v-icon>
+              <span v-if="tab.text" class="ml-3">{{ tab.text }}</span>
+            </v-tab>
+          </v-tabs>
+        </template>
+      </custom-toolbar>
 
       <v-tabs-items v-model="tab">
         <v-tab-item
@@ -111,6 +110,7 @@
 
 <script>
 import ComplaintList from "../components/ComplaintList";
+import CustomToolbar from "../../components/CustomToolbar";
 import { vuex } from "../../mixins/vuexable";
 import paginatable from "../../mixins/paginatable";
 import complaintModule from "../../stores/modules/complaints";
@@ -120,7 +120,8 @@ export default {
   mixins: [paginatable],
 
   components: {
-    ComplaintList
+    ComplaintList,
+    CustomToolbar
   },
 
   data() {
@@ -130,6 +131,9 @@ export default {
           select: true,
           selected: false,
           color: "deep-orange",
+          indeterminate: item => {
+            return item.selected && !this.$_paginatable_isSelectedAll;
+          },
           onChange: value => {
             this.$_paginatable_selectAll(value);
           },
@@ -272,21 +276,21 @@ export default {
       return this.tab === key;
     },
 
-    getColor({ color = "accent" }) {
-      return color;
-    },
+    // getColor({ color = "accent" }) {
+    //   return color;
+    // },
 
-    hasIcon({ icon = "" } = {}) {
-      return icon.length !== 0;
-    },
+    // hasIcon({ icon = "" } = {}) {
+    //   return icon.length !== 0;
+    // },
 
-    getClasses({ classes = {} } = {}) {
-      return classes;
-    },
+    // getClasses({ classes = {} } = {}) {
+    //   return classes;
+    // },
 
-    getDisabledAttribute(item) {
-      return item.disabled ? item.disabled() : false;
-    },
+    // getDisabledAttribute(item) {
+    //   return item.disabled ? item.disabled() : false;
+    // },
 
     onEmit(eventName, $event, item, ...indexes) {
       return item[eventName]

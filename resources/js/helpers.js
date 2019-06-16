@@ -86,3 +86,9 @@ export function getCorrectTextColor(hex) {
         return "#ffffff";
     }
 }
+
+export function onEmit(eventName, $event, item, ...indexes) {
+    return item[eventName] ?
+        item[eventName]($event, item, indexes) :
+        () => ({});
+}
