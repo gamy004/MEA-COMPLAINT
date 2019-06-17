@@ -26,7 +26,17 @@ Route::group([
         // Controllers Within The "App\Http\Controllers\Admin" Namespace
         Route::get('/auth', 'UserController@auth')->name('auth');
 
+        Route::get(
+            '/{hash}/download',
+            'FileController@download'
+        )->name('file.download')->middleware('signed');
+
         Route::middleware(['auth'])->group(function () {
+            Route::group(['as' => 'file.', 'prefix' => 'file'], function () {
+                Route::get('/{hash}/generate-link', 'FileController@generateLink')->name('generate-link');
+                Route::post('/upload', 'FileController@upload')->name('upload');
+            });
+
             Route::resources([
                 'issues' => 'IssueController'
             ]);

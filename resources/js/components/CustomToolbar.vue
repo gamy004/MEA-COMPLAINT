@@ -37,7 +37,11 @@
 
       <v-spacer v-else-if="item.spacer" :key="i"/>
 
-      <v-tooltip v-else-if="item.icon && item.text" :key="i" bottom>
+      <v-tooltip
+        v-else-if="item.icon && item.text"
+        :key="i"
+        v-bind="item.tooltipAttr ? item.tooltipAttr : { bottom: true }"
+      >
         <template v-slot:activator="{ on }">
           <v-btn
             v-on="on"

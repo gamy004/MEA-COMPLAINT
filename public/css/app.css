@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "Material Design Icons";
+  src: url("/fonts/vendor/@mdi/materialdesignicons-webfont.eot");
+  /* IE9 Compat Modes */
+  src: url("/fonts/vendor/@mdi/materialdesignicons-webfont.eot?#iefix") format("embedded-opentype"), url("/fonts/vendor/@mdi/materialdesignicons-webfont.woff2") format("woff2"), url("/fonts/vendor/@mdi/materialdesignicons-webfont.woff") format("woff"), url("/fonts/vendor/@mdi/materialdesignicons-webfont.ttf") format("truetype"), url("/fonts/vendor/@mdi/materialdesignicons-webfont.svg#svgFontName") format("svg");
+  /* Legacy iOS */
+}
+
 html,
 body,
 #app {

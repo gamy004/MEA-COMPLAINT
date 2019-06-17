@@ -13,11 +13,12 @@ import 'vuetify/src/stylus/app.styl';
 import {
     Ripple
 } from 'vuetify/lib/directives';
-
+import '@mdi/font/css/materialdesignicons.css';
 Vue.use(Vuetify, {
     directives: {
         Ripple
-    }
+    },
+    iconfont: ['md', 'mdi']
 })
 /**
  * The following block of code may be used to automatically register your

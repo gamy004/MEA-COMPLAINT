@@ -632,6 +632,11 @@
   resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-vue/-/ckeditor5-vue-1.0.0-beta.2.tgz#9491cf3e4b030847cd329ae3680c52996195d8bf"
   integrity sha512-9qF795EKQZi2VV5zgYjUfAY2L3rr50NaZOAMq2O2sADrWMxUGOb3cUAD6FuV3kboVaKoSmXGcApm7Iy5YTGr3g==
 
+"@mdi/font@^3.6.95":
+  version "3.6.95"
+  resolved "https://registry.yarnpkg.com/@mdi/font/-/font-3.6.95.tgz#0bbde766ca2d94cfa0e469f25523b23d3112bdd3"
+  integrity sha512-wUbkF/RRCIh51TPzAL9qUeRSUFla9I3x1nGq62HkfWzIebRHbDY5HPaYCQuZO7398dWaLHTu4BwnBA58YbhfEA==
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -6409,9 +6414,16 @@ vue-wait@^1.4.6:
   resolved "https://registry.yarnpkg.com/vue-wait/-/vue-wait-1.4.6.tgz#fc3cfd4efcdf0d21bc29bfd79370b2218c4e32d2"
   integrity sha512-aq1Yi7OabS0KlYNgaFHXFrqqR3DwCQ3VM4uCqSLxOr2CI6f7vuo6jHQ6tYF+MhuuXqKHRZyGDkD+3BomDz1OLQ==
 
-vue@^2.5.17:
+vue@^2.3.3, vue@^2.5.17:
   version "2.6.10"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.10.tgz#a72b1a42a4d82a721ea438d1b6bf55e66195c637"
+
+vuejs-uploader@^0.6.5:
+  version "0.6.5"
+  resolved "https://registry.yarnpkg.com/vuejs-uploader/-/vuejs-uploader-0.6.5.tgz#78dd38a0750d102b8fb9398cf2ad76a5431eb007"
+  integrity sha512-aXyVDQfGcQMt67Jv+HYAB4btIVYeciYRG/sHXNl9g4/6eeNWAq0NyvgL0AL/FsOgAgpI3Ma7VtJrI99mooF0rA==
+  dependencies:
+    vue "^2.3.3"
 
 vuetify-loader@^1.2.2:
   version "1.2.2"

@@ -64,25 +64,18 @@ mix.disableNotifications()
                 {
                     test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)(\?.*)?$/,
                     oneOf: [{
-                            test: /\.(png|jpe?g|gif)$/,
-                            resourceQuery: /vuetify-preload/,
-                            use: [
-                                'vuetify-loader/progressive-loader',
-                                {
-                                    loader: 'url-loader',
-                                    options: {
-                                        limit: 8000
-                                    }
+                        test: /\.(png|jpe?g|gif)$/,
+                        resourceQuery: /vuetify-preload/,
+                        use: [
+                            'vuetify-loader/progressive-loader',
+                            {
+                                loader: 'url-loader',
+                                options: {
+                                    limit: 8000
                                 }
-                            ]
-                        },
-                        {
-                            loader: 'url-loader',
-                            options: {
-                                limit: 8000
                             }
-                        }
-                    ]
+                        ]
+                    }]
                 }
             ]
         },
