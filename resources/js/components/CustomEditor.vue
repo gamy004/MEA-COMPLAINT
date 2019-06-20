@@ -75,29 +75,40 @@
         <v-layout align-center>
           <v-btn small flat color="primary">send</v-btn>
 
-          <uploader
-            ref="uploader"
-            :end-point="endpoint"
-            :multipart="multipart"
-            :multiple="true"
-            :show-errors="false"
-            :max-uploads="999"
-            @startUpload="onStartUpload"
-            @chunkUploaded="onChunkUploaded"
-            @fileUploaded="onFileUploaded"
-            @error="onUploadError"
-          >
-            <template slot="browse-btn">
+          <custom-toolbar :items="customToolbarItems">
+            <template v-slot:left>
+              <uploader
+                ref="uploader"
+                :end-point="endpoint"
+                :multipart="multipart"
+                :multiple="true"
+                :show-errors="false"
+                :max-uploads="999"
+                @startUpload="onStartUpload"
+                @chunkUploaded="onChunkUploaded"
+                @fileUploaded="onFileUploaded"
+                @error="onUploadError"
+              >
+                <template slot="browse-btn">
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on">attach_file</v-icon>
+                    </template>
+                    <span>Upload files</span>
+                  </v-tooltip>
+                </template>
+              </uploader>
+
+              <v-spacer></v-spacer>
+
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
-                  <v-icon v-on="on">attach_file</v-icon>
+                  <v-icon v-on="on">delete</v-icon>
                 </template>
-                <span>Upload files</span>
+                <span>Discard draft</span>
               </v-tooltip>
             </template>
-          </uploader>
-
-          <custom-toolbar :items="customToolbarItems"/>
+          </custom-toolbar>
         </v-layout>
       </v-flex>
     </v-layout>
@@ -155,7 +166,7 @@ export default {
     uploaderFiles: {
       deep: true,
       handler(files = []) {
-        if (!this.uploader.isUploadDisabled) {
+        if (this.uploader && !this.uploader.isUploadDisabled) {
           this.uploader.upload();
         }
       }
@@ -247,6 +258,10 @@ export default {
       max-height: 30vw;
       overflow: auto;
     }
+  }
+
+  .v-toolbar {
+    background-color: white;
   }
 }
 </style>

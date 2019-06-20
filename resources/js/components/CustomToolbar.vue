@@ -1,5 +1,7 @@
 <template>
   <v-toolbar id="complaintToolbar" tabs dense class="elevation-0">
+    <slot name="left"></slot>
+
     <template v-for="(item, i) in items">
       <v-checkbox
         v-if="item.select"
