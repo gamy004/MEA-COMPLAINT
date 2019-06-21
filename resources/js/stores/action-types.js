@@ -22,3 +22,7 @@ export const GROUP = {
 export const STATUS = {
     FETCH: 'statusFetch'
 };
+
+export const ISSUE_CATEGORY = {
+    FETCH: 'issueCategoryFetch'
+};

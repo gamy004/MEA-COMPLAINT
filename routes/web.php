@@ -38,7 +38,9 @@ Route::group([
             });
 
             Route::resources([
-                'issues' => 'IssueController'
+                'issues' => 'IssueController',
+                'groups' => 'GroupController',
+                'issue-categories' => 'IssueCategoryController'
             ]);
         });
     }

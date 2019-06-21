@@ -26,7 +26,16 @@ class DBCol
     const UNIQUE = 'unique';
     const NOTE = 'note';
     const UUID = 'uuid';
+    /**
+     * ISSUE
+     */
+    const SUBJECT = 'subject';
     const ISSUED_BY = 'issued_by';
+    const REFERENCED_TO = 'referenced_to';
+    /**
+     * ISSUE_CATEGORY
+     */
+    const CATEGORY = 'category';
     /**
      * File
      */

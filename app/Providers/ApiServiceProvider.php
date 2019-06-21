@@ -10,7 +10,9 @@ class ApiServiceProvider extends ServiceProvider
 {
     protected $controllers = [
         \App\Http\Controllers\Api\IssueController::class => \App\Api\Providers\IssueApi::class,
-        \App\Http\Controllers\Api\FileController::class => \App\Api\Providers\FileApi::class
+        \App\Http\Controllers\Api\FileController::class => \App\Api\Providers\FileApi::class,
+        \App\Http\Controllers\Api\GroupController::class => \App\Api\Providers\GroupApi::class,
+        \App\Http\Controllers\Api\IssueCategoryController::class => \App\Api\Providers\IssueCategoryApi::class
     ];
 
     /**

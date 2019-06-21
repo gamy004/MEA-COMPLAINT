@@ -16,6 +16,40 @@ const GroupStore = {
     },
 
     actions: {
+        async [vuex.actions.GROUP.FETCH](context, params) {
+            try {
+
+                context.dispatch(vuex.actions.REQUEST, {
+                    model: 'GROUP',
+                    action: 'FETCH',
+                    params
+                });
+
+                // let {
+                //     issues = [], issuer = [], total = 0
+                // } = await Complaint[
+                //     vuex.actions.COMPLAINT.FETCH
+                // ](state.base.pagination);
+
+                // commit(vuex.mutations.STORE, {
+                //     value: issues
+                // });
+
+                // commit(vuex.mutations.STORE, {
+                //     value: issues
+                // });
+
+                // commit(vuex.mutations.UPDATE_PAGINATION, {
+                //     key: 'totalItems',
+                //     value: total
+                // });
+
+                // return issues;
+
+            } catch (error) {
+                throw error;
+            }
+        }
         // async [vuex.actions.COMPLAINT.FETCH]({
         //     state,
         //     commit

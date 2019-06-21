@@ -25,6 +25,10 @@ body,
   background: transparent !important;
 }
 
+.clickable {
+  cursor: pointer !important;
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,

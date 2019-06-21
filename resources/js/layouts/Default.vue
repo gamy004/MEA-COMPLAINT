@@ -112,13 +112,5 @@ export default {
       margin-left: 4rem;
     }
   }
-
-  .complaint-form {
-    width: 625px;
-    position: absolute;
-    right: 15px;
-    bottom: 0;
-    z-index: 4;
-  }
 }
 </style>

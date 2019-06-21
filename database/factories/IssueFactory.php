@@ -17,6 +17,9 @@ $factory->define(Issue::class, function (Faker $faker, array $props = []) {
                             : null,
         "issue_status_id" => isset($props['issue_status_id'])
                             ? $props['issue_status_id']
-                            : factory(\App\Models\IssueStatus::class)->create()
+                            : factory(\App\Models\IssueStatus::class)->create(),
+        "issue_category_id" => isset($props['issue_category_id'])
+                            ? $props['issue_category_id']
+                            : factory(\App\Models\IssueCategory::class)->create()
     ];
 });

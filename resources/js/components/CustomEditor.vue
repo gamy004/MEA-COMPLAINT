@@ -1,117 +1,24 @@
 <template>
-  <div
-    class="editor-container"
-    @drop.stop.prevent="dropFiles"
-    @dragover.stop.prevent="dragover"
-    @dragleave="dragleave"
-  >
+  <div class="editor-container" :class="editorClasses" @dragleave="dragleave">
     <!-- <editor api-key="2p4wbftum5afmu5eugdcvsugrwvv6ivinukanpci7rgi9oru" v-model="data"></editor> -->
+    <v-layout v-show="!isInit" key="editorLoading" class="mx-3">
+      <v-flex xs12>
+        <v-progress-linear :indeterminate="true"></v-progress-linear>
+      </v-flex>
+    </v-layout>
+
     <editor
+      :key="editorKey"
+      ref="editor"
       api-key="2p4wbftum5afmu5eugdcvsugrwvv6ivinukanpci7rgi9oru"
-      v-model="data"
+      v-model="editorContent"
       :init="config"
+      @onDrop.stop.prevent="onDrop"
+      @onDragOver.stop.prevent="onDrageOver"
+      @onInit="onInit"
     ></editor>
 
-    <!-- file list here -->
-    <v-layout v-if="uploader" row wrap class="editor__filelist">
-      <template v-for="(uploadfile, index) in uploaderFiles">
-        <v-flex xs12 :key="`fileupload-${index}`">
-          <v-layout px-2 mb-1 align-center>
-            <file-icon :mime="uploadfile.extension"/>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <a
-                  href="#"
-                  class="body-2 ml-2 editor__filename text-truncate"
-                  v-on="on"
-                >{{ uploadfile.file.name }}</a>
-              </template>
-              <span>{{ uploadfile.file.name }}</span>
-            </v-tooltip>
-            <span class="body-1 ml-2 text-no-wrap">{{ uploadfile.formattedFilesize }}</span>
-            <v-spacer></v-spacer>
-            <v-progress-linear
-              class="mx-2 editor__progress"
-              v-model="uploadfile.multipartUploadPercent"
-            ></v-progress-linear>
-            <v-btn icon small @click="removeFile(uploadfile)">
-              <v-icon small>close</v-icon>
-            </v-btn>
-          </v-layout>
-        </v-flex>
-      </template>
-
-      <template v-for="(uploadedfile, index) in uploadedFiles">
-        <v-flex xs12 :key="`fileuploaded-${index}`">
-          <v-layout px-2 mb-1 align-center>
-            <file-icon :mime="uploadedfile.extension"/>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <a
-                  :href="uploadedfile.url"
-                  :download="uploadedfile.file.name"
-                  class="body-2 ml-2 editor__filename text-truncate"
-                  v-on="on"
-                >{{ uploadedfile.file.name }}</a>
-              </template>
-              <span>{{ uploadedfile.file.name }}</span>
-            </v-tooltip>
-            <span class="body-1 ml-2 text-no-wrap">{{ uploadedfile.formattedFilesize }}</span>
-            <v-spacer></v-spacer>
-            <v-btn icon small @click="removeFile(uploadedfile)">
-              <v-icon small>close</v-icon>
-            </v-btn>
-          </v-layout>
-        </v-flex>
-      </template>
-    </v-layout>
-
-    <v-layout row wrap>
-      <v-flex xs12>
-        <div class="custom-toolbar"></div>
-      </v-flex>
-
-      <v-flex xs12>
-        <v-layout align-center>
-          <v-btn small flat color="primary">send</v-btn>
-
-          <custom-toolbar :items="customToolbarItems">
-            <template v-slot:left>
-              <uploader
-                ref="uploader"
-                :end-point="endpoint"
-                :multipart="multipart"
-                :multiple="true"
-                :show-errors="false"
-                :max-uploads="999"
-                @startUpload="onStartUpload"
-                @chunkUploaded="onChunkUploaded"
-                @fileUploaded="onFileUploaded"
-                @error="onUploadError"
-              >
-                <template slot="browse-btn">
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                      <v-icon v-on="on">attach_file</v-icon>
-                    </template>
-                    <span>Upload files</span>
-                  </v-tooltip>
-                </template>
-              </uploader>
-
-              <v-spacer></v-spacer>
-
-              <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-icon v-on="on">delete</v-icon>
-                </template>
-                <span>Discard draft</span>
-              </v-tooltip>
-            </template>
-          </custom-toolbar>
-        </v-layout>
-      </v-flex>
-    </v-layout>
+    <slot></slot>
   </div>
 </template>
 
@@ -124,144 +31,133 @@
 // // Any plugins you want to use has to be imported
 // import 'tinymce/plugins/paste';
 // import 'tinymce/plugins/link';
-import uploadable from "../mixins/uploadable";
 import Editor from "@tinymce/tinymce-vue";
-import CustomToolbar from "./CustomToolbar";
-import FileIcon from "./FileIcon";
+import vmodelable from "../mixins/vmodelable";
 
 export default {
-  mixins: [uploadable],
+  mixins: [vmodelable],
 
   components: {
-    Editor,
-    CustomToolbar,
-    FileIcon
+    Editor
+  },
+
+  props: {
+    showToolbar: {
+      type: Boolean,
+      default: () => true
+    },
+    fullScreen: {
+      type: Boolean,
+      default: () => false
+    }
   },
 
   data() {
     return {
-      data: "<h1>Hello World!!</h1>",
-      uploader: null,
-      uploadedFiles: [],
-      customToolbarItems: [
-        // {
-        //   icon: "attach_file",
-        //   text: "Upload files",
-        //   tooltipAttr: { top: true }
-        // }
-      ],
-      config: {
-        paste_data_images: true,
-        inline: true,
-        resize: false,
-        fixed_toolbar_container: ".custom-toolbar",
-        menubar: false,
-        // toolbar: "undo redo | styleselect | bold italic | outdent indent",
-        toolbar_drawer: "sliding"
-      }
+      isInit: false
     };
   },
 
-  watch: {
-    uploaderFiles: {
-      deep: true,
-      handler(files = []) {
-        if (this.uploader && !this.uploader.isUploadDisabled) {
-          this.uploader.upload();
-        }
-      }
-    }
-  },
-
   computed: {
-    uploaderFiles() {
-      return this.uploader ? this.uploader.getFiles : [];
+    editorContent: {
+      get() {
+        return this.vmodelable_vmodel;
+      },
+
+      set(v) {
+        this.$_vmodelable_sync(v);
+      }
+    },
+
+    editorKey() {
+      return this.fullScreen ? "fullScreenEditor" : "editor";
+    },
+
+    fullScreenHeight() {
+      return window.innerHeight * 0.55;
+    },
+
+    config() {
+      return {
+        plugins: "autoresize",
+        paste_data_images: true,
+        statusbar: false,
+        menubar: false,
+        min_height: this.fullScreen ? this.fullScreenHeight : 350,
+        max_height: this.fullScreen ? this.fullScreenHeight : 650,
+        autoresize: true,
+        // toolbar: "undo redo | styleselect | bold italic | outdent indent",
+        toolbar_drawer: "sliding"
+      };
+    },
+    editorClasses() {
+      return {
+        "show-toolbar": this.showToolbar
+      };
     }
   },
 
   methods: {
-    onClickUploader() {
-      console.log(this.$refs.uploader);
+    onInit(event) {
+      console.log("Init!!", this.$refs.editor);
+      this.isInit = true;
     },
 
-    removeFile(file) {
-      this.uploader.removeFile(file);
+    onDrop(event) {
+      this.$emit("editor:drop", event);
     },
 
-    dropFiles(event) {
-      this.uploader.dropFiles(event);
-    },
-
-    dragover(event) {
-      this.uploader.dragover(event);
-      // console.log(event);
+    onDrageOver(event) {
+      this.$emit("editor:dragover", event);
     },
 
     dragleave(event) {
-      this.uploader.dragleave(event);
-      // console.log(event);
-    },
-
-    onFileUploaded({ file, response } = {}) {
-      const { url = "" } = response.meta;
-
-      for (const key in response.meta) {
-        if (response.meta.hasOwnProperty(key)) {
-          const element = response.meta[key];
-
-          this.$set(file, key, element);
-        }
-      }
-
-      this.uploadedFiles.push(file);
-      // if (url.length) {
-      //     this.sync("avatar", url);
-      // }
-
-      // this.stopUploading();
-
-      // this.$emit("fileUploaded", {
-      //   file,
-      //   response
-      // });
+      this.$emit("editor:dragleave", event);
     }
-  },
-
-  mounted() {
-    this.$nextTick(() => {
-      this.uploader = this.$refs.uploader;
-    });
   }
 };
 </script>
 
 <style lang="scss">
 .editor-container {
-  .vuejs-uploader {
-    &__btn--clear,
-    &__btn--upload,
-    &__queue {
-      display: none;
+  // position: relative;
+
+  .mce-content-body {
+    &:focus {
+      outline: transparent auto 5px;
     }
   }
 
-  .editor {
-    &__progress {
-      width: 25%;
-    }
-
-    &__filename {
-      max-width: 50%;
-    }
-
-    &__filelist {
-      max-height: 30vw;
-      overflow: auto;
-    }
+  .tox-tinymce {
+    border: none;
+    position: static !important;
   }
 
-  .v-toolbar {
-    background-color: white;
+  .tox-toolbar-overlord {
+    display: none;
+    position: absolute;
+    bottom: 60px;
+    left: 0;
+    right: 0;
+    width: 95%;
+    z-index: 1;
+    margin: 0 auto;
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+    transition: all 200ms ease-in-out;
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
+      0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12) !important;
+  }
+
+  &.show-toolbar {
+    .tox-toolbar-overlord {
+      display: block;
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2),
+        0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12) !important;
+    }
   }
 }
 </style>
+

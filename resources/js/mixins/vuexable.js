@@ -16,7 +16,7 @@ import {
     actions
 } from "../constants";
 
-import * as models from "../models";
+import models from "../models";
 
 export const vuex = {
     mapState,

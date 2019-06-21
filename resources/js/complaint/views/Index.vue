@@ -80,7 +80,7 @@
           </v-tabs>
         </template>
       </v-toolbar>-->
-      <custom-toolbar :items="items">
+      <custom-toolbar id="complaintToolbar" :items="items">
         <template v-slot:extension>
           <v-tabs v-model="tab" v-if="showTab" slider-color="deep-orange">
             <v-tab
@@ -116,6 +116,7 @@ import paginatable from "../../mixins/paginatable";
 import complaintModule from "../../stores/modules/complaints";
 import groupModule from "../../stores/modules/groups";
 import statusModule from "../../stores/modules/statuses";
+import issueCategoryModule from "../../stores/modules/issue-categories";
 export default {
   mixins: [paginatable],
 
@@ -303,12 +304,17 @@ export default {
     this.$store.registerModule(vuex.modules.COMPLAINT, complaintModule);
     this.$store.registerModule(vuex.modules.GROUP, groupModule);
     this.$store.registerModule(vuex.modules.STATUS, statusModule);
+    this.$store.registerModule(
+      vuex.modules.ISSUE_CATEGORY,
+      issueCategoryModule
+    );
   },
 
   beforeDestroy() {
     this.$store.unregisterModule(vuex.modules.COMPLAINT);
     this.$store.unregisterModule(vuex.modules.GROUP);
     this.$store.unregisterModule(vuex.modules.STATUS);
+    this.$store.unregisterModule(vuex.modules.ISSUE_CATEGORY);
   }
 };
 </script>

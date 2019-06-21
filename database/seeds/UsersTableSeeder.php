@@ -6,6 +6,7 @@ use App\Models\Group;
 use App\Models\Issue;
 use App\Models\IssueStatus;
 use Illuminate\Support\Arr;
+use App\Models\IssueCategory;
 use App\Models\IssueRecipient;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -28,9 +29,10 @@ class UsersTableSeeder extends Seeder
         Issue::truncate(); 
         
         $issue_statuses = IssueStatus::all();
+        $issue_categories = IssueCategory::all();
         
         $roles = Role::all()->each(
-            function($r) use ($issue_statuses) {
+            function($r) use ($issue_statuses, $issue_categories) {
                 $user_ids = [];
 
                 $group_ids = [null];
@@ -76,10 +78,17 @@ class UsersTableSeeder extends Seeder
 
                         for ($j=1; $j <= 10; $j++) {
                             $referenced_to = null;
+                            $rand_category = $issue_categories->random();
+                            $issue_category_id = $rand_category->id;
 
                             $issue = factory(Issue::class)
                                 ->create(
-                                    compact('issued_by', 'referenced_to', 'issue_status_id')
+                                    compact(
+                                        'issued_by',
+                                        'referenced_to',
+                                        'issue_status_id',
+                                        'issue_category_id'
+                                    )
                                 );
                                 
                             $random_recipients = Arr::random(
@@ -100,7 +109,8 @@ class UsersTableSeeder extends Seeder
                                         'subject' => "Re: ".$issue->subject,
                                         'issued_by' => $referenced_issued_by,
                                         'referenced_to' => $referenced_to,
-                                        'issue_status_id' => $issue_status_id
+                                        'issue_status_id' => $issue_status_id,
+                                        'issue_category_id' => $issue_category_id
                                     ]);
                                         
                                 $referenced_recipients = Arr::except(

@@ -10,6 +10,18 @@ class Group extends BaseVuexModel {
             ...data
         });
     }
+
+    static async [actions.GROUP.FETCH](props) {
+        let response;
+
+        try {
+            response = await api.get('api:groups.index', props);
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
 }
 
 export default Group;

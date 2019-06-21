@@ -92,3 +92,10 @@ export function onEmit(eventName, $event, item, ...indexes) {
         item[eventName]($event, item, indexes) :
         () => ({});
 }
+
+export function mapTextValue(data, text, value) {
+    return _.map(data, (x) => ({
+        text: x[text],
+        value: x[value]
+    }));
+}

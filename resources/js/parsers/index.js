@@ -1,9 +1,11 @@
-import complaintParser from './complaintParser';
-import groupParser from './groupParser';
-import statusParser from './statusParser';
+import COMPLAINT from './complaintParser';
+import GROUP from './groupParser';
+import STATUS from './statusParser';
+import ISSUE_CATEGORY from './issueCategoryParser';
 
 export default {
-    COMPLAINT: complaintParser,
-    GROUP: groupParser,
-    STATUS: statusParser
+    COMPLAINT,
+    GROUP,
+    STATUS,
+    ISSUE_CATEGORY
 };
