@@ -15,10 +15,12 @@ class CreateFilesTable extends Migration
     {
         Schema::create('files', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('display_name');
+            $table->text('display_name');
             $table->string('hash_name');
             $table->text('path');
+            $table->text('url');
             $table->integer('size')->nullable();
+            $table->string('formatted_size')->nullable();
             $table->string('mime', 150)->nullable();
             $table->boolean('public')->default(0);
             $table->timestamps();

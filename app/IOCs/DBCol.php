@@ -37,13 +37,20 @@ class DBCol
      */
     const CATEGORY = 'category';
     /**
+     * ISSUE STATUS
+     */
+    const STATUS = 'status';
+    const DEFAULT = 'default';
+    /**
      * File
      */
     const DISPLAY_NAME = 'display_name';
     const HASH_NAME = 'hash_name';
     const SIZE = 'size';
+    const FORMATTED_SIZE = 'formatted_size';
     const MIME = 'mime';
     const PATH = 'path';
+    const URL = 'url';
     const _PUBLIC = 'public';
     
     const GROUP_ID = 'group_id';

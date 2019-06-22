@@ -23,7 +23,8 @@ export default {
                 sortBy: "id"
             },
             totalItems: 0,
-            active: null
+            active: null,
+            dialog: false
         };
     },
 
@@ -177,6 +178,24 @@ export default {
     },
 
     mutations: {
+        [vuex.mutations.INCREASE](state, {
+            key,
+            value = 1
+        } = {}) {
+            if (state.hasOwnProperty(key) && _.isNumber(state[key])) {
+                Vue.set(state, key, state[key] + value);
+            }
+        },
+
+        [vuex.mutations.DECREASE](state, {
+            key,
+            value = 1
+        } = {}) {
+            if (state.hasOwnProperty(key) && _.isNumber(state[key])) {
+                Vue.set(state, key, state[key] - value);
+            }
+        },
+
         [vuex.mutations.DELETE](state, id) {
             if (state.collection.hasOwnProperty(id)) {
                 Vue.delete(state.collection, id);
@@ -293,7 +312,11 @@ export default {
 
                         Vue.set(state, 'collection', _.merge(collection, oldCollection));
 
-                        Vue.set(state, 'sortedIndex', _.union(oldSortedIndex, sortedIndex));
+                        const mergedSortedIndex = _.union(sortedIndex, oldSortedIndex);
+
+                        Vue.set(state, 'sortedIndex', mergedSortedIndex);
+
+                        Vue.set(state.sortedPaginateIndex, pagination.page, mergedSortedIndex);
 
                         break;
 
@@ -302,10 +325,10 @@ export default {
 
                         Vue.set(state, 'sortedIndex', sortedIndex);
 
+                        Vue.set(state.sortedPaginateIndex, pagination.page, sortedIndex);
+
                         break;
                 }
-
-                Vue.set(state.sortedPaginateIndex, pagination.page, sortedIndex);
 
                 if (activeVaule.hasOwnProperty(key)) {
                     state.active = activeVaule[key];

@@ -153,10 +153,15 @@ class Api extends BaseModel {
     }
 
     post(
-        routeName,
-        properties = {}
+        routeName, {
+            routeParam = {},
+            ...params
+        } = {}
     ) {
-        return this.call('post', routeName, properties);
+        return this.call('post', routeName, {
+            ...parse(params),
+            routeParam
+        });
     }
 
     get(
@@ -167,24 +172,39 @@ class Api extends BaseModel {
     }
 
     put(
-        routeName,
-        properties = {}
+        routeName, {
+            routeParam = {},
+            ...params
+        } = {}
     ) {
-        return this.call('put', routeName, properties);
+        return this.call('put', routeName, {
+            ...parse(params),
+            routeParam
+        });
     }
 
     patch(
-        routeName,
-        properties = {}
+        routeName, {
+            routeParam = {},
+            ...params
+        } = {}
     ) {
-        return this.call('patch', routeName, properties);
+        return this.call('patch', routeName, {
+            ...parse(params),
+            routeParam
+        });
     }
 
     delete(
-        routeName,
-        properties = {}
+        routeName, {
+            routeParam = {},
+            ...params
+        } = {}
     ) {
-        return this.call('delete', routeName, properties);
+        return this.call('delete', routeName, {
+            ...parse(params),
+            routeParam
+        });
     }
 
     async call(method, routeName, {
@@ -206,6 +226,11 @@ class Api extends BaseModel {
                 params,
                 paramsSerializer: window.$paramSerializer
             };
+        } else {
+            options = {
+                ...options,
+                ...params
+            }
         }
 
         try {

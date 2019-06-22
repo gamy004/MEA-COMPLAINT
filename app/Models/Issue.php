@@ -39,6 +39,13 @@ class Issue extends Model
             Group::class, 'issue_recipient', self::FK, 'recipient_id'
         )->using(IssueRecipient::class);
     }
+
+    public function attachments()
+    {
+        return $this->belongsToMany(
+            Group::class, 'issue_attachment', self::FK, 'attachment_id'
+        )->using(IssueAttachment::class);
+    }
     
     public function issuer()
     {

@@ -13,7 +13,8 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
     state: {
         meta: {},
-        mobileBreakPoint: 768,
+        // mobileBreakPoint: 768,
+        mobileBreakPoint: 1024,
         mini: false,
         windowSize: {
             x: 0,

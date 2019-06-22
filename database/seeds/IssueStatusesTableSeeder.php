@@ -19,13 +19,16 @@ class IssueStatusesTableSeeder extends Seeder
 
         IssueStatus::insert([
             [
-                "status" => "เปิดข้อร้องเรียน"
+                "status" => "เปิดข้อร้องเรียน",
+                "default" => 1
             ],
             [
-                "status" => "กำลังดำเนินงาน"
+                "status" => "กำลังดำเนินงาน",
+                "default" => 0
             ],
             [
-                "status" => "เสร็จสิ้น"
+                "status" => "เสร็จสิ้น",
+                "default" => 0
             ]
         ]);
     }

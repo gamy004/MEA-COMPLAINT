@@ -36,6 +36,31 @@ function convertToBytes($from)
     }
 }
 
+/**
+ * convert file size format
+ *
+ * @param  int $size // in byte
+ * @return string
+ */
+function sizeFormat($size)
+{
+    $ret = '';
+    $unit = [
+        'KB' => 1024,
+        'MB' => 1048576, // 1024*1024
+        'GB' => 1073741824, // 1024*1024*1024
+    ];
+
+    if ($size < $unit['MB']) {
+        $ret = number_format(round((float) $size / $unit['KB'], 2), 2) . ' KB';
+    } elseif ($size < $unit['GB']) {
+        $ret = number_format(round((float) $size / $unit['MB'], 2), 2) . ' MB';
+    } else {
+        $ret = number_format(round((float) $size / $unit['GB'], 2), 2) . ' GB';
+    }
+    return $ret;
+}
+
 function globalVar()
 {
     return app('GlobalVar');

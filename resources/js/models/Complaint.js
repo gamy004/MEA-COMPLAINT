@@ -34,8 +34,37 @@ class Complaint extends BaseVuexModel {
         return response;
     }
 
+    static async [actions.COMPLAINT.STORE](data) {
+        let response;
+
+        try {
+            response = await api.post('api:issues.store', {
+                ...data,
+                includes: ['recipients:sideload', 'status:sideload']
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
     get topic() {
-        return `<strong style="color:#333;">${this.subject}</strong>&nbsp;-&nbsp;<span>${this.description}</span>`
+        let {
+            subject = null, description = null
+        } = this;
+
+        subject = !_.isNull(subject) ? subject : "(no subject)";
+
+        let topic = `<strong style="color:#333;">${subject}</strong>`;
+
+        if (!_.isNull(description)) {
+            description = description.replace(/(<([^>]+)>)/ig, "");
+
+            topic += `&nbsp;-&nbsp;<span>${description}</span>`;
+        }
+
+        return topic;
     }
 
     get shortUpdatedAt() {

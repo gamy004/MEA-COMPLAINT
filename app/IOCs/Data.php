@@ -24,12 +24,18 @@ class Data
     const UPLOAD_PATH = 'upload_path';
 
     /**
+     * Issue
+     */
+    const RECIPIENTS = 'recipients';
+    
+    /**
      * File System
      */
     const APP_DIR = 'app/';
     const PUBLIC_DIR = 'public/';
     const STORAGE_DIR = 'storage/';
     const UPLOAD_DIR = 'uploads/';
+    const UPLOADED_FILES = 'uploaded_files';
 
     /**
      * Company API

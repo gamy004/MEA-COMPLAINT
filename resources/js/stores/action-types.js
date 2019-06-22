@@ -2,7 +2,7 @@ export const QUERY = 'query';
 export const REQUEST = 'request';
 export const FIND = 'find';
 export const FETCH = 'fetch';
-export const CREATE = 'create';
+export const STORE = 'store';
 export const UPDATE = 'update';
 export const DELETE = 'delete';
 
@@ -12,7 +12,9 @@ export const USER = {
 };
 
 export const COMPLAINT = {
-    FETCH: 'complaintFetch'
+    FETCH: 'complaintFetch',
+    STORE: 'complaintStore',
+    UPDATE: 'complaintUpdate'
 };
 
 export const GROUP = {
@@ -23,6 +25,6 @@ export const STATUS = {
     FETCH: 'statusFetch'
 };
 
-export const ISSUE_CATEGORY = {
+export const COMPLAINT_CATEGORY = {
     FETCH: 'issueCategoryFetch'
 };

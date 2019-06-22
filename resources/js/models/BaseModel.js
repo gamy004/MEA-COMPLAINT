@@ -81,8 +81,9 @@ class BaseModel {
     }
 
     set data(object = {}) {
-        this.$backup = {
-            ...this.$data
+        this.backup = {
+            ...this.$data,
+            ...object
         };
 
         this.$data = {
@@ -92,8 +93,11 @@ class BaseModel {
 
         for (let attribute in this.$data) {
             Object.defineProperty(this, attribute, {
+                enumerable: true,
+                configurable: true,
+
                 get() {
-                    return this.get(attribute);
+                    return this.$data[attribute];
                 },
 
                 set(v) {
@@ -101,8 +105,20 @@ class BaseModel {
 
                     return this;
                 }
-            })
+            });
         }
+
+        return this;
+    }
+
+    get backup() {
+        return get(this, '$backup', {});
+    }
+
+    set backup(object = {}) {
+        this.$backup = {
+            ...object
+        };
 
         return this;
     }

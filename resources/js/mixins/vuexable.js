@@ -97,8 +97,6 @@ export const vuexable = {
             key,
             value
         }, module = '') {
-            console.log(key);
-
             this.$_vuexable_commit(
                 mutations.UPDATE_PAGINATION,
                 module, {

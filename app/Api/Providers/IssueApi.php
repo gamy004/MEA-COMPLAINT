@@ -10,9 +10,12 @@ use App\Models\File;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Issue;
+use App\Traits\HasFile;
 use App\Models\UserRole;
+use App\Models\IssueStatus;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use App\Models\IssueCategory;
 use App\Contracts\ApiInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -22,6 +25,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class IssueApi extends BaseApi implements ApiInterface
 {
+    use HasFile;
     
     public function __construct(Issue $model)
     {
@@ -77,24 +81,34 @@ class IssueApi extends BaseApi implements ApiInterface
 
     public function store(array $raw)
     {
-        // try {
-        //     DB::beginTransaction();
+        try {
+            DB::beginTransaction();
 
-        //     $record = [];
-        //     $record[DBCol::PASSWORD] = Hash::make(Str::uuid()->toString());
-        //     $record = $this->parseGeneralFields($record, $raw);
-        //     $record = $this->parseAvatar($record, $raw);
-        //     $user = User::firstOrCreate($record);
-        //     $this->syncRole($user, $raw);
+            $default_status = IssueStatus::default()->select([DBCol::ID])->first();
 
-        //     DB::commit();
-        // } catch (Exception $exception) {
-        //     DB::rollback();
-        //     Log::error($exception);
-        //     throw new Exception("Error Creating User Request", 1);
-        // }
+            $record = [
+                IssueStatus::FK => $default_status->{DBCol::ID}
+            ];
+            
+            $record = $this->parseGeneralFields($record, $raw);
+            
+            $issue = Issue::firstOrCreate($record);
 
-        // return $this->find($user->id);
+            $this->syncRecipients($issue, $raw);
+
+            $this->setHasFileRelation('attachments')
+                ->setHasFileRootDirectory('issues/')
+                ->parseUploadedFiles($issue, $raw);
+
+            DB::commit();
+
+            return $this->find($issue->id);
+
+        } catch (Exception $exception) {
+            DB::rollback();
+            Log::error($exception);
+            throw new Exception("Error Handle Creating Issue Request", 1);
+        }
     }
 
     public function update(Model $model, array $raw)
@@ -130,15 +144,24 @@ class IssueApi extends BaseApi implements ApiInterface
             Arr::only(
                 $raw,
                 [
-                    DBCol::NAME,
-                    DBCol::EMAIL,
-                    DBCol::PHONE,
-                    DBCol::AVAILABLE,
-                    DBCol::EXPIRE_AT
+                    DBCol::SUBJECT,
+                    DBCol::DESCRIPTION,
+                    IssueCategory::FK
                 ]
             )
         );
 
         return $record;
+    }
+
+    private function syncRecipients(Issue $issue, $raw)
+    {
+        if (isset($raw[Data::RECIPIENTS])) {
+            $recipient_ids = $raw[Data::RECIPIENTS];
+
+            return $issue->recipients()->sync($recipient_ids);
+        }
+
+        return false;
     }
 }

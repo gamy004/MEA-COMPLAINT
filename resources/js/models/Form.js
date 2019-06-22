@@ -6,9 +6,10 @@ class Form extends BaseModel {
         ...props
     }) {
         super({
-            $isSubmitting: false,
             ...props
         });
+
+        this.$isSubmitting = false;
 
         if (!this.errors) {
             this.errors = Error.make();
@@ -159,9 +160,9 @@ class Form extends BaseModel {
     }
 
     async persist(cb, {
-        params = {},
+        params = [],
         routeParam = {}
-    } = {}) {
+    } = {}, ...props) {
         let res;
 
         try {
@@ -171,10 +172,17 @@ class Form extends BaseModel {
 
             this.toggle('$isSubmitting');
 
-            res = await cb({
-                ...data,
-                routeParam
-            });
+            if (props.length) {
+                res = await cb(...props, {
+                    ...data,
+                    routeParam
+                });
+            } else {
+                res = await cb({
+                    ...data,
+                    routeParam
+                });
+            }
         } catch (error) {
             this.$handleError(error);
 

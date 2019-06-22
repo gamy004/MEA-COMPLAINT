@@ -29,62 +29,145 @@ const uploadable = {
 
     data() {
         return {
-            uploading: false,
-            uploadProgress: null
+            uploadable_uploaderRef: 'uploadable_uploader',
+            uploadable_uploader: null,
+            uploadable_uploading: false,
+            uploadable_uploadedFiles: []
         };
     },
 
     computed: {
-        isIndeterminate() {
-            return _.isNull(this.uploadProgress);
+        $_uploadable_uploaderFiles() {
+            return this.uploadable_uploader ?
+                this.uploadable_uploader.getFiles : [];
+            // this.uploadable_uploader.getFiles.filter(file => {
+            //     return !file.uploaded;
+            // }) : [];
         },
-        progressAdditionalProps() {
-            let props = {};
 
-            if (!this.isIndeterminate) {
-                this.$set(props, "value", this.uploadProgress);
-            }
+        $_uploadable_metaData() {
+            return this.uploadable_uploadedFiles.reduce(
+                (acc, {
+                    file,
+                    hash_name,
+                    filesize: size,
+                    formattedFilesize: formatted_size,
+                    upload_path
+                }) => {
+                    acc.push({
+                        display_name: file.name,
+                        hash_name,
+                        size,
+                        formatted_size,
+                        upload_path
+                    });
 
-            return props;
+                    return acc;
+                }, []
+            );
         }
+    },
+
+    watch: {
+        $_uploadable_uploaderFiles: {
+            handler(files = []) {
+                if (this.uploadable_uploader) {
+                    this.uploadable_uploading = files.length !== 0;
+
+                    this.uploadable_uploader.upload();
+                }
+            }
+        },
+
+        // uploadable_uploadedFiles: {
+        //     deep: true,
+        //     handler(files = []) {
+        //         console.log(files);
+
+        //     }
+        // }
     },
 
     methods: {
         onStartUpload() {
-            this.uploading = true;
+            // this.uploading = true;
         },
+
         onChunkUploaded({
             totalParts
         }, currentChunk) {
-            this.uploadProgress = (currentChunk / totalParts) * 100;
+            // this.uploadProgress = (currentChunk / totalParts) * 100;
         },
+
+        onUploadError(error) {
+            this.stopUploading();
+        },
+
+        stopUploading() {
+            // this.uploading = false;
+            // this.uploadProgress = null;
+            // this.this.uploadable_totalFiles = 0;
+        },
+
+        dropFiles(event) {
+            this.uploadable_uploader.dropFiles(event);
+        },
+
+        dragover(event) {
+            this.uploadable_uploader.dragover(event);
+        },
+
+        dragleave(event) {
+            this.uploadable_uploader.dragleave(event);
+        },
+
+        removeFile(file) {
+            this.uploadable_uploader.removeFile(file);
+        },
+
         onFileUploaded({
             file,
             response
         } = {}) {
-            const {
-                url = ""
-            } = response.meta;
+            for (const key in response.meta) {
+                if (response.meta.hasOwnProperty(key)) {
+                    const element = response.meta[key];
 
-            // if (url.length) {
-            //     this.sync("avatar", url);
-            // }
+                    this.$set(file, key, element);
+                }
+            }
 
             this.stopUploading();
+
+            this.$set(file, "uploaded", true);
+
+            this.uploadable_uploadedFiles.push(file);
+
+            this.uploadable_uploadedFiles = Array.from(
+                new Set(this.uploadable_uploadedFiles)
+            );
 
             this.$emit("fileUploaded", {
                 file,
                 response
             });
         },
-        onUploadError(error) {
-            console.log(error);
-            this.stopUploading();
+
+        $_uploadable_UpdateUploader() {
+            this.$nextTick(() => {
+                this.uploadable_uploader = this.$refs[this.uploadable_uploaderRef];
+            });
         },
-        stopUploading() {
-            this.uploading = false;
-            this.uploadProgress = null;
+
+        $_uploadable_reset() {
+            this.uploadable_uploadedFiles = [];
+            this.uploadable_uploading = false;
+            this.$_uploadable_UpdateUploader();
         }
+    },
+
+    created() {
+        this.$_uploadable_UpdateUploader();
     }
 };
 

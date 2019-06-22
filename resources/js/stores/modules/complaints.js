@@ -18,38 +18,27 @@ const userStore = {
     actions: {
         async [vuex.actions.COMPLAINT.FETCH](context) {
             try {
-
-                context.dispatch(vuex.actions.REQUEST, {
+                return await context.dispatch(vuex.actions.REQUEST, {
                     model: 'COMPLAINT',
                     action: 'FETCH',
                     params: context.state.base.pagination
                 });
-
-                // let {
-                //     issues = [], issuer = [], total = 0
-                // } = await Complaint[
-                //     vuex.actions.COMPLAINT.FETCH
-                // ](state.base.pagination);
-
-                // commit(vuex.mutations.STORE, {
-                //     value: issues
-                // });
-
-                // commit(vuex.mutations.STORE, {
-                //     value: issues
-                // });
-
-                // commit(vuex.mutations.UPDATE_PAGINATION, {
-                //     key: 'totalItems',
-                //     value: total
-                // });
-
-                // return issues;
-
             } catch (error) {
                 throw error;
             }
-        }
+        },
+
+        async [vuex.actions.STORE](context, input) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'COMPLAINT',
+                    action: 'STORE',
+                    params: input
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
         // },
 
         // async [vuex.actions.STORE]({

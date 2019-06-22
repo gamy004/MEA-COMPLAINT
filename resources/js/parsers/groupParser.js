@@ -4,10 +4,12 @@ import {
 
 function parseFetch(context, {
     groups = [],
-    total = 0
+    total = 0,
+    strategy = 'merge'
 } = {}) {
     const {
         rootCommit,
+        rootGetters,
         vuex,
         models
     } = context;
@@ -15,6 +17,7 @@ function parseFetch(context, {
     rootCommit(
         vuex.mutations.STORE,
         vuex.modules.GROUP, {
+            strategy,
             value: groups.map(x => new models.GROUP({
                 ...x,
                 context
@@ -26,7 +29,7 @@ function parseFetch(context, {
         vuex.mutations.SET_STATE,
         vuex.modules.GROUP, {
             key: 'totalItems',
-            value: !total ? groups.length : total
+            value: !total ? rootGetters[`${vuex.modules.GROUP}/${vuex.getters.ALL_COUNT}`] : total
         }
     );
 

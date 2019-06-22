@@ -38,7 +38,11 @@ class FileUploader
      */
     private function createUploadDir()
     {
-        Storage::makeDirectory(Data::PUBLIC_DIR . Data::UPLOAD_DIR);
+        $uploadDirectory = Data::PUBLIC_DIR . Data::UPLOAD_DIR;
+        
+        if (!Storage::exists($uploadDirectory)) {
+            Storage::makeDirectory($uploadDirectory);
+        }
     }
 
     /**

@@ -16,6 +16,7 @@ class CreateIssueStatusesTable extends Migration
         Schema::create('issue_statuses', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string("status");
+            $table->boolean("default")->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

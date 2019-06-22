@@ -20,10 +20,9 @@ class FileMaker
 
     public function makeFromUpload($new_dir, array $file_data, $visibility = 'private')
     {
-        $name = $file_data[DBCol::DISPLAY_NAME];
-        $hash = $file_data[DBCol::HASH_NAME];
+        $hash_name = $file_data[DBCol::HASH_NAME];
         $upload_path = $file_data[Data::UPLOAD_PATH];
-        $move_path = $file_path = $new_dir . $hash;
+        $move_path = $file_path = $new_dir . $hash_name;
         $is_public = $visibility === self::VISIBILITY_PUBLIC;
 
         if ($is_public) {
@@ -37,14 +36,21 @@ class FileMaker
         }
 
         if (Storage::exists($move_path)) {
+            $display_name = $file_data[DBCol::DISPLAY_NAME];
+            $size = isset($file_data[DBCol::SIZE]) ? $file_data[DBCol::SIZE] : Storage::size($move_path);
+            $formatted_size = isset($file_data[DBCol::FORMATTED_SIZE]) ? $file_data[DBCol::FORMATTED_SIZE] : sizeFormat($size);
+            $mime = isset($file_data[DBCol::MIME]) ? $file_data[DBCol::MIME] : Storage::mimeType($move_path);
+
             return File::firstOrCreate(
                 [
-                    DBCol::DISPLAY_NAME => $name,
-                    DBCol::HASH_NAME => $hash,
-                    DBCol::SIZE => Storage::size($move_path),
-                    DBCol::MIME => Storage::mimeType($move_path),
-                    DBCol::PATH => $file_path,
-                    DBCol::_PUBLIC => $is_public,
+                    DBCol::DISPLAY_NAME => $display_name,
+                    DBCol::HASH_NAME => $hash_name,
+                    DBCol::SIZE => $size,
+                    DBCol::FORMATTED_SIZE => $formatted_size,
+                    DBCol::MIME => $mime,
+                    DBCol::PATH => $move_path,
+                    DBCol::URL => $file_path,
+                    DBCol::_PUBLIC => $is_public
                 ]
             );
         }

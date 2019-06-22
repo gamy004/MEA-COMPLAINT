@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Issue;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreIssueRequest;
 
 class IssueController extends BaseApiController
 {
@@ -33,9 +34,11 @@ class IssueController extends BaseApiController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreIssueRequest $request)
     {
-        //
+        return $this->api->store(
+            $request->all()
+        );
     }
 
     /**
