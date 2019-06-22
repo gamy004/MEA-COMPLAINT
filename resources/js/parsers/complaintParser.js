@@ -43,11 +43,6 @@ function parseFetch(context, {
             value: !total ? rootGetters[`${vuex.modules.COMPLAINT}/${vuex.getters.ALL_COUNT}`] : total
         }
     );
-
-    // return {
-    //     ...props,
-    //     issues: issues.map(issue => new Complaint(issue))
-    // }
 };
 
 function parseStore(context, {
@@ -69,14 +64,28 @@ function parseStore(context, {
         statuses,
         total: rootGetters[`${vuex.modules.COMPLAINT}/${vuex.getters.GET_STATE}`]('totalItems') + issues.length
     });
+};
 
-    // return {
-    //     ...props,
-    //     issues: issues.map(issue => new Complaint(issue))
-    // }
+function parseDelete(context, {
+    id
+} = {}) {
+
+    const {
+        rootCommit,
+        vuex
+    } = context;
+
+    rootCommit(
+        vuex.mutations.DELETE,
+        vuex.modules.COMPLAINT, {
+            id
+        }
+    );
 };
 
 export default {
     [actions.COMPLAINT.FETCH]: parseFetch,
-    [actions.COMPLAINT.STORE]: parseStore
+    [actions.COMPLAINT.STORE]: parseStore,
+    [actions.COMPLAINT.DELETE]: parseDelete,
+    [actions.COMPLAINT.RESTORE]: parseStore
 }

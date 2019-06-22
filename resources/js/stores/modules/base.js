@@ -12,6 +12,7 @@ export default {
             mapping: {},
             sortedIndex: [],
             sortedPaginateIndex: {},
+            paginateIndex: {},
             pagination: {
                 search: {
                     keyword: '',
@@ -196,9 +197,21 @@ export default {
             }
         },
 
-        [vuex.mutations.DELETE](state, id) {
+        [vuex.mutations.DELETE](state, {
+            id
+        }) {
             if (state.collection.hasOwnProperty(id)) {
+                const targetPage = state.paginateIndex[id],
+                    sortedIndex = state.sortedIndex.indexOf(id),
+                    sortedPaginatedIndex = state.sortedPaginateIndex[targetPage].indexOf(id);
+
+                state.sortedIndex.splice(sortedIndex, 1);
+
+                state.sortedPaginateIndex[targetPage].splice(sortedPaginatedIndex, 1);
+
                 Vue.delete(state.collection, id);
+
+                Vue.set(state, 'totalItems', state.totalItems - 1);
             }
         },
 
@@ -206,6 +219,7 @@ export default {
             Vue.set(state, 'collection', {});
             Vue.set(state, 'sortedIndex', []);
             Vue.set(state, 'sortedPaginateIndex', {});
+            Vue.set(state, 'paginateIndex', {});
             Vue.set(state, 'active', null);
         },
 
@@ -329,6 +343,10 @@ export default {
 
                         break;
                 }
+
+                state.sortedIndex.forEach(element => {
+                    Vue.set(state.paginateIndex, element, pagination.page);
+                });
 
                 if (activeVaule.hasOwnProperty(key)) {
                     state.active = activeVaule[key];

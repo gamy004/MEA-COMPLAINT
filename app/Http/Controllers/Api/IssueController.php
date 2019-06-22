@@ -83,6 +83,17 @@ class IssueController extends BaseApiController
      */
     public function destroy(Issue $issue)
     {
-        //
+        return $this->api->destroy($issue);
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     *
+     * @param  \App\Issue  $issue
+     * @return \Illuminate\Http\Response
+     */
+    public function restore($issue)
+    {
+        return $this->api->restore($issue);
     }
 }

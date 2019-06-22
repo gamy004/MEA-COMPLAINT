@@ -39,6 +39,42 @@ const userStore = {
                 throw error;
             }
         },
+
+        async [vuex.actions.COMPLAINT.DELETE](context, {
+            id: issue
+        }) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'COMPLAINT',
+                    action: 'DELETE',
+                    params: {
+                        routeParam: {
+                            issue
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        async [vuex.actions.COMPLAINT.RESTORE](context, {
+            id: issue
+        }) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'COMPLAINT',
+                    action: 'RESTORE',
+                    params: {
+                        routeParam: {
+                            issue
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
         // },
 
         // async [vuex.actions.STORE]({

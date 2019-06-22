@@ -49,6 +49,35 @@ class Complaint extends BaseVuexModel {
         return response;
     }
 
+    static async [actions.COMPLAINT.DELETE](data) {
+        let response;
+
+        try {
+            response = await api.delete('api:issues.destroy', {
+                ...data
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
+    static async [actions.COMPLAINT.RESTORE](data) {
+        let response;
+
+        try {
+            response = await api.post('api:issues.restore', {
+                ...data,
+                includes: ['recipients:sideload', 'status:sideload']
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
     get topic() {
         let {
             subject = null, description = null

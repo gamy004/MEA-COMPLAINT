@@ -132,11 +132,6 @@ class IssueApi extends BaseApi implements ApiInterface
         // return $this->find($model->id);
     }
 
-    public function destroy(Model $model)
-    {
-
-    }
-
     private function parseGeneralFields($record, $raw)
     {
         $record = array_merge(

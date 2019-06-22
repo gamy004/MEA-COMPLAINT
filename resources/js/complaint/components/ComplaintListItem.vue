@@ -1,221 +1,237 @@
 <template>
-    <v-hover>
-        <v-list-tile slot-scope="{ hover }" class="complaint-list__item">
-            <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
-                <v-avatar color="indigo accent-3" size="10" class="status-indicator"></v-avatar>
-            </v-list-tile-action>
+  <v-hover>
+    <v-list-tile
+      slot-scope="{ hover }"
+      class="complaint-list__item clickable"
+      :class="getItemCLasses(hover)"
+    >
+      <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
+        <v-avatar color="indigo accent-3" size="10" class="status-indicator"></v-avatar>
+      </v-list-tile-action>
 
-            <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
-                <!-- action selected -->
-                <v-checkbox v-model="itemSelected" color="deep-orange" hide-details></v-checkbox>
-            </v-list-tile-action>
+      <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
+        <!-- action selected -->
+        <v-checkbox v-model="itemSelected" color="deep-orange" hide-details></v-checkbox>
+      </v-list-tile-action>
 
-            <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
-                <!-- action starred -->
-                <v-btn icon @click="item.markStarred()">
-                    <v-icon
-                        :color="item.starred ? 'deep-orange' : 'grey lignten-2'"
-                    >{{ item.starred ? 'star' : 'star_border' }}</v-icon>
-                </v-btn>
-            </v-list-tile-action>
+      <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
+        <!-- action starred -->
+        <v-btn icon @click="item.markStarred()">
+          <v-icon
+            :color="item.starred ? 'deep-orange' : 'grey lignten-2'"
+          >{{ item.starred ? 'star' : 'star_border' }}</v-icon>
+        </v-btn>
+      </v-list-tile-action>
 
-            <v-list-tile-content class="complaint-list__content" :class="isMobileClasses">
-                <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                        <v-list-tile-sub-title
-                            v-on="on"
-                            class="complaint-list__title font-weight-bold"
-                            :class="isMobileClasses"
-                            v-text="title"
-                        ></v-list-tile-sub-title>
-                    </template>
-                    <span v-html="title"></span>
-                </v-tooltip>
+      <v-list-tile-content class="complaint-list__content" :class="isMobileClasses">
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-list-tile-sub-title
+              v-on="on"
+              class="complaint-list__title font-weight-bold"
+              :class="isMobileClasses"
+              v-text="title"
+            ></v-list-tile-sub-title>
+          </template>
+          <span v-html="title"></span>
+        </v-tooltip>
 
-                <v-chip
-                    class="complaint-list__status"
-                    small
-                    color="indigo accent-3"
-                    dark
-                >{{ item.currentStatus }}</v-chip>
+        <v-chip
+          class="complaint-list__status"
+          small
+          color="indigo accent-3"
+          dark
+        >{{ item.currentStatus }}</v-chip>
 
-                <!-- Merge line on desktop and tablet -->
-                <v-list-tile-sub-title
-                    v-if="!isMobile"
-                    class="complaint-list__sub-title"
-                    :class="isMobileClasses"
-                    v-html="item.topic"
-                ></v-list-tile-sub-title>
+        <!-- Merge line on desktop and tablet -->
+        <v-list-tile-sub-title
+          v-if="!isMobile"
+          class="complaint-list__sub-title"
+          :class="isMobileClasses"
+          v-html="item.topic"
+        ></v-list-tile-sub-title>
 
-                <!-- Seperate line on mobile -->
-                <v-list-tile-sub-title
-                    v-if="isMobile"
-                    class="complaint-list__title font-weight-bold"
-                    :class="isMobileClasses"
-                    v-text="item.subject"
-                ></v-list-tile-sub-title>
+        <!-- Seperate line on mobile -->
+        <v-list-tile-sub-title
+          v-if="isMobile"
+          class="complaint-list__title font-weight-bold"
+          :class="isMobileClasses"
+          v-text="item.subject"
+        ></v-list-tile-sub-title>
 
-                <v-list-tile-sub-title
-                    v-if="isMobile"
-                    class="complaint-list__sub-title"
-                    :class="isMobileClasses"
-                    v-html="item.description"
-                ></v-list-tile-sub-title>
-            </v-list-tile-content>
+        <v-list-tile-sub-title
+          v-if="isMobile"
+          class="complaint-list__sub-title"
+          :class="isMobileClasses"
+          v-html="item.description"
+        ></v-list-tile-sub-title>
+      </v-list-tile-content>
 
-            <v-list-tile-action
-                v-if="hover"
-                class="complaint-list__action-right"
-                :class="isMobileClasses"
-            >
-                <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                        <v-btn v-on="on" icon @click.prevent.stop="item.archive()" class="mr-2">
-                            <v-icon color="grey darken-1">archive</v-icon>
-                        </v-btn>
-                    </template>
-                    <span>Archive</span>
-                </v-tooltip>
+      <v-list-tile-action
+        v-if="hover"
+        class="complaint-list__action-right"
+        :class="isMobileClasses"
+      >
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" icon @click.prevent.stop="item.archive()" class="mr-2">
+              <v-icon color="grey darken-1">archive</v-icon>
+            </v-btn>
+          </template>
+          <span>Archive</span>
+        </v-tooltip>
 
-                <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                        <v-btn v-on="on" icon @click.prevent.stop="item.delete()">
-                            <v-icon color="grey darken-1">delete</v-icon>
-                        </v-btn>
-                    </template>
-                    <span>Delete</span>
-                </v-tooltip>
-            </v-list-tile-action>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" icon @click.prevent.stop="onDeleteItem">
+              <v-icon color="grey darken-1">delete</v-icon>
+            </v-btn>
+          </template>
+          <span>Delete</span>
+        </v-tooltip>
+      </v-list-tile-action>
 
-            <v-list-tile-action
-                v-else
-                class="complaint-list__action-right"
-                :class="isMobileClasses"
-            >
-                <v-list-tile-sub-title
-                    class="complaint-list__action-right-content font-weight-bold"
-                    v-text="item.shortUpdatedAt"
-                ></v-list-tile-sub-title>
-            </v-list-tile-action>
-        </v-list-tile>
-    </v-hover>
+      <v-list-tile-action v-else class="complaint-list__action-right" :class="isMobileClasses">
+        <v-list-tile-sub-title
+          class="complaint-list__action-right-content font-weight-bold"
+          v-text="item.shortUpdatedAt"
+        ></v-list-tile-sub-title>
+      </v-list-tile-action>
+    </v-list-tile>
+  </v-hover>
 </template>
 
 <script>
-    import { vuex, vuexable } from "../../mixins/vuexable";
+import { vuex, vuexable } from "../../mixins/vuexable";
 
-    export default {
-        props: {
-            item: {
-                type: vuex.models.COMPLAINT,
-                required: true
-            }
-        },
+export default {
+  props: {
+    item: {
+      type: vuex.models.COMPLAINT,
+      required: true
+    }
+  },
 
-        mixins: [vuexable],
+  mixins: [vuexable],
 
-        computed: {
-            ...vuex.mapGetters(["isMobile", "isMobileClasses"]),
+  computed: {
+    ...vuex.mapGetters(["isMobile", "isMobileClasses"]),
 
-            title() {
-                return this.item.joinedRecipientName;
-            },
+    title() {
+      return this.item.joinedRecipientName;
+    },
 
-            issuer() {
-                return this.$_vuexable_getByKey(
-                    this.item.issued_by,
-                    vuex.modules.GROUP
-                );
-            },
+    issuer() {
+      return this.$_vuexable_getByKey(this.item.issued_by, vuex.modules.GROUP);
+    },
 
-            itemSelected: {
-                get() {
-                    const { selected = false } = this.item;
+    itemSelected: {
+      get() {
+        const { selected = false } = this.item;
 
-                    return selected;
-                },
+        return selected;
+      },
 
-                set(value) {
-                    this.item.update("selected", value);
-                }
-            }
-        }
-    };
+      set(value) {
+        this.item.update("selected", value);
+      }
+    }
+  },
+
+  methods: {
+    getItemCLasses(hover) {
+      return {
+        "elevation-2": hover
+      };
+    },
+
+    onDeleteItem() {
+      this.$emit("delete", this.item);
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>
-    .complaint-list {
-        &__item {
-            border-bottom: 1px solid #e0e0e0;
-        }
+.complaint-list {
+  &__item {
+    border-bottom: 1px solid #e0e0e0;
+  }
 
-        &__action {
-            min-width: 36px !important;
+  &__action {
+    min-width: 36px !important;
 
-            &.is-mobile {
-                align-items: flex-start;
-            }
-
-            .status-indicator {
-                margin-top: 4px;
-                margin-left: 4px;
-            }
-        }
-
-        &__content {
-            justify-content: flex-start;
-        }
-
-        &__action-right {
-            justify-content: flex-end;
-        }
-
-        &__content,
-        &__action-right {
-            flex-direction: row;
-            align-items: center;
-
-            &.is-mobile {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-        }
-
-        &__title,
-        &__action-right-content {
-            color: #333 !important;
-        }
-
-        &__action-right {
-            min-width: 80px;
-            padding-top: 0;
-            padding-bottom: 0;
-            margin-left: 16px;
-
-            &.is-mobile {
-                min-width: auto;
-                justify-content: flex-start;
-            }
-        }
-
-        &__action-right-content {
-            width: auto;
-            margin-left: 16px;
-        }
-
-        &__title {
-            max-width: 168px;
-            min-width: 125px;
-            padding-right: 32px;
-
-            &.is-mobile {
-                max-width: 100%;
-            }
-        }
-
-        &__status {
-            margin-right: 12px;
-        }
+    &.is-mobile {
+      align-items: flex-start;
     }
+
+    .status-indicator {
+      margin-top: 4px;
+      margin-left: 4px;
+    }
+  }
+
+  &__content {
+    justify-content: flex-start;
+
+    &.is-mobile {
+      flex-direction: column;
+    }
+  }
+
+  &__action-right {
+    justify-content: flex-end;
+
+    &.is-mobile {
+      flex-direction: row;
+    }
+  }
+
+  &__content,
+  &__action-right {
+    flex-direction: row;
+    align-items: center;
+
+    &.is-mobile {
+      align-items: flex-start;
+    }
+  }
+
+  &__title,
+  &__action-right-content {
+    color: #333 !important;
+  }
+
+  &__action-right {
+    min-width: 80px;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-left: 16px;
+
+    &.is-mobile {
+      min-width: auto;
+      justify-content: flex-start;
+    }
+  }
+
+  &__action-right-content {
+    width: auto;
+    margin-left: 16px;
+  }
+
+  &__title {
+    max-width: 168px;
+    min-width: 125px;
+    padding-right: 32px;
+
+    &.is-mobile {
+      max-width: 100%;
+    }
+  }
+
+  &__status {
+    margin-right: 12px;
+  }
+}
 </style>
 

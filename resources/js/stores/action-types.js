@@ -14,7 +14,9 @@ export const USER = {
 export const COMPLAINT = {
     FETCH: 'complaintFetch',
     STORE: 'complaintStore',
-    UPDATE: 'complaintUpdate'
+    UPDATE: 'complaintUpdate',
+    DELETE: 'complaintDelete',
+    RESTORE: 'complaintRestore'
 };
 
 export const GROUP = {

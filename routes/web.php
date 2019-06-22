@@ -36,6 +36,12 @@ Route::group([
                 Route::get('/{hash}/generate-link', 'FileController@generateLink')->name('generate-link');
                 Route::post('/upload', 'FileController@upload')->name('upload');
             });
+            /**
+             * Custom route IssueController
+             */
+            Route::group(['as' => 'issues.', 'prefix' => 'issues'], function () {
+                Route::post('/{issue}/restore', 'IssueController@restore')->name('restore');
+            });
 
             Route::resources([
                 'issues' => 'IssueController',

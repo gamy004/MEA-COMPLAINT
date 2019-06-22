@@ -79,6 +79,8 @@ const menuable = {
             x: window.innerWidth,
             y: window.innerHeight
         });
+
+        this.drawer = !this.isMobile;
     }
 }
 

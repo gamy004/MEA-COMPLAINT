@@ -1,8 +1,22 @@
+const enumTypes = ["success", "info", "warning", "error"];
+
 const alertable = {
     props: {
+        alertableType: {
+            type: String,
+            default: 'info'
+        },
         alertableVisible: {
             type: Boolean,
             default: () => false
+        },
+        alertableMessages: {
+            type: Object,
+            default: () => ({})
+        },
+        alertableProps: {
+            type: Object,
+            default: () => ({})
         },
         alertableTimeout: {
             type: Number,
@@ -10,26 +24,103 @@ const alertable = {
         },
         alertableAutoClose: {
             type: Boolean,
-            default: () => false
+            default: () => true
+        },
+        alertablePosition: {
+            type: String,
+            default: 'bottom-left'
         }
     },
 
-    data: () => ({
-        alertable_alert: false,
-        alertable_type: "success",
-        alertable_messages: {}
-    }),
+    data() {
+        return {
+            alertable_timer: null,
+            alertable_alert: false,
+            alertable_type: "info",
+            alertable_messages: {},
+            alertable_props: {}
+        };
+    },
+
+    watch: {
+        alert(v) {
+            if (v && this.alertableAutoClose) {
+                this.$_alertable_updateTimer();
+            }
+        }
+    },
 
     computed: {
+        alert: {
+            get() {
+                return this.alertableVisible;
+            },
+            set(v) {
+                this.$emit('update:alertable-visible', v);
+            }
+        },
+
         $_alertable_message() {
-            return this.alertable_messages[this.alertable_type] || "";
+            let message = this.alertableMessages[this.alertableType] || "";
+
+            if (message && message.hasOwnProperty('text')) {
+                message = message.text;
+            }
+
+            return message;
+        },
+
+        $_alertable_actions() {
+            let actions = [],
+                message = this.alertableMessages[this.alertableType] || "";
+
+            if (message && message.hasOwnProperty('actions')) {
+                actions = message.actions;
+            }
+
+            return actions;
+        },
+
+        $_alertable_classes() {
+            return {
+                [this.alertablePosition]: true
+            };
+        },
+
+        $_alertable_matchedType() {
+            return enumTypes.indexOf(this.alertableType) !== -1;
+        },
+
+        $_alertable_context() {
+            return this.$_alertable_matchedType ? this.alertableType : undefined;
+        },
+
+        $_alertable_color() {
+            return this.$_alertable_matchedType ? this.alertableType : "blue-grey darken-4";
+        },
+
+        $_alertable_action_color() {
+            return this.$_alertable_matchedType ? "white" : "indigo lighten-3";
         }
     },
 
     methods: {
-        $_alertable_alert(type) {
-            this.alertable_alert = true;
+        $_alertable_alert(type, props = {}) {
             this.alertable_type = type;
+            this.alert = true;
+            this.alertable_alert = true;
+            this.alertable_props = {
+                ...props
+            };
+        },
+
+        $_alertable_updateTimer() {
+            clearTimeout(this.alertable_timer);
+
+            this.alertable_timer = setTimeout(() => {
+                this.alert = false;
+                this.alertable_alert = false;
+            }, this.alertableTimeout);
         }
     }
 }

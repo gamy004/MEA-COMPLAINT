@@ -5,9 +5,12 @@ namespace App\Models;
 use App\IOCs\DBCol;
 use App\Helpers\DateTimeHelper;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Issue extends Model
 {
+    use SoftDeletes;
+    
     const FK = 'issue_id';
 
     protected $fillable = [

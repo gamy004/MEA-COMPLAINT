@@ -3,30 +3,6 @@ const dialogable = {
         dialogableVisible: {
             type: Boolean,
             default: () => false
-        },
-        dialogableTimeout: {
-            type: Number,
-            default: () => 2000
-        },
-        dialogableAutoClose: {
-            type: Boolean,
-            default: () => false
-        }
-    },
-
-    data: () => ({
-        dialogable_timer: null
-    }),
-
-    watch: {
-        dialog(v) {
-            if (v && this.dialogableAutoClose) {
-                clearTimeout(this.dialogable_timer);
-
-                this.dialogable_timer = setTimeout(() => {
-                    this.dialog = false;
-                }, this.dialogableTimeout);
-            }
         }
     },
 

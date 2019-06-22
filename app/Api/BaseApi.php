@@ -2,6 +2,7 @@
 
 namespace App\Api;
 
+use Exception;
 use App\IOCs\Data;
 use App\Api\Parser;
 use App\IOCs\DBCol;
@@ -11,10 +12,11 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
 use App\Api\Parsers\BaseParser;
+use App\Helpers\DateTimeHelper;
 use App\Api\Parsers\SelectParser;
 use Illuminate\Support\Facades\DB;
-use App\Helpers\DateTimeHelper;
 use App\Api\Parsers\PaginateParser;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -150,6 +152,51 @@ abstract class BaseApi
     public function show(Model $model)
     {
         return $this->find($model_id);
+    }
+
+    public function destroy(Model $model)
+    {
+        try {
+            DB::beginTransaction();
+            
+            $model->delete();
+
+            DB::commit();
+
+            return response()->json([
+                "message" => "destroy success",
+                "id" => $model->{DBCol::ID}
+            ]);
+        } catch (Exception $exception) {
+            DB::rollback();
+
+            Log::error($exception);
+
+            throw new Exception("Error Handle Deleting Resource Request");
+        }
+    }
+
+    public function restore($id)
+    {
+        try {
+            DB::beginTransaction();
+            
+            $restore = $this->originalModel->withTrashed()
+                ->where(DBCol::ID, $id)
+                ->restore();
+
+            DB::commit();
+
+            if ($restore) {
+                return $this->find($id);
+            }
+        } catch (Exception $exception) {
+            DB::rollback();
+
+            Log::error($exception);
+            
+            throw new Exception("Error Handle Restoring Resource Request");
+        }
     }
 
     public function get($key = null)
