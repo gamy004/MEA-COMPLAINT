@@ -101,8 +101,9 @@
             <file-list
               class="editor__filelist editor__filelist--front px-2"
               v-if="uploadable_uploader"
-              :files="uploadable_uploadedFiles"
+              :files="complaintAttachments"
               :uploader="uploadable_uploader"
+              @remove="onFileRemoved"
             />
 
             <file-list
@@ -125,7 +126,7 @@
                       @click.prevent.stop="onSubmit"
                       :loading="form.isSubmitting"
                       :disabled="uploadable_uploading"
-                    >send</v-btn>
+                    >{{ managableEdit ? "Update" : "Send" }}</v-btn>
 
                     <v-tooltip top>
                       <template v-slot:activator="{ on }">
@@ -244,7 +245,14 @@ export default {
       warningSubmit: false,
       alertable_messages: {
         error: "Cannot create complaint, please check error message.",
-        success: "Create complaint success."
+        add_success: {
+          text: "Create complaint successfully.",
+          type: "success"
+        },
+        edit_success: {
+          text: "Update complaint successfully.",
+          type: "success"
+        }
       }
     };
   },
@@ -301,6 +309,19 @@ export default {
 
     activeComplaint() {
       return this.$_vuexable_getActive(vuex.modules.COMPLAINT);
+    },
+
+    activeComplaintFiles() {
+      return this.activeComplaint
+        ? this.$_vuexable_getByKeys(
+            this.activeComplaint.attachments,
+            vuex.modules.FILE
+          )
+        : [];
+    },
+
+    complaintAttachments() {
+      return [...this.activeComplaintFiles, ...this.uploadable_uploadedFiles];
     },
 
     formDescription: {
@@ -441,6 +462,7 @@ export default {
           "description",
           "issue_category_id",
           "recipients",
+          "attachments",
           "uploaded_files"
         ]);
       } catch (error) {
@@ -449,13 +471,18 @@ export default {
         throw error;
       }
 
-      this.$_alertable_alert("success");
+      this.$_alertable_alert(`${this.$_managable_action}_success`);
 
       return this.resetComplaintForm();
     },
 
     validateSubjectAndDescription() {
-      if (!this.form.subject.length && !this.form.description.length) {
+      const subject = !_.isNull(this.form.subject) ? this.form.subject : "";
+      const description = !_.isNull(this.form.description)
+        ? this.form.description
+        : "";
+
+      if (!subject.length && !description.length) {
         this.warningSubmit = true;
       }
 
@@ -465,6 +492,35 @@ export default {
     resetComplaintForm() {
       this.form.reset();
       this.$_uploadable_reset();
+    },
+
+    async onFileRemoved(file, files) {
+      if (file.id) {
+        try {
+          // await this.$_vuexable_dispatch(
+          //   vuex.actions.FILE.DELETE,
+          //   vuex.modules.FILE,
+          //   file
+          // );
+          const { form } = this;
+          const attachments = [...form.attachments];
+          const fileIndex = attachments.indexOf(file.id);
+
+          attachments.splice(fileIndex, 1);
+
+          form.set("attachments", attachments);
+
+          this.activeComplaint.update("attachments", attachments);
+
+          form.set("includes", []);
+
+          await this.$_managable_submitForm(form, [
+            "id",
+            "attachments",
+            "includes"
+          ]);
+        } catch (error) {}
+      }
     }
   }
 };

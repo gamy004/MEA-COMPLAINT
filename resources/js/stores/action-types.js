@@ -24,6 +24,11 @@ export const GROUP = {
     FETCH: 'groupFetch'
 };
 
+export const FILE = {
+    FETCH: 'fileFetch',
+    DELETE: 'fileDelete'
+};
+
 export const STATUS = {
     FETCH: 'statusFetch'
 };

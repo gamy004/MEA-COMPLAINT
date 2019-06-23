@@ -46,7 +46,7 @@ class Issue extends Model
     public function attachments()
     {
         return $this->belongsToMany(
-            Group::class, 'issue_attachment', self::FK, 'attachment_id'
+            File::class, 'issue_attachment', self::FK, 'attachment_id'
         )->using(IssueAttachment::class);
     }
     

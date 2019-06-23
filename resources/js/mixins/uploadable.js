@@ -4,7 +4,7 @@ const uploadable = {
     props: {
         endpoint: {
             type: String,
-            default: () => (route('api:file.upload'))
+            default: () => (route('api:files.upload'))
         },
 
         multipart: {

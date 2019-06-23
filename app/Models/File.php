@@ -5,9 +5,12 @@ namespace App\Models;
 use App\IOCs\Data;
 use App\IOCs\DBCol;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class File extends Model
 {
+    use SoftDeletes;
+    
     protected $fillable = [
         DBCol::DISPLAY_NAME,
         DBCol::HASH_NAME,

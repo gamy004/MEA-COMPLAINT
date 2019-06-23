@@ -9,19 +9,21 @@ class BaseVuexModel extends BaseModel {
             ...data
         });
 
+        this.$store = '';
         this.$context = context;
     }
 
-    update(key, value) {
+    update(attr, value) {
         const {
-            id = null
+            id: key = null
         } = this;
 
-        if (id) {
-            this.$context.commit(
-                this.$context.vuex.mutations.UPDATE, {
-                    id,
+        if (key) {
+            this.$context.rootCommit(
+                this.$context.vuex.mutations.UPDATE,
+                this.$store, {
                     key,
+                    attr,
                     value
                 }
             );

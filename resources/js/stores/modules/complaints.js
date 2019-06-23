@@ -58,6 +58,18 @@ const userStore = {
             }
         },
 
+        async [vuex.actions.UPDATE](context, input) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'COMPLAINT',
+                    action: 'UPDATE',
+                    params: input
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
         async [vuex.actions.COMPLAINT.DELETE](context, {
             id: issue
         }) {

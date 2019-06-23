@@ -1,6 +1,7 @@
 import BaseVuexModel from './BaseVuexModel';
 import {
-    actions
+    actions,
+    modules
 } from '../constants';
 import {
     formatShortDateTime
@@ -17,6 +18,8 @@ class Complaint extends BaseVuexModel {
             starred: false,
             ...data
         });
+
+        this.$store = modules.COMPLAINT;
     }
 
     static async [actions.COMPLAINT.FETCH](pagination) {
@@ -25,7 +28,7 @@ class Complaint extends BaseVuexModel {
         try {
             response = await api.get('api:issues.index', {
                 pagination,
-                includes: ['recipients:sideload', 'status:sideload']
+                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload']
             });
         } catch (error) {
             throw error;
@@ -39,8 +42,8 @@ class Complaint extends BaseVuexModel {
 
         try {
             response = await api.get('api:issues.edit', {
+                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload'],
                 ...data,
-                includes: ['recipients:sideload', 'status:sideload']
             });
         } catch (error) {
             throw error;
@@ -54,8 +57,23 @@ class Complaint extends BaseVuexModel {
 
         try {
             response = await api.post('api:issues.store', {
+                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload'],
                 ...data,
-                includes: ['recipients:sideload', 'status:sideload']
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
+    static async [actions.COMPLAINT.UPDATE](data) {
+        let response;
+
+        try {
+            response = await api.put('api:issues.update', {
+                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload'],
+                ...data,
             });
         } catch (error) {
             throw error;

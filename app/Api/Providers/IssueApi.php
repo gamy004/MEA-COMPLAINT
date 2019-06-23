@@ -107,29 +107,40 @@ class IssueApi extends BaseApi implements ApiInterface
         } catch (Exception $exception) {
             DB::rollback();
             Log::error($exception);
-            throw new Exception("Error Handle Creating Issue Request", 1);
+            throw new Exception("Error Creating Issue Request", 1);
         }
     }
 
-    public function update(Model $model, array $raw)
+    public function update(Model $issue, array $raw)
     {
-        // try {
-        //     DB::beginTransaction();
+        try {
+            DB::beginTransaction();
 
-        //     $record = [];
-        //     $record = $this->parseGeneralFields($record, $raw);
-        //     $record = $this->parseAvatar($record, $raw);
-        //     $model->update($record);
-        //     $this->syncRole($model, $raw);
+            $record = [];
 
-        //     DB::commit();
-        // } catch (Exception $exception) {
-        //     DB::rollback();
-        //     Log::error($exception);
-        //     throw new Exception("Error Updating model Request", 1);
-        // }
+            $record = $this->parseGeneralFields($record, $raw);
 
-        // return $this->find($model->id);
+            if (count($record)) {
+                $issue->update($record);
+            }
+            
+            $this->syncAttachments($issue, $raw);
+
+            $this->syncRecipients($issue, $raw);
+            // add uploaded files to attachments and sync!!! <=== tomorrow!!!
+            $this->setHasFileRelation('attachments')
+                ->setHasFileRootDirectory('issues/')
+                ->parseUploadedFiles($issue, $raw);
+
+            DB::commit();
+        } catch (Exception $exception) {
+            DB::rollback();
+            Log::error($exception);
+            dd($exception);
+            throw new Exception("Error Updating issue Request", 1);
+        }
+
+        return $this->find($issue->id);
     }
 
     private function parseGeneralFields($record, $raw)
@@ -155,6 +166,19 @@ class IssueApi extends BaseApi implements ApiInterface
             $recipient_ids = $raw[Data::RECIPIENTS];
 
             return $issue->recipients()->sync($recipient_ids);
+        }
+
+        return false;
+    }
+
+    private function syncAttachments(Issue $issue, $raw)
+    {
+        if (isset($raw[Data::ATTACHMENTS])) {
+            $attachment_ids = $raw[Data::ATTACHMENTS];
+
+            $result = $issue->attachments()->sync($attachment_ids);
+
+            $this->syncFiles($result);
         }
 
         return false;

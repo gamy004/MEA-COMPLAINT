@@ -73,7 +73,10 @@ class IssueController extends BaseApiController
      */
     public function update(Request $request, Issue $issue)
     {
-        //
+        return $this->api->update(
+            $issue,
+            $request->all()
+        );
     }
 
     /**

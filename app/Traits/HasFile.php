@@ -5,6 +5,7 @@ namespace App\Traits;
 use Exception;
 use App\IOCs\Data;
 use App\IOCs\DBCol;
+use App\Models\File;
 use App\Services\FileMaker;
 use Illuminate\Database\Eloquent\Model;
 
@@ -62,5 +63,19 @@ trait HasFile
             Data::UPLOADED_FILES.'.*.formatted_size' => 'sometimes|required|string|max:255',
             Data::UPLOADED_FILES.'.*.uploaded_path' => 'sometimes|required|string'
         ];
+    }
+
+    private function syncFiles($result)
+    {
+        if (isset($result[Data::DETACHED])
+            && count($result[Data::DETACHED])
+        ) {
+            $detached_file_ids = $result[Data::DETACHED];
+
+            File::whereIn('id', $detached_file_ids)
+                ->each(function($file) {
+                    $file->delete();
+                });
+        }
     }
 }

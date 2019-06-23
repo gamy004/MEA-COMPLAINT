@@ -22,12 +22,13 @@ class Data
     const ROLE = 'role';
     const ROLES = 'roles';
     const UPLOAD_PATH = 'upload_path';
-
+    const DETACHED = 'detached';
     /**
      * Issue
      */
     const RECIPIENTS = 'recipients';
-    
+    const ATTACHMENTS = 'attachments';
+
     /**
      * File System
      */

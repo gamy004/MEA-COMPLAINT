@@ -81,7 +81,7 @@ class FileController extends BaseApiController
      */
     public function destroy(File $file)
     {
-        //
+        return $this->api->destroy($file);
     }
 
     /**

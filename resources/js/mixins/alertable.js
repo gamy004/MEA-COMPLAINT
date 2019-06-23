@@ -96,7 +96,15 @@ const alertable = {
         },
 
         $_alertable_color() {
-            return this.$_alertable_matchedType ? this.alertableType : "blue-grey darken-4";
+            const messageType = this.alertableMessages[this.alertableType];
+
+            let color = this.$_alertable_matchedType ? this.alertableType : "blue-grey darken-4";
+
+            if (messageType && messageType.type) {
+                color = messageType.type;
+            }
+
+            return color;
         },
 
         $_alertable_action_color() {

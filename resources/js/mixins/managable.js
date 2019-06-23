@@ -33,11 +33,11 @@ const managable = {
                 actions
             } = vuex;
 
-            return this.edit ? actions.UPDATE : actions.STORE;
+            return this.managableEdit ? actions.UPDATE : actions.STORE;
         },
 
         $_managable_action() {
-            return this.edit ? 'edit' : 'add';
+            return this.managableEdit ? 'edit' : 'add';
         }
     },
 
@@ -51,7 +51,7 @@ const managable = {
         },
 
         toggleEdit() {
-            this.syncEdit(!this.edit);
+            this.syncEdit(!this.managableEdit);
         },
 
         syncEdit(v) {

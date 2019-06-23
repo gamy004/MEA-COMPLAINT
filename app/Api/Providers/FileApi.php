@@ -80,11 +80,6 @@ class FileApi extends BaseApi implements ApiInterface
          //
     }
 
-    public function destroy(Model $model)
-    {
-
-    }
-
     public function generateTemporaryLink($hash)
     {
         $user_id = auth()->id();

@@ -5,6 +5,7 @@ import * as getters from './stores/getters';
 
 // Modules
 import user from './stores/modules/users';
+import file from './stores/modules/files';
 
 const debug = process.env.NODE_ENV !== 'production';
 
@@ -27,7 +28,8 @@ const store = new Vuex.Store({
     mutations,
 
     modules: {
-        [modules.USER]: user
+        [modules.USER]: user,
+        [modules.FILE]: file
     },
 
     strict: debug,

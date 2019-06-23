@@ -48,7 +48,8 @@ function parseFetch(context, {
 function parseEdit(context, {
     issues: issue,
     recipients: groups = [],
-    status: statuses = []
+    status: statuses = [],
+    attachments: files = []
 } = {}) {
 
     const {
@@ -64,6 +65,10 @@ function parseEdit(context, {
 
     parsers.STATUS[vuex.actions.STATUS.FETCH](context, {
         statuses
+    });
+
+    parsers.FILE[vuex.actions.FILE.FETCH](context, {
+        files
     });
 
     rootCommit(
@@ -122,6 +127,7 @@ function parseDelete(context, {
 export default {
     [actions.COMPLAINT.FETCH]: parseFetch,
     [actions.COMPLAINT.EDIT]: parseEdit,
+    [actions.COMPLAINT.UPDATE]: parseEdit,
     [actions.COMPLAINT.STORE]: parseStore,
     [actions.COMPLAINT.DELETE]: parseDelete,
     [actions.COMPLAINT.RESTORE]: parseStore

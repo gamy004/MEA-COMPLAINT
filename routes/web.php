@@ -29,10 +29,10 @@ Route::group([
         Route::get(
             '/{hash}/download',
             'FileController@download'
-        )->name('file.download')->middleware('signed');
+        )->name('files.download')->middleware('signed');
 
         Route::middleware(['auth'])->group(function () {
-            Route::group(['as' => 'file.', 'prefix' => 'file'], function () {
+            Route::group(['as' => 'files.', 'prefix' => 'files'], function () {
                 Route::get('/{hash}/generate-link', 'FileController@generateLink')->name('generate-link');
                 Route::post('/upload', 'FileController@upload')->name('upload');
             });
@@ -46,7 +46,8 @@ Route::group([
             Route::resources([
                 'issues' => 'IssueController',
                 'groups' => 'GroupController',
-                'issue-categories' => 'IssueCategoryController'
+                'issue-categories' => 'IssueCategoryController',
+                'files' => 'FileController'
             ]);
         });
     }
