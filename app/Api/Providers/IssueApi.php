@@ -92,7 +92,7 @@ class IssueApi extends BaseApi implements ApiInterface
             
             $record = $this->parseGeneralFields($record, $raw);
             
-            $issue = Issue::firstOrCreate($record);
+            $issue = Issue::create($record);
 
             $this->syncRecipients($issue, $raw);
 

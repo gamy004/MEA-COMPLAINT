@@ -34,6 +34,21 @@ class Complaint extends BaseVuexModel {
         return response;
     }
 
+    static async [actions.COMPLAINT.EDIT](data) {
+        let response;
+
+        try {
+            response = await api.get('api:issues.edit', {
+                ...data,
+                includes: ['recipients:sideload', 'status:sideload']
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
     static async [actions.COMPLAINT.STORE](data) {
         let response;
 

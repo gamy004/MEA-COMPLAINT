@@ -7,7 +7,7 @@ function parseFetch(context, {
     recipients: groups = [],
     status: statuses = [],
     total = 0,
-    strategy = 'merge'
+    strategy = 'replace'
 } = {}) {
     const {
         rootCommit,
@@ -45,6 +45,39 @@ function parseFetch(context, {
     );
 };
 
+function parseEdit(context, {
+    issues: issue,
+    recipients: groups = [],
+    status: statuses = []
+} = {}) {
+
+    const {
+        rootCommit,
+        vuex,
+        models,
+        parsers
+    } = context;
+
+    parsers.GROUP[vuex.actions.GROUP.FETCH](context, {
+        groups
+    });
+
+    parsers.STATUS[vuex.actions.STATUS.FETCH](context, {
+        statuses
+    });
+
+    rootCommit(
+        vuex.mutations.UPDATE,
+        vuex.modules.COMPLAINT, {
+            key: issue.id,
+            value: new models.COMPLAINT({
+                ...issue,
+                context
+            })
+        }
+    );
+};
+
 function parseStore(context, {
     issues,
     recipients: groups = [],
@@ -62,7 +95,10 @@ function parseStore(context, {
         issues,
         groups,
         statuses,
-        total: rootGetters[`${vuex.modules.COMPLAINT}/${vuex.getters.GET_STATE}`]('totalItems') + issues.length
+        total: rootGetters[
+            `${vuex.modules.COMPLAINT}/${vuex.getters.GET_STATE}`
+        ]('totalItems') + issues.length,
+        strategy: 'merge'
     });
 };
 
@@ -85,6 +121,7 @@ function parseDelete(context, {
 
 export default {
     [actions.COMPLAINT.FETCH]: parseFetch,
+    [actions.COMPLAINT.EDIT]: parseEdit,
     [actions.COMPLAINT.STORE]: parseStore,
     [actions.COMPLAINT.DELETE]: parseDelete,
     [actions.COMPLAINT.RESTORE]: parseStore

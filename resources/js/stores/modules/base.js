@@ -317,7 +317,9 @@ export default {
                         const {
                             collection: oldCollection,
                                 sortedIndex: oldSortedIndex
-                        } = state;
+                        } = state,
+
+                        oldSortedPaginateIndex = state.sortedPaginateIndex[pagination.page] || [];
 
                         // Vue.set(state, 'collection', {
                         //     ...oldCollection,
@@ -330,7 +332,19 @@ export default {
 
                         Vue.set(state, 'sortedIndex', mergedSortedIndex);
 
-                        Vue.set(state.sortedPaginateIndex, pagination.page, mergedSortedIndex);
+                        const mergedSortedPaginatedIndex = _.union(sortedIndex, oldSortedPaginateIndex);
+
+                        Vue.set(state.sortedPaginateIndex, pagination.page, mergedSortedPaginatedIndex);
+
+                        // Vue.set(state, 'collection', _.merge(oldCollection, collection));
+
+                        // const mergedSortedIndex = _.union(oldSortedIndex, sortedIndex);
+
+                        // Vue.set(state, 'sortedIndex', mergedSortedIndex);
+
+                        // const mergedSortedPaginatedIndex = _.union(oldSortedPaginateIndex, sortedIndex);
+
+                        // Vue.set(state.sortedPaginateIndex, pagination.page, mergedSortedPaginatedIndex);
 
                         break;
 
@@ -339,28 +353,38 @@ export default {
 
                         Vue.set(state, 'sortedIndex', sortedIndex);
 
+                        Vue.set(state, 'sortedPaginateIndex', {});
+
+                        Vue.set(state, 'paginateIndex', {});
+
                         Vue.set(state.sortedPaginateIndex, pagination.page, sortedIndex);
 
                         break;
                 }
 
-                state.sortedIndex.forEach(element => {
-                    Vue.set(state.paginateIndex, element, pagination.page);
-                });
-
-                if (activeVaule.hasOwnProperty(key)) {
-                    state.active = activeVaule[key];
+                if (state.sortedPaginateIndex[pagination.page]) {
+                    state.sortedPaginateIndex[pagination.page].forEach(element => {
+                        Vue.set(state.paginateIndex, element, pagination.page);
+                    });
                 }
+                // Don't set active
+                // if (activeVaule.hasOwnProperty(key)) {
+                //     state.active = activeVaule[key];
+                // }
             }
         },
 
         [vuex.mutations.UPDATE](state, {
-            id,
             key,
-            value
+            value,
+            attr = null
         }) {
-            if (state.collection.hasOwnProperty(id)) {
-                Vue.set(state.collection[id], key, value);
+            if (state.collection.hasOwnProperty(key)) {
+                if (attr !== null) {
+                    Vue.set(state.collection[key], attr, value);
+                } else {
+                    Vue.set(state.collection, key, value);
+                }
             }
         },
 

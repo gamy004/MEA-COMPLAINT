@@ -14,6 +14,7 @@ export const USER = {
 export const COMPLAINT = {
     FETCH: 'complaintFetch',
     STORE: 'complaintStore',
+    EDIT: 'complaintEdit',
     UPDATE: 'complaintUpdate',
     DELETE: 'complaintDelete',
     RESTORE: 'complaintRestore'

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\IOCs\DBCol;
 use App\Models\Issue;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreIssueRequest;
@@ -60,7 +61,7 @@ class IssueController extends BaseApiController
      */
     public function edit(Issue $issue)
     {
-        //
+        return $this->api->find($issue->{DBCol::ID});
     }
 
     /**

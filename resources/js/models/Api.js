@@ -165,10 +165,15 @@ class Api extends BaseModel {
     }
 
     get(
-        routeName,
-        properties = {}
+        routeName, {
+            routeParam = {},
+            ...params
+        } = {}
     ) {
-        return this.call('get', routeName, parse(properties));
+        return this.call('get', routeName, {
+            ...parse(params),
+            routeParam
+        });
     }
 
     put(
@@ -212,7 +217,6 @@ class Api extends BaseModel {
         routeParam = {},
         ...props
     } = {}) {
-
         let url = this.route(routeName, routeParam),
             v;
 

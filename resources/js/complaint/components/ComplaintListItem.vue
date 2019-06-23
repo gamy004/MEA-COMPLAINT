@@ -69,7 +69,7 @@
 
       <v-list-tile-action
         v-if="hover"
-        class="complaint-list__action-right"
+        class="complaint-list__action-right complaint-list__action-right--hover"
         :class="isMobileClasses"
       >
         <v-tooltip bottom>
@@ -79,6 +79,15 @@
             </v-btn>
           </template>
           <span>Archive</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" icon @click.prevent.stop="onEditItem" class="mr-2">
+              <v-icon color="grey darken-1">edit</v-icon>
+            </v-btn>
+          </template>
+          <span>Edit</span>
         </v-tooltip>
 
         <v-tooltip bottom>
@@ -143,6 +152,10 @@ export default {
       return {
         "elevation-2": hover
       };
+    },
+
+    onEditItem() {
+      this.$emit("edit", this.item);
     },
 
     onDeleteItem() {
@@ -211,6 +224,20 @@ export default {
     &.is-mobile {
       min-width: auto;
       justify-content: flex-start;
+    }
+
+    &--hover {
+      background: rgb(255, 255, 255);
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(250, 250, 250, 1) 20%,
+        rgba(255, 255, 255, 1) 100%
+      );
+      position: absolute;
+      right: 0;
+      padding-left: 16px;
+      padding-right: 8px;
     }
   }
 

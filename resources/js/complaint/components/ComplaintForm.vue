@@ -261,6 +261,15 @@ export default {
       handler(v) {
         this.fullScreen = v;
       }
+    },
+
+    activeComplaint: {
+      immediate: true,
+      handler(complaint) {
+        if (complaint) {
+          this.form.record({ ...complaint.getData() });
+        }
+      }
     }
   },
 
@@ -285,7 +294,13 @@ export default {
           },
           vuex.modules.COMPLAINT
         );
+
+        this.$_vuexable_setActive(null, vuex.modules.COMPLAINT);
       }
+    },
+
+    activeComplaint() {
+      return this.$_vuexable_getActive(vuex.modules.COMPLAINT);
     },
 
     formDescription: {

@@ -9,6 +9,7 @@
             <complaint-list-item
               :key="`complaint-${itemIndex}`"
               :item="item"
+              @edit="onEditItem(item, itemIndex)"
               @delete="onDeleteItem(item, itemIndex)"
             />
           </template>
@@ -43,7 +44,7 @@ export default {
     }
   },
 
-  mixins: [alertable, paginatable],
+  mixins: [alertable, paginatable, vuexable],
 
   components: {
     ComplaintListItem,
@@ -110,9 +111,30 @@ export default {
   methods: {
     ...vuex.mapWaitingActions(vuex.modules.COMPLAINT, [
       vuex.actions.COMPLAINT.FETCH,
+      vuex.actions.COMPLAINT.EDIT,
       vuex.actions.COMPLAINT.DELETE,
       vuex.actions.COMPLAINT.RESTORE
     ]),
+
+    async onEditItem(item, itemIndex) {
+      const { id } = item;
+
+      try {
+        await this[vuex.actions.COMPLAINT.EDIT](item);
+      } catch (error) {
+        throw error;
+      }
+
+      this.$_vuexable_setState(
+        {
+          key: "dialog",
+          value: true
+        },
+        vuex.modules.COMPLAINT
+      );
+
+      this.$_vuexable_setActive(id, vuex.modules.COMPLAINT);
+    },
 
     async onDeleteItem(item, itemIndex) {
       try {

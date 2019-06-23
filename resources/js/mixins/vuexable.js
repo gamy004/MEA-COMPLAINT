@@ -66,6 +66,18 @@ export const vuexable = {
                 });
         },
 
+        $_vuexable_getActive(module = '') {
+            return this.$_vuexable_getter(getters.ACTIVE, module);
+        },
+
+        $_vuexable_setActive(key, module = '') {
+            return this.$_vuexable_commit(
+                mutations.SET_ACTIVE,
+                module,
+                key
+            );
+        },
+
         $_vuexable_setPagination(pagination, module = '') {
             this.$_vuexable_commit(
                 mutations.SET_PAGINATION,
@@ -77,14 +89,14 @@ export const vuexable = {
         },
 
         $_vuexable_update({
-            id,
             key,
-            value
+            value,
+            attr = null
         }, module = '') {
             this.$_vuexable_commit(
                 mutations.UPDATE,
                 module, {
-                    id,
+                    attr,
                     key,
                     value
                 }
