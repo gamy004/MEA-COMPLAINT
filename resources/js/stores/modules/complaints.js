@@ -28,6 +28,22 @@ const userStore = {
             }
         },
 
+        async [vuex.actions.COMPLAINT.SHOW](context, issue) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'COMPLAINT',
+                    action: 'SHOW',
+                    params: {
+                        routeParam: {
+                            issue
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
         async [vuex.actions.COMPLAINT.EDIT](context, {
             id: issue
         }) {

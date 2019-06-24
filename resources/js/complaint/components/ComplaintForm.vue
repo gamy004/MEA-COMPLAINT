@@ -201,6 +201,7 @@
       :alertable-visible.sync="alertable_alert"
       :alertable-type="alertable_type"
       :alertable-messages="alertable_messages"
+      :alertable-props="alertable_props"
     ></message-alert>
   </v-layout>
 </template>
@@ -246,11 +247,28 @@ export default {
       alertable_messages: {
         error: "Cannot create complaint, please check error message.",
         add_success: {
-          text: "Create complaint successfully.",
+          text: "Complaint was created successfully.",
           type: "success"
         },
         edit_success: {
-          text: "Update complaint successfully.",
+          text: "Complaint was updated successfully.",
+          type: "success"
+        },
+        delete_file_success: {
+          text: "Attachment was deleted successfully",
+          type: "success",
+          color: "white",
+          actions: [
+            {
+              text: "Undo",
+              handler: async ({ file }) => {
+                this.onFileRestore(file);
+              }
+            }
+          ]
+        },
+        delete_uploadfile_success: {
+          text: "Uploaded file was deleted successfully",
           type: "success"
         }
       }
@@ -374,6 +392,10 @@ export default {
       [vuex.actions.COMPLAINT_CATEGORY.FETCH]: "fetching form categories"
     }),
 
+    ...vuex.mapWaitingActions(vuex.modules.FILE, {
+      [vuex.actions.FILE.RESTORE]: "restoring file"
+    }),
+
     toggleshowFormatting() {
       toggle(this, "showFormatting");
 
@@ -494,7 +516,7 @@ export default {
       this.$_uploadable_reset();
     },
 
-    async onFileRemoved(file, files) {
+    async onFileRemoved(file, index, files) {
       if (file.id) {
         try {
           // await this.$_vuexable_dispatch(
@@ -519,7 +541,44 @@ export default {
             "attachments",
             "includes"
           ]);
-        } catch (error) {}
+
+          this.$_alertable_alert("delete_file_success", { file });
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        const uploadedFileIndex = _.findIndex(this.uploadable_uploadedFiles, [
+          "upload_path",
+          file.upload_path
+        ]);
+
+        this.uploadable_uploadedFiles.splice(uploadedFileIndex, 1);
+
+        this.$_alertable_alert("delete_uploadfile_success");
+      }
+    },
+
+    async onFileRestore(file) {
+      try {
+        await this[vuex.actions.FILE.RESTORE](file);
+
+        const { form } = this;
+
+        const attachments = [...form.attachments, file.id];
+
+        form.set("attachments", attachments);
+
+        this.activeComplaint.update("attachments", attachments);
+
+        form.set("includes", []);
+
+        await this.$_managable_submitForm(form, [
+          "id",
+          "attachments",
+          "includes"
+        ]);
+      } catch (error) {
+        console.log(error);
       }
     }
   }

@@ -13,6 +13,7 @@ export const USER = {
 
 export const COMPLAINT = {
     FETCH: 'complaintFetch',
+    SHOW: 'complaintShow',
     STORE: 'complaintStore',
     EDIT: 'complaintEdit',
     UPDATE: 'complaintUpdate',
@@ -26,7 +27,9 @@ export const GROUP = {
 
 export const FILE = {
     FETCH: 'fileFetch',
-    DELETE: 'fileDelete'
+    DELETE: 'fileDelete',
+    RESTORE: 'fileRestore',
+    DELETE_BY_PATH: 'fileDeleteByHash'
 };
 
 export const STATUS = {

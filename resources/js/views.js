@@ -4,5 +4,6 @@ export const auth = {
 };
 
 export const complaint = {
-    index: () => import( /* webpackChunkName: "mea-complaint-index" */ './complaint/views/Index')
+    index: () => import( /* webpackChunkName: "mea-complaint-index" */ './complaint/views/Index'),
+    show: () => import( /* webpackChunkName: "mea-complaint-show" */ './complaint/views/Show'),
 };

@@ -217,6 +217,8 @@ class Api extends BaseModel {
         routeParam = {},
         ...props
     } = {}) {
+        console.log(routeName, routeParam);
+
         let url = this.route(routeName, routeParam),
             v;
 

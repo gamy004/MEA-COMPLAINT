@@ -13,6 +13,7 @@ use Illuminate\Support\Arr;
 use App\Contracts\ApiInterface;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 
 class FileApi extends BaseApi implements ApiInterface
@@ -106,15 +107,13 @@ class FileApi extends BaseApi implements ApiInterface
 
     public function destroyByPath($path, $backup = true)
     {
-        $full_path = File::makeFullPath($path);
-
-        if ($backup) {
-            // move file tp backup folder
+        // $full_path = File::makeFullPath($path);
+        
+        if (Storage::exists($path)) {
+            $deleted = Storage::delete($path);
         }
 
-        if (Storage::exists($full_path)) {
-            return Storage::delete($full_path);
-        }
+        return compact('deleted');
     }
 
     private function parseGeneralFields($record, $raw)

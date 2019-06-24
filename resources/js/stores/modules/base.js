@@ -52,7 +52,6 @@ export default {
             try {
                 response = await requestModel[requestAction](params);
             } catch (error) {
-                console.log(error);
                 throw error;
             }
 

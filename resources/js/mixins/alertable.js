@@ -108,7 +108,15 @@ const alertable = {
         },
 
         $_alertable_action_color() {
-            return this.$_alertable_matchedType ? "white" : "indigo lighten-3";
+            const messageType = this.alertableMessages[this.alertableType];
+
+            let actionColor = this.$_alertable_matchedType ? "white" : "indigo lighten-3";
+
+            if (messageType && messageType.color) {
+                actionColor = messageType.color;
+            }
+
+            return actionColor;
         }
     },
 

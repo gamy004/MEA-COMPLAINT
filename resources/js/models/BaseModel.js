@@ -92,20 +92,22 @@ class BaseModel {
         };
 
         for (let attribute in this.$data) {
-            Object.defineProperty(this, attribute, {
-                enumerable: true,
-                configurable: true,
+            if (!this[attribute]) {
+                Object.defineProperty(this, attribute, {
+                    enumerable: true,
+                    configurable: true,
 
-                get() {
-                    return this.$data[attribute];
-                },
+                    get() {
+                        return this.$data[attribute];
+                    },
 
-                set(v) {
-                    this.set(attribute, v);
+                    set(v) {
+                        this.set(attribute, v);
 
-                    return this;
-                }
-            });
+                        return this;
+                    }
+                });
+            }
         }
 
         return this;

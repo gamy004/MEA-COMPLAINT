@@ -1,7 +1,7 @@
 <template>
   <div class="message-alert__wrapper" :class="$_alertable_classes">
     <v-alert
-      transition="slide-x-reverse-transition"
+      :transition="transitionName"
       :value="alert"
       :type="$_alertable_context"
       :color="$_alertable_color"
@@ -19,7 +19,7 @@
               small
               flat
               :color="$_alertable_action_color"
-              @click.stop.prevent="action.handler(alertableProps)"
+              @click.stop.prevent="onActionClicked(action)"
             >{{ action.text }}</v-btn>
           </template>
         </v-layout>
@@ -34,6 +34,14 @@ import alertable from "../mixins/alertable";
 export default {
   mixins: [alertable],
 
+  computed: {
+    transitionName() {
+      return this.alertablePosition.includes("left")
+        ? "slide-x-transition"
+        : "slide-x-reverse-transition";
+    }
+  },
+
   methods: {
     onMouseOver(event) {
       clearTimeout(this.alertable_timer);
@@ -41,6 +49,12 @@ export default {
 
     onMouseLeave(event) {
       this.$_alertable_updateTimer();
+    },
+
+    onActionClicked(action) {
+      action.handler(this.alertableProps);
+
+      this.alert = false;
     }
   }
 };

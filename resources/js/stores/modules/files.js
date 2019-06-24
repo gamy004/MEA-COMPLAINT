@@ -47,6 +47,40 @@ const FileStore = {
                 throw error;
             }
         },
+
+        async [vuex.actions.FILE.DELETE_BY_PATH](context, {
+            upload_path
+        }) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'FILE',
+                    action: 'DELETE_BY_PATH',
+                    params: {
+                        upload_path
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        async [vuex.actions.FILE.RESTORE](context, {
+            id: file
+        }) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'FILE',
+                    action: 'RESTORE',
+                    params: {
+                        routeParam: {
+                            file
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
         // async [vuex.actions.COMPLAINT.FETCH]({
         //     state,
         //     commit

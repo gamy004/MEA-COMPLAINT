@@ -39,8 +39,11 @@ export default {
         gif: "gif",
         "7z": "mdi-zip-box",
         rar: "mdi-zip-box",
+        "application/rar": "mdi-zip-box",
         zip: "mdi-zip-box",
-        exe: "mdi-apps-box"
+        "application/zip": "mdi-zip-box",
+        exe: "mdi-apps-box",
+        "application/x-dosexec": "mdi-apps-box"
       },
 
       colors: {
@@ -66,8 +69,11 @@ export default {
         gif: "accent",
         "7z": "amber darken-1",
         rar: "amber darken-1",
+        "application/rar": "amber darken-1",
         zip: "amber darken-1",
-        exe: "grey darken-2"
+        "application/zip": "amber darken-1",
+        exe: "info",
+        "application/x-dosexec": "info"
       }
     };
   },

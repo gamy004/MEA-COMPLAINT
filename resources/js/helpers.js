@@ -44,6 +44,12 @@ export function formatShortDateTime(date, {
     return date.format('MMM D');
 }
 
+export function formatLongDateTime(date) {
+    date = moment(date);
+
+    return date.format('MMM D, Y, h:mm A');
+}
+
 export function getCorrectTextColor(hex) {
     /*
     Reference: https://codepen.io/davidhalford/pen/ywEva
@@ -98,4 +104,28 @@ export function mapTextValue(data, text, value) {
         text: x[text],
         value: x[value]
     }));
+}
+
+export function hasRootModule(store, moduleName) {
+    return store._modules.root._children[moduleName] !== undefined;
+}
+
+export function registerModules(store, modules = {}) {
+    for (const key in modules) {
+        if (modules.hasOwnProperty(key)) {
+            const mod = modules[key];
+
+            if (!hasRootModule(store, key)) {
+                store.registerModule(key, mod);
+            }
+        }
+    }
+}
+
+export function unregisterModules(store, modules = []) {
+    modules.forEach(mod => {
+        if (hasRootModule(store, mod)) {
+            store.unregisterModule(mod);
+        }
+    })
 }

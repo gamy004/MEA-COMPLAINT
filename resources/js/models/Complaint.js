@@ -4,7 +4,8 @@ import {
     modules
 } from '../constants';
 import {
-    formatShortDateTime
+    formatShortDateTime,
+    formatLongDateTime
 } from '../helpers'
 
 class Complaint extends BaseVuexModel {
@@ -29,6 +30,21 @@ class Complaint extends BaseVuexModel {
             response = await api.get('api:issues.index', {
                 pagination,
                 includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload']
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
+    static async [actions.COMPLAINT.SHOW](data) {
+        let response;
+
+        try {
+            response = await api.get('api:issues.show', {
+                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload'],
+                ...data,
             });
         } catch (error) {
             throw error;
@@ -111,19 +127,36 @@ class Complaint extends BaseVuexModel {
         return response;
     }
 
-    get topic() {
+    get title() {
         let {
-            subject = null, description = null
+            subject = null
         } = this;
 
-        subject = !_.isNull(subject) ? subject : "(no subject)";
+        return !_.isNull(subject) ? subject : "(no subject)";
+    }
 
-        let topic = `<strong style="color:#333;">${subject}</strong>`;
+    get stripContent() {
+        let {
+            description = null
+        } = this;
 
         if (!_.isNull(description)) {
             description = description.replace(/(<([^>]+)>)/ig, "");
+        }
 
-            topic += `&nbsp;-&nbsp;<span>${description}</span>`;
+        return description;
+    }
+
+    get topic() {
+        let {
+            title,
+            stripContent
+        } = this;
+
+        let topic = `<strong style="color:#333;">${title}</strong>`;
+
+        if (stripContent) {
+            topic += `&nbsp;-&nbsp;<span>${stripContent}</span>`;
         }
 
         return topic;
@@ -131,6 +164,10 @@ class Complaint extends BaseVuexModel {
 
     get shortUpdatedAt() {
         return formatShortDateTime(this.updated_at);
+    }
+
+    get longUpdatedAt() {
+        return formatLongDateTime(this.updated_at);
     }
 
     get joinedRecipientName() {
@@ -164,7 +201,9 @@ class Complaint extends BaseVuexModel {
                 `${vuex.modules.STATUS}/${vuex.getters.BY_KEY}`
             ](status);
 
-            currentStatus = currentStatus.status;
+            if (currentStatus) {
+                currentStatus = currentStatus.status;
+            }
         }
 
         return currentStatus;

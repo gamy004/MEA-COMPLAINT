@@ -39,6 +39,34 @@ class File extends BaseVuexModel {
 
         return response;
     }
+
+    static async [actions.FILE.RESTORE](data) {
+        let response;
+
+        try {
+            response = await api.post('api:files.restore', {
+                ...data
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
+    static async [actions.FILE.DELETE_BY_PATH](data) {
+        let response;
+
+        try {
+            response = await api.post('api:files.destroy-by-path', {
+                ...data
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
 }
 
 export default File;

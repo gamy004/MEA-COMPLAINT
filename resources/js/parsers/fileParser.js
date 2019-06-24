@@ -36,6 +36,28 @@ function parseFetch(context, {
     );
 };
 
+function parseStore(context, {
+    files: file
+} = {}) {
+
+    const {
+        vuex,
+        rootGetters
+    } = context;
+
+    const files = [file];
+
+    console.log(files);
+
+    parseFetch(context, {
+        files,
+        total: rootGetters[
+            `${vuex.modules.FILE}/${vuex.getters.GET_STATE}`
+        ]('totalItems') + files.length,
+        strategy: 'merge'
+    });
+};
+
 function parseDelete(context, {
     id
 } = {}) {
@@ -55,5 +77,6 @@ function parseDelete(context, {
 
 export default {
     [actions.FILE.FETCH]: parseFetch,
+    [actions.FILE.RESTORE]: parseStore,
     [actions.FILE.DELETE]: parseDelete
 }

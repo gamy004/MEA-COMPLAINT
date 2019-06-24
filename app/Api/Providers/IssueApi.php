@@ -96,9 +96,11 @@ class IssueApi extends BaseApi implements ApiInterface
 
             $this->syncRecipients($issue, $raw);
 
-            $this->setHasFileRelation('attachments')
+            $uploaded_file_ids = $this->setHasFileRelation('attachments')
                 ->setHasFileRootDirectory('issues/')
                 ->parseUploadedFiles($issue, $raw);
+
+            $this->syncAttachments($issue, $raw, $uploaded_file_ids);
 
             DB::commit();
 
@@ -123,14 +125,14 @@ class IssueApi extends BaseApi implements ApiInterface
             if (count($record)) {
                 $issue->update($record);
             }
-            
-            $this->syncAttachments($issue, $raw);
 
             $this->syncRecipients($issue, $raw);
-            // add uploaded files to attachments and sync!!! <=== tomorrow!!!
-            $this->setHasFileRelation('attachments')
+            
+            $uploaded_file_ids = $this->setHasFileRelation('attachments')
                 ->setHasFileRootDirectory('issues/')
                 ->parseUploadedFiles($issue, $raw);
+
+            $this->syncAttachments($issue, $raw, $uploaded_file_ids);
 
             DB::commit();
         } catch (Exception $exception) {
@@ -171,14 +173,17 @@ class IssueApi extends BaseApi implements ApiInterface
         return false;
     }
 
-    private function syncAttachments(Issue $issue, $raw)
+    private function syncAttachments(Issue $issue, $raw, array $uploaded_file_ids = [])
     {
         if (isset($raw[Data::ATTACHMENTS])) {
             $attachment_ids = $raw[Data::ATTACHMENTS];
 
-            $result = $issue->attachments()->sync($attachment_ids);
+            $result = $issue->attachments()->sync(array_merge(
+                $attachment_ids,
+                $uploaded_file_ids
+            ));
 
-            $this->syncFiles($result);
+            $this->parseSyncResult($result);
         }
 
         return false;

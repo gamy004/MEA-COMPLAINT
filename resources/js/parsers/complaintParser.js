@@ -54,6 +54,7 @@ function parseEdit(context, {
 
     const {
         rootCommit,
+        rootGetters,
         vuex,
         models,
         parsers
@@ -71,12 +72,20 @@ function parseEdit(context, {
         files
     });
 
+    const oldComplaint = rootGetters[
+        `${vuex.modules.COMPLAINT}/${vuex.getters.BY_KEY}`
+    ](issue.id) || {};
+
+    const updatedCompaint = _.merge({
+        ...oldComplaint.data
+    }, issue);
+
     rootCommit(
         vuex.mutations.UPDATE,
         vuex.modules.COMPLAINT, {
             key: issue.id,
             value: new models.COMPLAINT({
-                ...issue,
+                ...updatedCompaint,
                 context
             })
         }
@@ -84,9 +93,9 @@ function parseEdit(context, {
 };
 
 function parseStore(context, {
-    issues,
-    recipients: groups = [],
-    status: statuses = []
+    issues: issue,
+    recipients,
+    status
 } = {}) {
 
     const {
@@ -94,12 +103,12 @@ function parseStore(context, {
         rootGetters
     } = context;
 
-    issues = [issues];
+    const issues = [issue];
 
     parseFetch(context, {
         issues,
-        groups,
-        statuses,
+        recipients,
+        status,
         total: rootGetters[
             `${vuex.modules.COMPLAINT}/${vuex.getters.GET_STATE}`
         ]('totalItems') + issues.length,
@@ -126,6 +135,7 @@ function parseDelete(context, {
 
 export default {
     [actions.COMPLAINT.FETCH]: parseFetch,
+    [actions.COMPLAINT.SHOW]: parseStore,
     [actions.COMPLAINT.EDIT]: parseEdit,
     [actions.COMPLAINT.UPDATE]: parseEdit,
     [actions.COMPLAINT.STORE]: parseStore,

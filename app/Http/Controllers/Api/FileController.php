@@ -85,6 +85,17 @@ class FileController extends BaseApiController
     }
 
     /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\File  $file
+     * @return \Illuminate\Http\Response
+     */
+    public function restore($file)
+    {
+        return $this->api->restore($file);
+    }
+
+    /**
      * Response download the specified resource.
      *
      * @param  \App\File  $file
@@ -130,7 +141,7 @@ class FileController extends BaseApiController
     public function destroyByPath(Request $request)
     {
         $upload_path = $request->upload_path;
-
+        
         return $this->api->destroyByPath($upload_path);
     }
 }

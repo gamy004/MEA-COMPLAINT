@@ -1,85 +1,6 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <!-- <v-toolbar id="complaintToolbar" tabs dense class="elevation-0">
-        <template v-for="(item, i) in items">
-          <v-checkbox
-            v-if="item.select"
-            :key="i"
-            v-model="item.selected"
-            class="shrink"
-            :color="getColor(item)"
-            :indeterminate="item.indeterminate(item)"
-            hide-details
-            @change="onEmit('onChange', $event, item, i)"
-          ><span v-if="item.text" v-html="item.text"></span></v-checkbox>
-
-          <v-menu
-            v-else-if="item.menu"
-            :key="i"
-            :open-on-hover="item.hover"
-            min-width="200"
-            offset-y
-          >
-            <template v-slot:activator="{ on }">
-              <v-icon v-if="hasIcon(item)" v-text="item.icon" :class="getClasses(item)" v-on="on"></v-icon>
-
-              <v-btn v-else-if="item.customActivator" flat :class="getClasses(item)" v-on="on">
-                <div class="caption text-lowercase" v-html="item.customActivator()"></div>
-              </v-btn>
-
-              <div v-else v-html="item.text" :class="getClasses(item)" v-on="on"></div>
-            </template>
-
-            <v-list v-if="item.menuItems" dense>
-              <v-list-tile
-                v-for="(menuItem, menuIndex) in item.menuItems"
-                :key="`menuItem-${i}--${menuIndex}`"
-                :disabled="getDisabledAttribute(menuItem)"
-                @click="onEmit('onClick', $event, menuItem, i, menuIndex)"
-              >
-                <v-list-tile-title class="pl-4">{{ menuItem.text }}</v-list-tile-title>
-              </v-list-tile>
-            </v-list>
-          </v-menu>
-
-          <v-spacer v-else-if="item.spacer" :key="i"/>
-
-          <v-tooltip v-else-if="item.icon && item.text" :key="i" bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                v-on="on"
-                icon
-                small
-                :disabled="getDisabledAttribute(item)"
-                @click="onEmit('onClick', $event, item, i)"
-              >
-                <v-icon>{{ item.icon }}</v-icon>
-              </v-btn>
-            </template>
-            <span>{{ item.text }}</span>
-          </v-tooltip>
-
-          <v-btn v-else-if="item.icon" :key="i" icon small>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-btn>
-
-          <span v-else :key="i" v-text="item.text"></span>
-        </template>
-
-        <template v-slot:extension>
-          <v-tabs v-model="tab" v-if="showTab" slider-color="deep-orange">
-            <v-tab
-              v-for="(tab, tabIndex) in tabs"
-              :key="`tab-${tabIndex}`"
-              :href="`#tab-${tabIndex}`"
-            >
-              <v-icon v-if="tab.icon">{{ tab.icon }}</v-icon>
-              <span v-if="tab.text" class="ml-3">{{ tab.text }}</span>
-            </v-tab>
-          </v-tabs>
-        </template>
-      </v-toolbar>-->
       <custom-toolbar id="complaintToolbar" :items="items">
         <template v-slot:extension>
           <v-tabs v-model="tab" v-if="showTab" slider-color="deep-orange">
@@ -119,14 +40,15 @@
 import ComplaintList from "../components/ComplaintList";
 import CustomToolbar from "../../components/CustomToolbar";
 import ComplaintForm from "../components/ComplaintForm";
-import { vuex } from "../../mixins/vuexable";
-import paginatable from "../../mixins/paginatable";
-import complaintModule from "../../stores/modules/complaints";
-import groupModule from "../../stores/modules/groups";
-import statusModule from "../../stores/modules/statuses";
-import issueCategoryModule from "../../stores/modules/issue-categories";
+// import { vuex } from "../../mixins/vuexable";
+import complaintMixin from "../../mixins/complaint-mixin";
+import { onEmit } from "../../helpers";
+// import complaintModule from "../../stores/modules/complaints";
+// import groupModule from "../../stores/modules/groups";
+// import statusModule from "../../stores/modules/statuses";
+// import issueCategoryModule from "../../stores/modules/issue-categories";
 export default {
-  mixins: [paginatable],
+  mixins: [complaintMixin],
 
   components: {
     ComplaintList,
@@ -136,7 +58,6 @@ export default {
 
   data() {
     return {
-      vuex,
       items: [
         {
           select: true,
@@ -192,7 +113,7 @@ export default {
         {
           menu: true,
           hover: true,
-          customActivator: () => {
+          html: () => {
             return this.$_paginatable_currentPageRange;
           },
           menuItems: [
@@ -259,7 +180,7 @@ export default {
 
     $_paginatable_currentPaginatedList(paginatedList) {
       this.items.forEach((item, index) => {
-        this.onEmit("onPaginatedListChange", paginatedList, item, index);
+        onEmit("onPaginatedListChange", paginatedList, item, index);
       });
     }
 
@@ -276,71 +197,10 @@ export default {
     // }
   },
 
-  computed: {
-    $_paginatable_module() {
-      return vuex.modules.COMPLAINT;
-    },
-
-    complaintDialog() {
-      return this.$_vuexable_getState("dialog", vuex.modules.COMPLAINT);
-    },
-
-    activeComplaintId() {
-      return this.$_vuexable_getState("active", vuex.modules.COMPLAINT);
-    },
-
-    hasActiveComplaint() {
-      return !_.isNull(this.activeComplaintId);
-    },
-
-    complaintRouteParam() {
-      return this.hasActiveComplaint ? { issue: this.activeComplaintId } : {};
-    }
-  },
-
   methods: {
     isTabActive(key) {
       return this.tab === key;
-    },
-
-    // getColor({ color = "accent" }) {
-    //   return color;
-    // },
-
-    // hasIcon({ icon = "" } = {}) {
-    //   return icon.length !== 0;
-    // },
-
-    // getClasses({ classes = {} } = {}) {
-    //   return classes;
-    // },
-
-    // getDisabledAttribute(item) {
-    //   return item.disabled ? item.disabled() : false;
-    // },
-
-    onEmit(eventName, $event, item, ...indexes) {
-      return item[eventName]
-        ? item[eventName]($event, item, indexes)
-        : () => ({});
     }
-  },
-
-  beforeCreate() {
-    this.$store.registerModule(vuex.modules.COMPLAINT, complaintModule);
-    this.$store.registerModule(vuex.modules.GROUP, groupModule);
-    this.$store.registerModule(vuex.modules.STATUS, statusModule);
-    this.$store.registerModule(
-      vuex.modules.COMPLAINT_CATEGORY,
-      issueCategoryModule
-    );
-  },
-
-  beforeDestroy() {
-    this.$store.unregisterModule(vuex.modules.COMPLAINT);
-    this.$store.unregisterModule(vuex.modules.GROUP);
-    this.$store.unregisterModule(vuex.modules.STATUS);
-    this.$store.unregisterModule(vuex.modules.COMPLAINT_CATEGORY);
   }
 };
 </script>

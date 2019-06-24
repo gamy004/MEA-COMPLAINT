@@ -30,10 +30,11 @@ trait HasFile
 
     private function parseUploadedFiles(Model $model, array $raw)
     {
+        $uploaded_file_ids = [];
+
         if (isset($raw[Data::UPLOADED_FILES])) {
             $fileMaker = app(FileMaker::class);
             $uploaded_files = $raw[Data::UPLOADED_FILES];
-            $uploaded_file_ids = [];
 
             foreach ($uploaded_files as $uploaded_file_key => $uploaded_file) {
                 $file = $fileMaker->makeFromUpload(
@@ -45,12 +46,12 @@ trait HasFile
                 $uploaded_file_ids[$uploaded_file_key] = $file->{DBCol::ID};
             }
 
-            if (count($uploaded_file_ids)) {
-                return $model->{$this->hasfile_relation}()->sync($uploaded_file_ids);
-            }
+            // if (count($uploaded_file_ids)) {
+            //     return $model->{$this->hasfile_relation}()->attach($uploaded_file_ids);
+            // }
         }
 
-        return false;
+        return $uploaded_file_ids;
     }
 
     private function uploadedFilesRules()
@@ -65,7 +66,7 @@ trait HasFile
         ];
     }
 
-    private function syncFiles($result)
+    private function parseSyncResult($result)
     {
         if (isset($result[Data::DETACHED])
             && count($result[Data::DETACHED])

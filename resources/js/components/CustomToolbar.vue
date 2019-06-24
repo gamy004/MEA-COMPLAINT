@@ -18,8 +18,14 @@
         <template v-slot:activator="{ on }">
           <v-icon v-if="hasIcon(item)" v-text="item.icon" :class="getClasses(item)" v-on="on"></v-icon>
 
-          <v-btn v-else-if="item.customActivator" flat :class="getClasses(item)" v-on="on">
-            <div class="caption text-lowercase" v-html="item.customActivator()"></div>
+          <v-btn v-else-if="item.html || item.component" flat :class="getClasses(item)" v-on="on">
+            <div v-if="item.html" class="caption text-lowercase" v-html="item.html()"></div>
+
+            <v-compoment
+              v-else-if="item.component"
+              :is="item.component()"
+              v-bind="item.componentProps ? item.componentProps() : {}"
+            ></v-compoment>
           </v-btn>
 
           <div v-else v-html="item.text" :class="getClasses(item)" v-on="on"></div>
@@ -38,6 +44,8 @@
       </v-menu>
 
       <v-spacer v-else-if="item.spacer" :key="i"/>
+
+      <v-divider v-else-if="item.divider" vertical class="custom-toolbar__divider" :key="i"/>
 
       <v-tooltip
         v-else-if="item.icon && item.text"
@@ -106,3 +114,13 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.custom-toolbar {
+  &__divider {
+    min-height: 45%;
+    max-height: 45%;
+    align-self: center;
+  }
+}
+</style>

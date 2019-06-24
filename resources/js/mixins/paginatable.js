@@ -111,11 +111,6 @@ export const paginatable = {
                 return descending;
             },
             set(value) {
-                console.log({
-                    key: 'descending',
-                    value
-                });
-
                 this.$_vuexable_updatePagination({
                     key: 'descending',
                     value

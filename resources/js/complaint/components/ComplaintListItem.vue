@@ -4,6 +4,7 @@
       slot-scope="{ hover }"
       class="complaint-list__item clickable"
       :class="getItemCLasses(hover)"
+      @click.prevent.stop="onClick"
     >
       <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
         <v-avatar color="indigo accent-3" size="10" class="status-indicator"></v-avatar>
@@ -11,12 +12,14 @@
 
       <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
         <!-- action selected -->
-        <v-checkbox v-model="itemSelected" color="deep-orange" hide-details></v-checkbox>
+        <div @click.prevent.stop>
+          <v-checkbox v-model="itemSelected" color="deep-orange" hide-details></v-checkbox>
+        </div>
       </v-list-tile-action>
 
       <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
         <!-- action starred -->
-        <v-btn icon @click="item.markStarred()">
+        <v-btn icon @click.prevent.stop="item.markStarred()">
           <v-icon
             :color="item.starred ? 'deep-orange' : 'grey lignten-2'"
           >{{ item.starred ? 'star' : 'star_border' }}</v-icon>
@@ -112,6 +115,7 @@
 
 <script>
 import { vuex, vuexable } from "../../mixins/vuexable";
+import { views } from "../../constants";
 
 export default {
   props: {
@@ -160,6 +164,15 @@ export default {
 
     onDeleteItem() {
       this.$emit("delete", this.item);
+    },
+
+    onClick() {
+      this.$router.push({
+        name: views.COMPLAINT.SHOW,
+        params: {
+          issue: this.item.id
+        }
+      });
     }
   }
 };

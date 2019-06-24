@@ -32,8 +32,11 @@ Route::group([
         )->name('files.download')->middleware('signed');
 
         Route::middleware(['auth'])->group(function () {
+            Route::post('files/destroy-by-path', 'FileController@destroyByPath')->name('files.destroy-by-path');
+
             Route::group(['as' => 'files.', 'prefix' => 'files'], function () {
                 Route::get('/{hash}/generate-link', 'FileController@generateLink')->name('generate-link');
+                Route::post('/{file}/restore', 'FileController@restore')->name('restore');
                 Route::post('/upload', 'FileController@upload')->name('upload');
             });
             /**

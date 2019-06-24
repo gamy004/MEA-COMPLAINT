@@ -50,7 +50,7 @@ class IssueController extends BaseApiController
      */
     public function show(Issue $issue)
     {
-        //
+        return $this->api->find($issue->{DBCol::ID});
     }
 
     /**
