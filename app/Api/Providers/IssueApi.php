@@ -154,7 +154,8 @@ class IssueApi extends BaseApi implements ApiInterface
                 [
                     DBCol::SUBJECT,
                     DBCol::DESCRIPTION,
-                    IssueCategory::FK
+                    IssueCategory::FK,
+                    IssueStatus::FK
                 ]
             )
         );

@@ -193,13 +193,13 @@ class Complaint extends BaseVuexModel {
             vuex,
             rootGetters
         } = this.$context, {
-            status = null
+            issue_status_id = null
         } = this;
 
-        if (status) {
+        if (issue_status_id) {
             currentStatus = rootGetters[
-                `${vuex.modules.STATUS}/${vuex.getters.BY_KEY}`
-            ](status);
+                `${vuex.modules.ISSUE_STATUS}/${vuex.getters.BY_KEY}`
+            ](issue_status_id);
 
             if (currentStatus) {
                 currentStatus = currentStatus.status;

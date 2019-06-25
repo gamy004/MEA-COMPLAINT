@@ -5,7 +5,7 @@ import {
 import paginatable from "./paginatable";
 import complaintModule from "../stores/modules/complaints";
 import groupModule from "../stores/modules/groups";
-import statusModule from "../stores/modules/statuses";
+import statusModule from "../stores/modules/issue-statuses";
 import issueCategoryModule from "../stores/modules/issue-categories";
 import {
     registerModules,
@@ -92,7 +92,7 @@ const complaintMixin = {
         registerModules(this.$store, {
             [vuex.modules.COMPLAINT]: complaintModule,
             [vuex.modules.GROUP]: groupModule,
-            [vuex.modules.STATUS]: statusModule,
+            [vuex.modules.ISSUE_STATUS]: statusModule,
             [vuex.modules.COMPLAINT_CATEGORY]: issueCategoryModule
         });
     },
@@ -105,7 +105,7 @@ const complaintMixin = {
     //     unregisterModules(this.$store, [
     //         vuex.modules.COMPLAINT,
     //         vuex.modules.GROUP,
-    //         vuex.modules.STATUS,
+    //         vuex.modules.ISSUE_STATUS,
     //         vuex.modules.COMPLAINT_CATEGORY
     //     ]);
     // }

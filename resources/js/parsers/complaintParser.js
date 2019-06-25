@@ -5,7 +5,8 @@ import {
 function parseFetch(context, {
     issues = [],
     recipients: groups = [],
-    status: statuses = [],
+    status: issue_statuses = [],
+    attachments: files = [],
     total = 0,
     strategy = 'replace'
 } = {}) {
@@ -21,8 +22,12 @@ function parseFetch(context, {
         groups
     });
 
-    parsers.STATUS[vuex.actions.STATUS.FETCH](context, {
-        statuses
+    parsers.ISSUE_STATUS[vuex.actions.ISSUE_STATUS.FETCH](context, {
+        issue_statuses
+    });
+
+    parsers.FILE[vuex.actions.FILE.FETCH](context, {
+        files
     });
 
     rootCommit(
@@ -48,7 +53,7 @@ function parseFetch(context, {
 function parseEdit(context, {
     issues: issue,
     recipients: groups = [],
-    status: statuses = [],
+    status: issue_statuses = [],
     attachments: files = []
 } = {}) {
 
@@ -64,8 +69,8 @@ function parseEdit(context, {
         groups
     });
 
-    parsers.STATUS[vuex.actions.STATUS.FETCH](context, {
-        statuses
+    parsers.ISSUE_STATUS[vuex.actions.ISSUE_STATUS.FETCH](context, {
+        issue_statuses
     });
 
     parsers.FILE[vuex.actions.FILE.FETCH](context, {
@@ -94,8 +99,9 @@ function parseEdit(context, {
 
 function parseStore(context, {
     issues: issue,
-    recipients,
-    status
+    recipients = [],
+    status = [],
+    attachments = []
 } = {}) {
 
     const {
@@ -109,6 +115,7 @@ function parseStore(context, {
         issues,
         recipients,
         status,
+        attachments,
         total: rootGetters[
             `${vuex.modules.COMPLAINT}/${vuex.getters.GET_STATE}`
         ]('totalItems') + issues.length,

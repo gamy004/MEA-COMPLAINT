@@ -18,6 +18,17 @@ const complaintItemMixin = {
                 this.issueId,
                 vuex.modules.COMPLAINT
             )
+        },
+
+        complaintAttachments() {
+            return this.complaint ? this.$_vuexable_getByKeys(
+                this.complaint.attachments,
+                vuex.modules.FILE
+            ) : [];
+        },
+
+        hasAttachments() {
+            return this.complaint ? this.complaint.attachments.length : false;
         }
     }
 }

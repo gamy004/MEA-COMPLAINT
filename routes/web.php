@@ -49,6 +49,7 @@ Route::group([
             Route::resources([
                 'issues' => 'IssueController',
                 'groups' => 'GroupController',
+                'issue-statuses' => 'IssueStatusController',
                 'issue-categories' => 'IssueCategoryController',
                 'files' => 'FileController'
             ]);

@@ -18,7 +18,13 @@
         <template v-slot:activator="{ on }">
           <v-icon v-if="hasIcon(item)" v-text="item.icon" :class="getClasses(item)" v-on="on"></v-icon>
 
-          <v-btn v-else-if="item.html || item.component" flat :class="getClasses(item)" v-on="on">
+          <v-btn
+            v-else-if="item.html || item.component"
+            flat
+            :class="getClasses(item)"
+            v-on="on"
+            @click.prevent.stop="item.onClick ? item.onClick($event, item, i) : () => {}"
+          >
             <div v-if="item.html" class="caption text-lowercase" v-html="item.html()"></div>
 
             <v-compoment

@@ -128,6 +128,13 @@ export const vuexable = {
             );
         },
 
+        $_vuexable_getSortedValues(module = '') {
+            return this.$_vuexable_getter(
+                getters.SORTED_VALUES,
+                module
+            );
+        },
+
         // $_vuexable_shouldUpdatePagination({
         //   descending: newDescending,
         //   page: newPage,

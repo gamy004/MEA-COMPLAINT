@@ -32,8 +32,8 @@ export const FILE = {
     DELETE_BY_PATH: 'fileDeleteByHash'
 };
 
-export const STATUS = {
-    FETCH: 'statusFetch'
+export const ISSUE_STATUS = {
+    FETCH: 'issueStatusFetch'
 };
 
 export const COMPLAINT_CATEGORY = {
