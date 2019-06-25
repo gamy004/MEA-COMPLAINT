@@ -1,33 +1,20 @@
 <template>
   <v-sheet elevation="1" class="d-flex" width="180" height="120">
     <v-sheet class="mt-auto d-flex file-sheet__footer py-2" color="grey lighten-3">
-      <file-icon :mime="fileExtension"/>
+      <file-icon :mime="$fileitem_mixin_fileExtension"/>
     </v-sheet>
   </v-sheet>
 </template>
 
 <script>
-import filemixin from "../mixins/filemixin";
+import fileItemMixin from "../mixins/file-item-mixin";
 import FileIcon from "./FileIcon";
 
 export default {
-  mixins: [filemixin],
-
-  props: {
-    file: {
-      type: Object,
-      required: true
-    }
-  },
+  mixins: [fileItemMixin],
 
   components: {
     FileIcon
-  },
-
-  computed: {
-    fileExtension() {
-      return this.$_filemixin_getExtension(this.file);
-    }
   }
 };
 </script>

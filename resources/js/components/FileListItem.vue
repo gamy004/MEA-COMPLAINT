@@ -1,32 +1,36 @@
 <template>
   <v-layout px-2 mb-1 align-center>
-    <file-icon :mime="fileExtension"/>
+    <file-icon :mime="$fileitem_mixin_fileExtension"/>
     <v-tooltip top>
       <template v-slot:activator="{ on }">
         <a
           :href="file.url"
           class="body-2 ml-2 editor__filename text-truncate"
           v-on="on"
-        >{{ displayName }}</a>
+        >{{ $fileitem_mixin_displayName }}</a>
       </template>
-      <span>{{ displayName }}</span>
+      <span>{{ $fileitem_mixin_displayName }}</span>
     </v-tooltip>
-    <span class="body-1 ml-2 text-no-wrap">{{ fileFormattedFilesize }}</span>
+    <span class="body-1 ml-2 text-no-wrap">{{ $fileitem_mixin_fileFormattedFilesize }}</span>
     <v-spacer></v-spacer>
-    <span v-if="showProcessing" class="body-2">processing</span>
-    <v-progress-linear v-if="showProgress" class="mx-2 editor__progress" v-model="uploadPercent"></v-progress-linear>
-    <v-btn icon small @click="remove">
+    <span v-if="$fileitem_mixin_showProcessing" class="body-2">processing</span>
+    <v-progress-linear
+      v-if="$fileitem_mixin_showProgress"
+      class="mx-2 editor__progress"
+      v-model="$fileitem_mixin_uploadPercent"
+    ></v-progress-linear>
+    <v-btn icon small @click="$fileitem_mixin_removeFile">
       <v-icon small>close</v-icon>
     </v-btn>
   </v-layout>
 </template>
 
 <script>
-import filemixin from "../mixins/filemixin";
+import fileItemMixin from "../mixins/file-item-mixin";
 import FileIcon from "./FileIcon";
 
 export default {
-  mixins: [filemixin],
+  mixins: [fileItemMixin],
 
   props: {
     file: {
