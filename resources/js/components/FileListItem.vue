@@ -5,6 +5,7 @@
       <template v-slot:activator="{ on }">
         <a
           :href="file.url"
+          target="_blank"
           class="body-2 ml-2 editor__filename text-truncate"
           v-on="on"
         >{{ $fileitem_mixin_displayName }}</a>
