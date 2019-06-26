@@ -17,22 +17,49 @@
         </v-flex>
       </v-layout>
 
-      <v-layout class="content__wrapper" column pl-5>
+      <v-layout v-if="activeComplaint" class="content__wrapper" column pl-5 pr-4>
         <v-flex xs12>
-          <transition name="slide-y-reverse-transition" appear>
+          <transition-group name="slide-y-reverse-transition" appear>
             <complaint-detail-card
               v-if="!$_complaint_mixin_isFetchingShowComplaint"
-              :issue-id="$route.params.issue"
-              class="pr-4"
+              key="complaintDetailCard"
+              :issue-id="activeComplaint.id"
             />
-          </transition>
-        </v-flex>
+          </transition-group>
 
-        <v-flex xs12>
-          <v-btn color="light" @click="showRemarkForm">
-            <v-icon>reply</v-icon>
-            <span>Remark</span>
-          </v-btn>
+          <transition-group name="slide-y-reverse-transition" appear mode="out-in">
+            <v-progress-linear
+              v-if="$_issue_note_mixin_isFetchingNote"
+              key="loadingComplaintNotes"
+              :indeterminate="true"
+              color="deep-orange"></v-progress-linear>
+
+            <template v-else v-for="(note, noteIndex) in $_issue_note_mixin_complaintNotes">
+              <v-divider :key="`divider-note-${noteIndex}`" class="mx-3 mt-3"></v-divider>
+
+              <complaint-note-card
+                :key="`issueNoteCard-${activeComplaint.id}__${note.id}`"
+                :issue-id="activeComplaint.id"
+                :note-id="note.id"
+                :delay="noteIndex * 100"
+                :managable-module="vuex.modules.ISSUE_NOTE"
+                :managable-route-param="$_issue_note_mixin_issueNoteRouteParam"
+                :managable-edit="$_issue_note_mixin_hasActiveIssueNote" />
+            </template>
+
+            <complaint-note-card
+              key="issueNoteCardForm"
+              v-if="$_issue_note_mixin_issueNoteDialog"
+              :issue-id="activeComplaint.id"
+              :managable-module="vuex.modules.ISSUE_NOTE"
+              :managable-route-param="$_issue_note_mixin_issueNoteRouteParam"
+              :managable-edit="$_issue_note_mixin_hasActiveIssueNote" />
+
+            <v-btn key="btnAddRemark" color="light" @click="showRemarkForm" class="mt-3">
+              <v-icon>reply</v-icon>
+              <span>Remark</span>
+            </v-btn>
+          </transition-group>
         </v-flex>
       </v-layout>
       <!-- <v-tabs-items v-model="tab">
@@ -66,26 +93,28 @@
 <script>
 import { vuex } from "../../mixins/vuexable";
 import alertable from "../../mixins/alertable";
+import issueNoteMixin from "../../mixins/issue-note-mixin";
 import CustomToolbar from "../../components/CustomToolbar";
 import MessageAlert from "../../components/MessageAlert";
 import ComplaintForm from "../components/ComplaintForm";
 import complaintMixin from "../../mixins/complaint-mixin";
 import ComplaintStatus from "../components/ComplaintStatus";
 import ComplaintDetailCard from "../components/ComplaintDetailCard";
+import ComplaintNoteCard from "../components/ComplaintNoteCard";
 
 export default {
-  mixins: [alertable, complaintMixin],
+  mixins: [alertable, complaintMixin, issueNoteMixin],
 
   components: {
     CustomToolbar,
     MessageAlert,
     ComplaintForm,
-    ComplaintDetailCard
+    ComplaintDetailCard,
+    ComplaintNoteCard
   },
 
   data() {
     return {
-      remarkDialog:  false,
       alertable_messages: {
         update_status_success: {
           text: "Complaint Status was updated successfully.",
@@ -93,6 +122,20 @@ export default {
         }
       }
     };
+  },
+
+  watch: {
+    activeComplaintId: {
+      immediate: true,
+      async handler(v = null) {
+        if (v) {
+          this[vuex.actions.ISSUE.SHOW](v);
+          this[vuex.actions.ISSUE_NOTE.FETCH]({
+            filters: { issue_id: v }
+          });
+        }
+      }
+    }
   },
 
   computed: {
@@ -193,7 +236,7 @@ export default {
     }),
 
     showRemarkForm() {
-      this.remarkDialog = true;
+      this.$_issue_note_mixin_setDialog(true);
     }
   }
 };

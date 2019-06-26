@@ -97,41 +97,42 @@ class UsersTableSeeder extends Seeder
                                 rand(1, count($other_group_ids))
                             );
 
-                            // $notes = factory(IssueNote::class, 3)
-                            //     ->create([
-                            //         'issue_id' => $issue->id
-                            //     ]);
+                            $notes = factory(IssueNote::class, 3)
+                                ->create([
+                                    'issue_id' => $issue->id,
+                                    'created_by' => head($random_recipients)
+                                ]);
 
                             $issue->recipients()->sync($random_recipients);
 
                             $rand_is_referenced_to = rand(0, 1);
 
-                            if ($rand_is_referenced_to) {
-                                $referenced_to = $issue->id;
-                                $referenced_issued_by = Arr::random($random_recipients);
+                            // if ($rand_is_referenced_to) {
+                            //     $referenced_to = $issue->id;
+                            //     $referenced_issued_by = Arr::random($random_recipients);
 
-                                $referenced_issue = factory(Issue::class)
-                                    ->create([
-                                        'subject' => "Re: ".$issue->subject,
-                                        'issued_by' => $referenced_issued_by,
-                                        'referenced_to' => $referenced_to,
-                                        'issue_status_id' => $issue_status_id,
-                                        'issue_category_id' => $issue_category_id
-                                    ]);
+                            //     $referenced_issue = factory(Issue::class)
+                            //         ->create([
+                            //             'subject' => "Re: ".$issue->subject,
+                            //             'issued_by' => $referenced_issued_by,
+                            //             'referenced_to' => $referenced_to,
+                            //             'issue_status_id' => $issue_status_id,
+                            //             'issue_category_id' => $issue_category_id
+                            //         ]);
 
-                                $referenced_recipients = Arr::except(
-                                    $random_recipients,
-                                    $referenced_issued_by
-                                );
+                            //     $referenced_recipients = Arr::except(
+                            //         $random_recipients,
+                            //         $referenced_issued_by
+                            //     );
 
-                                $result = $referenced_issue->recipients()->sync(array_merge(
-                                    [$issued_by],
-                                    Arr::random(
-                                        $referenced_recipients,
-                                        rand(1, count($referenced_recipients))
-                                    )
-                                ));
-                            }
+                            //     $result = $referenced_issue->recipients()->sync(array_merge(
+                            //         [$issued_by],
+                            //         Arr::random(
+                            //             $referenced_recipients,
+                            //             rand(1, count($referenced_recipients))
+                            //         )
+                            //     ));
+                            // }
                         }
                     }
                 }

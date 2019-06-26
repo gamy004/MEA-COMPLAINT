@@ -3,10 +3,6 @@ import {
     actions,
     modules
 } from '../constants';
-import {
-    formatShortDateTime,
-    formatLongDateTime
-} from '../helpers'
 
 class Complaint extends BaseVuexModel {
     constructor(data) {
@@ -16,6 +12,7 @@ class Complaint extends BaseVuexModel {
             issued_by: null,
             referenced_to: null,
             issue_status_id: null,
+            issue_category_id: null,
             starred: false,
             ...data
         });
@@ -33,7 +30,8 @@ class Complaint extends BaseVuexModel {
                     'recipients:sideload',
                     'status:sideload',
                     'attachments:sideload',
-                    'category:sideload'
+                    'category:sideload',
+                    // 'notes:ids'
                 ]
             });
         } catch (error) {
@@ -48,8 +46,13 @@ class Complaint extends BaseVuexModel {
 
         try {
             response = await api.get('api:issues.show', {
-                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload',
-                'category:sideload'],
+                includes: [
+                    'recipients:sideload',
+                    'status:sideload',
+                    'attachments:sideload',
+                    'category:sideload',
+                    'notes:ids'
+                ],
                 ...data,
             });
         } catch (error) {
@@ -64,8 +67,13 @@ class Complaint extends BaseVuexModel {
 
         try {
             response = await api.get('api:issues.edit', {
-                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload',,
-                'category:sideload'],
+                includes: [
+                    'recipients:sideload',
+                    'status:sideload',
+                    'attachments:sideload',,
+                    'category:sideload',
+                    // 'notes:ids'
+                ],
                 ...data,
             });
         } catch (error) {
@@ -80,8 +88,13 @@ class Complaint extends BaseVuexModel {
 
         try {
             response = await api.post('api:issues.store', {
-                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload',
-                'category:sideload'],
+                includes: [
+                    'recipients:sideload',
+                    'status:sideload',
+                    'attachments:sideload',
+                    'category:sideload',
+                    // 'notes:ids'
+                ],
                 ...data,
             });
         } catch (error) {
@@ -96,8 +109,13 @@ class Complaint extends BaseVuexModel {
 
         try {
             response = await api.put('api:issues.update', {
-                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload',
-                'category:sideload'],
+                includes: [
+                    'recipients:sideload',
+                    'status:sideload',
+                    'attachments:sideload',
+                    'category:sideload',
+                    // 'notes:ids'
+                ],
                 ...data,
             });
         } catch (error) {
@@ -169,14 +187,6 @@ class Complaint extends BaseVuexModel {
         }
 
         return topic;
-    }
-
-    get shortUpdatedAt() {
-        return formatShortDateTime(this.updated_at);
-    }
-
-    get longUpdatedAt() {
-        return formatLongDateTime(this.updated_at);
     }
 
     get joinedRecipientName() {

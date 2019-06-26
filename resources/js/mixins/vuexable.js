@@ -41,8 +41,8 @@ export const vuexable = {
             return this.$_vuexable_getter(getters.BY_KEY, module, key);
         },
 
-        $_vuexable_getByKeys(key, module = '') {
-            return this.$_vuexable_getter(getters.BY_KEYS, module, key);
+        $_vuexable_getByKeys(keys, module = '') {
+            return this.$_vuexable_getter(getters.BY_KEYS, module, keys);
         },
 
         $_vuexable_getMapping(mapModule, {

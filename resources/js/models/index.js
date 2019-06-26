@@ -4,6 +4,7 @@ import GROUP from './Group';
 import ISSUE_STATUS from './IssueStatus';
 import FORM from './Form';
 import ISSUE_CATEGORY from './IssueCategory';
+import ISSUE_NOTE from './IssueNote';
 import FILE from './File';
 
 export default {
@@ -13,5 +14,6 @@ export default {
     ISSUE_STATUS,
     FORM,
     ISSUE_CATEGORY,
+    ISSUE_NOTE,
     FILE
 };

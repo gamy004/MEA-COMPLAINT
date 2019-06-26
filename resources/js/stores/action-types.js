@@ -39,3 +39,7 @@ export const ISSUE_STATUS = {
 export const ISSUE_CATEGORY = {
     FETCH: 'issueCategoryFetch'
 };
+
+export const ISSUE_NOTE = {
+    FETCH: 'issueNoteFetch'
+};

@@ -6,6 +6,7 @@ function parseFetch(context, {
     issues = [],
     recipients: groups = [],
     status: issue_statuses = [],
+    notes: issue_notes = [],
     attachments: files = [],
     total = 0,
     strategy = 'replace'
@@ -28,6 +29,10 @@ function parseFetch(context, {
 
     parsers.FILE[vuex.actions.FILE.FETCH](context, {
         files
+    });
+
+    parsers.ISSUE_NOTE[vuex.actions.ISSUE_NOTE.FETCH](context, {
+        issue_notes
     });
 
     rootCommit(
@@ -54,6 +59,7 @@ function parseEdit(context, {
     issues: issue,
     recipients: groups = [],
     status: issue_statuses = [],
+    notes: issue_notes = [],
     attachments: files = []
 } = {}) {
 
@@ -71,6 +77,10 @@ function parseEdit(context, {
 
     parsers.ISSUE_STATUS[vuex.actions.ISSUE_STATUS.FETCH](context, {
         issue_statuses
+    });
+
+    parsers.ISSUE_NOTE[vuex.actions.ISSUE_NOTE.FETCH](context, {
+        issue_notes
     });
 
     parsers.FILE[vuex.actions.FILE.FETCH](context, {
@@ -101,6 +111,7 @@ function parseStore(context, {
     issues: issue,
     recipients = [],
     status = [],
+    notes = [],
     attachments = []
 } = {}) {
 
@@ -109,18 +120,33 @@ function parseStore(context, {
         rootGetters
     } = context;
 
-    const issues = [issue];
+    const oldComplaint = rootGetters[
+        `${vuex.modules.ISSUE}/${vuex.getters.BY_KEY}`
+    ](issue.id) || null;
 
-    parseFetch(context, {
-        issues,
-        recipients,
-        status,
-        attachments,
-        total: rootGetters[
-            `${vuex.modules.ISSUE}/${vuex.getters.GET_STATE}`
-        ]('totalItems') + issues.length,
-        strategy: 'merge'
-    });
+    if (oldComplaint) {
+        parseEdit(context, {
+            issues: issue,
+            recipients,
+            status,
+            notes,
+            attachments
+        });
+    } else {
+        const issues = [issue];
+
+        parseFetch(context, {
+            issues,
+            recipients,
+            status,
+            notes,
+            attachments,
+            total: rootGetters[
+                `${vuex.modules.ISSUE}/${vuex.getters.GET_STATE}`
+            ]('totalItems') + issues.length,
+            strategy: 'merge'
+        });
+    }
 };
 
 function parseDelete(context, {

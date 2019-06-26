@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\IOCs\DBCol;
 use Illuminate\Database\Eloquent\Model;
 
 class Group extends Model
@@ -15,7 +16,12 @@ class Group extends Model
 
     public function issues()
     {
-        return $this->hasMany(Issue::class, 'issued_by');
+        return $this->hasMany(Issue::class, DBCol::ISSUED_BY);
+    }
+
+    public function notes()
+    {
+        return $this->hasMany(IssueNote::class, DBCol::CREATED_BY);
     }
 
     public function relatedIssues()

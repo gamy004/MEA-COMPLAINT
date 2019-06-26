@@ -15,7 +15,7 @@ const IssueCategoryStore = {
     },
 
     actions: {
-        async [vuex.actions.ISSUE_CATEGORY.FETCH](context, params) {
+        async [vuex.actions.ISSUE_CATEGORY.FETCH](context, params = {}) {
             try {
 
                 context.dispatch(vuex.actions.REQUEST, {

@@ -13,29 +13,29 @@ const complaintItemMixin = {
     },
 
     computed: {
-        complaint() {
+        $_complaint_item_mixin_complaint() {
             return this.$_vuexable_getByKey(
                 this.issueId,
                 vuex.modules.ISSUE
             )
         },
 
-        complaintCategory() {
-            return this.complaint ? this.$_vuexable_getByKey(
-                this.complaint.issue_category_id,
+        $_complaint_item_mixin_complaintCategory() {
+            return this.$_complaint_item_mixin_complaint ? this.$_vuexable_getByKey(
+                this.$_complaint_item_mixin_complaint.issue_category_id,
                 vuex.modules.ISSUE_CATEGORY
             ) : null;
         },
 
-        complaintAttachments() {
-            return this.complaint ? this.$_vuexable_getByKeys(
-                this.complaint.attachments,
+        $_complaint_item_mixin_complaintAttachments() {
+            return this.$_complaint_item_mixin_complaint ? this.$_vuexable_getByKeys(
+                this.$_complaint_item_mixin_complaint.attachments,
                 vuex.modules.FILE
             ) : [];
         },
 
-        hasAttachments() {
-            return this.complaint ? this.complaint.attachments.length : false;
+        $_complaint_item_mixin_hasAttachments() {
+            return this.$_complaint_item_mixin_complaint ? this.$_complaint_item_mixin_complaint.attachments.length : false;
         }
     }
 }

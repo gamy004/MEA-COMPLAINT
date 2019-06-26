@@ -1,6 +1,6 @@
 
 <template>
-  <v-layout class="complaint-status" v-if="complaint">
+  <v-layout class="complaint-status" v-if="$_complaint_item_mixin_complaint">
     <v-flex xs12>
       <transition name="slide-x-transition">
         <v-progress-circular v-if="isFetchingStatuses" indeterminate color="info" size="10"></v-progress-circular>
@@ -8,7 +8,7 @@
         <v-avatar v-else color="indigo accent-3" size="10" class="status-indicator mr-1"></v-avatar>
       </transition>
 
-      <span>{{ complaint.currentStatus }}</span>
+      <span>{{ $_complaint_item_mixin_complaint.currentStatus }}</span>
     </v-flex>
   </v-layout>
 </template>
@@ -46,4 +46,3 @@ export default {
   }
 };
 </script>
-

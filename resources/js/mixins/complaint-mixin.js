@@ -7,6 +7,7 @@ import complaintModule from "../stores/modules/complaints";
 import groupModule from "../stores/modules/groups";
 import statusModule from "../stores/modules/issue-statuses";
 import issueCategoryModule from "../stores/modules/issue-categories";
+import issueNoteModule from "../stores/modules/issue-notes";
 import {
     registerModules,
     unregisterModules
@@ -23,22 +24,7 @@ const complaintMixin = {
     },
 
     watch: {
-        "$route": "$_complaint_mixin_updateRouteParam",
-
-        activeComplaint: {
-            immediate: true,
-            handler(v) {
-                if (!v) {
-                    const {
-                        issue = null
-                    } = this.$route.params;
-
-                    if (issue) {
-                        this[vuex.actions.ISSUE.SHOW](issue);
-                    }
-                }
-            }
-        }
+        "$route": "$_complaint_mixin_updateRouteParam"
     },
 
     computed: {
@@ -79,12 +65,16 @@ const complaintMixin = {
         }),
 
         $_complaint_mixin_updateRouteParam() {
-            if (this.$route.params.issue) {
-                this.$_vuexable_setActive(
-                    this.$route.params.issue,
-                    vuex.modules.ISSUE
-                );
-            }
+            const { issue = null } = this.$route.params;
+
+            this.$_complaint_mixin_setActive(issue);
+        },
+
+        $_complaint_mixin_setActive(value) {
+            this.$_vuexable_setActive(
+                value,
+                vuex.modules.ISSUE
+            );
         }
     },
 
@@ -93,7 +83,8 @@ const complaintMixin = {
             [vuex.modules.ISSUE]: complaintModule,
             [vuex.modules.GROUP]: groupModule,
             [vuex.modules.ISSUE_STATUS]: statusModule,
-            [vuex.modules.ISSUE_CATEGORY]: issueCategoryModule
+            [vuex.modules.ISSUE_CATEGORY]: issueCategoryModule,
+            [vuex.modules.ISSUE_NOTE]: issueNoteModule,
         });
     },
 

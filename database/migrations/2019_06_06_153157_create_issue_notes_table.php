@@ -17,12 +17,14 @@ class CreateIssueNotesTable extends Migration
             $table->bigIncrements('id');
             $table->text('description')->nullable();
             $table->bigInteger('issue_id')->unsigned();
+            $table->bigInteger('created_by')->unsigned();
             $table->timestamps();
             $table->softDeletes();
         });
 
         Schema::table('issue_notes', function (Blueprint $table) {
             $table->foreign('issue_id')->references('id')->on('issues')->onDelete('cascade');
+            $table->foreign('created_by')->references('id')->on('groups')->onDelete('cascade');
         });
     }
 
@@ -35,6 +37,10 @@ class CreateIssueNotesTable extends Migration
     {
         Schema::table('issue_notes', function (Blueprint $table) {
             $table->dropForeign(['issue_id']);
+        });
+
+        Schema::table('issue_notes', function (Blueprint $table) {
+            $table->dropForeign(['created_by']);
         });
 
         Schema::dropIfExists('issue_notes');
