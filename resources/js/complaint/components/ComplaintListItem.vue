@@ -120,7 +120,7 @@ import { views } from "../../constants";
 export default {
   props: {
     item: {
-      type: vuex.models.COMPLAINT,
+      type: vuex.models.ISSUE,
       required: true
     }
   },
@@ -168,7 +168,7 @@ export default {
 
     onClick() {
       this.$router.push({
-        name: views.COMPLAINT.SHOW,
+        name: views.ISSUE.SHOW,
         params: {
           issue: this.item.id
         }
@@ -274,4 +274,3 @@ export default {
   }
 }
 </style>
-

@@ -1,17 +1,17 @@
-import COMPLAINT from './Complaint';
+import ISSUE from './Complaint';
 import USER from './User';
 import GROUP from './Group';
 import ISSUE_STATUS from './IssueStatus';
 import FORM from './Form';
-import COMPLAINT_CATEGORY from './IssueCategory';
+import ISSUE_CATEGORY from './IssueCategory';
 import FILE from './File';
 
 export default {
-    COMPLAINT,
+    ISSUE,
     USER,
     GROUP,
     ISSUE_STATUS,
     FORM,
-    COMPLAINT_CATEGORY,
+    ISSUE_CATEGORY,
     FILE
 };

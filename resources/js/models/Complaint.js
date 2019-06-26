@@ -20,16 +20,21 @@ class Complaint extends BaseVuexModel {
             ...data
         });
 
-        this.$store = modules.COMPLAINT;
+        this.$store = modules.ISSUE;
     }
 
-    static async [actions.COMPLAINT.FETCH](pagination) {
+    static async [actions.ISSUE.FETCH](pagination) {
         let response;
 
         try {
             response = await api.get('api:issues.index', {
                 pagination,
-                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload']
+                includes: [
+                    'recipients:sideload',
+                    'status:sideload',
+                    'attachments:sideload',
+                    'category:sideload'
+                ]
             });
         } catch (error) {
             throw error;
@@ -38,12 +43,13 @@ class Complaint extends BaseVuexModel {
         return response;
     }
 
-    static async [actions.COMPLAINT.SHOW](data) {
+    static async [actions.ISSUE.SHOW](data) {
         let response;
 
         try {
             response = await api.get('api:issues.show', {
-                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload'],
+                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload',
+                'category:sideload'],
                 ...data,
             });
         } catch (error) {
@@ -53,12 +59,13 @@ class Complaint extends BaseVuexModel {
         return response;
     }
 
-    static async [actions.COMPLAINT.EDIT](data) {
+    static async [actions.ISSUE.EDIT](data) {
         let response;
 
         try {
             response = await api.get('api:issues.edit', {
-                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload'],
+                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload',,
+                'category:sideload'],
                 ...data,
             });
         } catch (error) {
@@ -68,12 +75,13 @@ class Complaint extends BaseVuexModel {
         return response;
     }
 
-    static async [actions.COMPLAINT.STORE](data) {
+    static async [actions.ISSUE.STORE](data) {
         let response;
 
         try {
             response = await api.post('api:issues.store', {
-                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload'],
+                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload',
+                'category:sideload'],
                 ...data,
             });
         } catch (error) {
@@ -83,12 +91,13 @@ class Complaint extends BaseVuexModel {
         return response;
     }
 
-    static async [actions.COMPLAINT.UPDATE](data) {
+    static async [actions.ISSUE.UPDATE](data) {
         let response;
 
         try {
             response = await api.put('api:issues.update', {
-                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload'],
+                includes: ['recipients:sideload', 'status:sideload', 'attachments:sideload',
+                'category:sideload'],
                 ...data,
             });
         } catch (error) {
@@ -98,7 +107,7 @@ class Complaint extends BaseVuexModel {
         return response;
     }
 
-    static async [actions.COMPLAINT.DELETE](data) {
+    static async [actions.ISSUE.DELETE](data) {
         let response;
 
         try {
@@ -112,7 +121,7 @@ class Complaint extends BaseVuexModel {
         return response;
     }
 
-    static async [actions.COMPLAINT.RESTORE](data) {
+    static async [actions.ISSUE.RESTORE](data) {
         let response;
 
         try {

@@ -81,7 +81,7 @@ const FileStore = {
                 throw error;
             }
         },
-        // async [vuex.actions.COMPLAINT.FETCH]({
+        // async [vuex.actions.ISSUE.FETCH]({
         //     state,
         //     commit
         // }) {
@@ -89,7 +89,7 @@ const FileStore = {
         //         let {
         //             issues = [], total = 0
         //         } = await Complaint[
-        //             vuex.actions.COMPLAINT.FETCH
+        //             vuex.actions.ISSUE.FETCH
         //         ](state.base.pagination);
 
         //         commit(vuex.mutations.STORE, {

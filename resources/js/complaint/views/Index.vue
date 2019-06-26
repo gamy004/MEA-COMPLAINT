@@ -29,7 +29,7 @@
 
     <complaint-form
       v-if="complaintDialog"
-      :managable-module="vuex.modules.COMPLAINT"
+      :managable-module="vuex.modules.ISSUE"
       :managable-route-param="complaintRouteParam"
       :managable-edit="hasActiveComplaint"
     />
@@ -239,5 +239,3 @@ export default {
   margin-left: -0.5rem;
 }
 </style>
-
-

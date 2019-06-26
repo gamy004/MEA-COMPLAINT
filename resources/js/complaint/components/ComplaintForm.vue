@@ -317,7 +317,7 @@
                 get() {
                     return this.$_vuexable_getState(
                         "dialog",
-                        vuex.modules.COMPLAINT
+                        vuex.modules.ISSUE
                     );
                 },
 
@@ -327,15 +327,15 @@
                             key: "dialog",
                             value
                         },
-                        vuex.modules.COMPLAINT
+                        vuex.modules.ISSUE
                     );
 
-                    this.$_vuexable_setActive(null, vuex.modules.COMPLAINT);
+                    this.$_vuexable_setActive(null, vuex.modules.ISSUE);
                 }
             },
 
             activeComplaint() {
-                return this.$_vuexable_getActive(vuex.modules.COMPLAINT);
+                return this.$_vuexable_getActive(vuex.modules.ISSUE);
             },
 
             activeComplaintFiles() {
@@ -369,7 +369,7 @@
             storeCategories() {
                 const categories = this.$_vuexable_getter(
                     vuex.getters.SORTED_VALUES,
-                    vuex.modules.COMPLAINT_CATEGORY
+                    vuex.modules.ISSUE_CATEGORY
                 );
 
                 return mapTextValue(categories, "category", "id");
@@ -400,8 +400,8 @@
                 [vuex.actions.GROUP.FETCH]: "fetching form recipients"
             }),
 
-            ...vuex.mapWaitingActions(vuex.modules.COMPLAINT_CATEGORY, {
-                [vuex.actions.COMPLAINT_CATEGORY.FETCH]: "fetching form categories"
+            ...vuex.mapWaitingActions(vuex.modules.ISSUE_CATEGORY, {
+                [vuex.actions.ISSUE_CATEGORY.FETCH]: "fetching form categories"
             }),
 
             ...vuex.mapWaitingActions(vuex.modules.FILE, {
@@ -466,7 +466,7 @@
                     sort = ["category"];
 
                 try {
-                    response = await this[vuex.actions.COMPLAINT_CATEGORY.FETCH]({
+                    response = await this[vuex.actions.ISSUE_CATEGORY.FETCH]({
                         filters,
                         select,
                         sort
@@ -724,5 +724,3 @@
         }
     }
 </style>
-
-

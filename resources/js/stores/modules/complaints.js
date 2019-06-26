@@ -2,7 +2,6 @@ import base from './base';
 import {
     vuex
 } from '../../mixins/vuexable';
-import Complaint from '../../models/Complaint';
 
 const userStore = {
     state() {
@@ -16,10 +15,10 @@ const userStore = {
     },
 
     actions: {
-        async [vuex.actions.COMPLAINT.FETCH](context) {
+        async [vuex.actions.ISSUE.FETCH](context) {
             try {
                 return await context.dispatch(vuex.actions.REQUEST, {
-                    model: 'COMPLAINT',
+                    model: 'ISSUE',
                     action: 'FETCH',
                     params: context.state.base.pagination
                 });
@@ -28,10 +27,10 @@ const userStore = {
             }
         },
 
-        async [vuex.actions.COMPLAINT.SHOW](context, issue) {
+        async [vuex.actions.ISSUE.SHOW](context, issue) {
             try {
                 return await context.dispatch(vuex.actions.REQUEST, {
-                    model: 'COMPLAINT',
+                    model: 'ISSUE',
                     action: 'SHOW',
                     params: {
                         routeParam: {
@@ -44,12 +43,12 @@ const userStore = {
             }
         },
 
-        async [vuex.actions.COMPLAINT.EDIT](context, {
+        async [vuex.actions.ISSUE.EDIT](context, {
             id: issue
         }) {
             try {
                 return await context.dispatch(vuex.actions.REQUEST, {
-                    model: 'COMPLAINT',
+                    model: 'ISSUE',
                     action: 'EDIT',
                     params: {
                         routeParam: {
@@ -65,7 +64,7 @@ const userStore = {
         async [vuex.actions.STORE](context, input) {
             try {
                 return await context.dispatch(vuex.actions.REQUEST, {
-                    model: 'COMPLAINT',
+                    model: 'ISSUE',
                     action: 'STORE',
                     params: input
                 });
@@ -77,7 +76,7 @@ const userStore = {
         async [vuex.actions.UPDATE](context, input) {
             try {
                 return await context.dispatch(vuex.actions.REQUEST, {
-                    model: 'COMPLAINT',
+                    model: 'ISSUE',
                     action: 'UPDATE',
                     params: input
                 });
@@ -86,12 +85,12 @@ const userStore = {
             }
         },
 
-        async [vuex.actions.COMPLAINT.DELETE](context, {
+        async [vuex.actions.ISSUE.DELETE](context, {
             id: issue
         }) {
             try {
                 return await context.dispatch(vuex.actions.REQUEST, {
-                    model: 'COMPLAINT',
+                    model: 'ISSUE',
                     action: 'DELETE',
                     params: {
                         routeParam: {
@@ -104,12 +103,12 @@ const userStore = {
             }
         },
 
-        async [vuex.actions.COMPLAINT.RESTORE](context, {
+        async [vuex.actions.ISSUE.RESTORE](context, {
             id: issue
         }) {
             try {
                 return await context.dispatch(vuex.actions.REQUEST, {
-                    model: 'COMPLAINT',
+                    model: 'ISSUE',
                     action: 'RESTORE',
                     params: {
                         routeParam: {

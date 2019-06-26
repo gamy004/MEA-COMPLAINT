@@ -11,7 +11,7 @@ class IssueCategory extends BaseVuexModel {
         });
     }
 
-    static async [actions.COMPLAINT_CATEGORY.FETCH](props) {
+    static async [actions.ISSUE_CATEGORY.FETCH](props) {
         let response;
 
         try {

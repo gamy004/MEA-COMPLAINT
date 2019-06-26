@@ -63,7 +63,7 @@ export default {
             {
               text: "Undo",
               handler: ({ item, itemIndex }) => {
-                this[vuex.actions.COMPLAINT.RESTORE](item);
+                this[vuex.actions.ISSUE.RESTORE](item);
               }
             }
           ]
@@ -78,7 +78,7 @@ export default {
     //   immediate: true,
     //   async handler(active) {
     //     if (active) {
-    //       await this[vuex.actions.COMPLAINT.FETCH]();
+    //       await this[vuex.actions.ISSUE.FETCH]();
     //     }
     //   }
     // },
@@ -90,7 +90,7 @@ export default {
         if (this.active) {
           console.log("ComplaintList pagination changed: ", v);
 
-          await this[vuex.actions.COMPLAINT.FETCH]();
+          await this[vuex.actions.ISSUE.FETCH]();
         }
       }
     }
@@ -98,29 +98,29 @@ export default {
 
   computed: {
     $_paginatable_module() {
-      return vuex.modules.COMPLAINT;
+      return vuex.modules.ISSUE;
     },
 
     ...vuex.mapGetters(["isMobile", "isMobileClasses"]),
 
     ...vuex.mapWaitingGetters({
-      isFetchingComplaint: [vuex.actions.COMPLAINT.FETCH]
+      isFetchingComplaint: [vuex.actions.ISSUE.FETCH]
     })
   },
 
   methods: {
-    ...vuex.mapWaitingActions(vuex.modules.COMPLAINT, [
-      vuex.actions.COMPLAINT.FETCH,
-      vuex.actions.COMPLAINT.EDIT,
-      vuex.actions.COMPLAINT.DELETE,
-      vuex.actions.COMPLAINT.RESTORE
+    ...vuex.mapWaitingActions(vuex.modules.ISSUE, [
+      vuex.actions.ISSUE.FETCH,
+      vuex.actions.ISSUE.EDIT,
+      vuex.actions.ISSUE.DELETE,
+      vuex.actions.ISSUE.RESTORE
     ]),
 
     async onEditItem(item, itemIndex) {
       const { id } = item;
 
       try {
-        await this[vuex.actions.COMPLAINT.EDIT](item);
+        await this[vuex.actions.ISSUE.EDIT](item);
       } catch (error) {
         throw error;
       }
@@ -130,15 +130,15 @@ export default {
           key: "dialog",
           value: true
         },
-        vuex.modules.COMPLAINT
+        vuex.modules.ISSUE
       );
 
-      this.$_vuexable_setActive(id, vuex.modules.COMPLAINT);
+      this.$_vuexable_setActive(id, vuex.modules.ISSUE);
     },
 
     async onDeleteItem(item, itemIndex) {
       try {
-        await this[vuex.actions.COMPLAINT.DELETE](item);
+        await this[vuex.actions.ISSUE.DELETE](item);
 
         this.$_alertable_alert("remove", { item, itemIndex });
       } catch (error) {
@@ -194,5 +194,3 @@ export default {
   }
 }
 </style>
-
-

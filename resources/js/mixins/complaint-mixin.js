@@ -34,7 +34,7 @@ const complaintMixin = {
                     } = this.$route.params;
 
                     if (issue) {
-                        this[vuex.actions.COMPLAINT.SHOW](issue);
+                        this[vuex.actions.ISSUE.SHOW](issue);
                     }
                 }
             }
@@ -47,19 +47,19 @@ const complaintMixin = {
         }),
 
         $_paginatable_module() {
-            return this.vuex.modules.COMPLAINT;
+            return this.vuex.modules.ISSUE;
         },
 
         complaintDialog() {
-            return this.$_vuexable_getState("dialog", vuex.modules.COMPLAINT);
+            return this.$_vuexable_getState("dialog", vuex.modules.ISSUE);
         },
 
         activeComplaintId() {
-            return this.$_vuexable_getState("active", vuex.modules.COMPLAINT);
+            return this.$_vuexable_getState("active", vuex.modules.ISSUE);
         },
 
         activeComplaint() {
-            return this.$_vuexable_getActive(vuex.modules.COMPLAINT);
+            return this.$_vuexable_getActive(vuex.modules.ISSUE);
         },
 
         hasActiveComplaint() {
@@ -74,15 +74,15 @@ const complaintMixin = {
     },
 
     methods: {
-        ...vuex.mapWaitingActions(vuex.modules.COMPLAINT, {
-            [vuex.actions.COMPLAINT.SHOW]: "fetching show complaint"
+        ...vuex.mapWaitingActions(vuex.modules.ISSUE, {
+            [vuex.actions.ISSUE.SHOW]: "fetching show complaint"
         }),
 
         $_complaint_mixin_updateRouteParam() {
             if (this.$route.params.issue) {
                 this.$_vuexable_setActive(
                     this.$route.params.issue,
-                    vuex.modules.COMPLAINT
+                    vuex.modules.ISSUE
                 );
             }
         }
@@ -90,10 +90,10 @@ const complaintMixin = {
 
     beforeCreate() {
         registerModules(this.$store, {
-            [vuex.modules.COMPLAINT]: complaintModule,
+            [vuex.modules.ISSUE]: complaintModule,
             [vuex.modules.GROUP]: groupModule,
             [vuex.modules.ISSUE_STATUS]: statusModule,
-            [vuex.modules.COMPLAINT_CATEGORY]: issueCategoryModule
+            [vuex.modules.ISSUE_CATEGORY]: issueCategoryModule
         });
     },
 
@@ -103,10 +103,10 @@ const complaintMixin = {
 
     // beforeDestroy() {
     //     unregisterModules(this.$store, [
-    //         vuex.modules.COMPLAINT,
+    //         vuex.modules.ISSUE,
     //         vuex.modules.GROUP,
     //         vuex.modules.ISSUE_STATUS,
-    //         vuex.modules.COMPLAINT_CATEGORY
+    //         vuex.modules.ISSUE_CATEGORY
     //     ]);
     // }
 };

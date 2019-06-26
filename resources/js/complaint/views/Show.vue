@@ -17,15 +17,22 @@
         </v-flex>
       </v-layout>
 
-      <v-layout class="content__wrapper">
+      <v-layout class="content__wrapper" column pl-5>
         <v-flex xs12>
           <transition name="slide-y-reverse-transition" appear>
             <complaint-detail-card
               v-if="!$_complaint_mixin_isFetchingShowComplaint"
               :issue-id="$route.params.issue"
-              class="pl-5 pr-4"
+              class="pr-4"
             />
           </transition>
+        </v-flex>
+
+        <v-flex xs12>
+          <v-btn color="light" @click="showRemarkForm">
+            <v-icon>reply</v-icon>
+            <span>Remark</span>
+          </v-btn>
         </v-flex>
       </v-layout>
       <!-- <v-tabs-items v-model="tab">
@@ -41,7 +48,7 @@
 
     <complaint-form
       v-if="complaintDialog"
-      :managable-module="vuex.modules.COMPLAINT"
+      :managable-module="vuex.modules.ISSUE"
       :managable-route-param="complaintRouteParam"
       :managable-edit="hasActiveComplaint"
     />
@@ -78,6 +85,7 @@ export default {
 
   data() {
     return {
+      remarkDialog:  false,
       alertable_messages: {
         update_status_success: {
           text: "Complaint Status was updated successfully.",
@@ -180,9 +188,13 @@ export default {
   },
 
   methods: {
-    ...vuex.mapWaitingActions(vuex.modules.COMPLAINT, {
+    ...vuex.mapWaitingActions(vuex.modules.ISSUE, {
       [vuex.actions.UPDATE]: "updating complaint status"
-    })
+    }),
+
+    showRemarkForm() {
+      this.remarkDialog = true;
+    }
   }
 };
 </script>
@@ -196,5 +208,3 @@ export default {
   }
 }
 </style>
-
-

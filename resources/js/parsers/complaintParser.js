@@ -32,8 +32,8 @@ function parseFetch(context, {
 
     rootCommit(
         vuex.mutations.STORE,
-        vuex.modules.COMPLAINT, {
-            value: issues.map(issue => new models.COMPLAINT({
+        vuex.modules.ISSUE, {
+            value: issues.map(issue => new models.ISSUE({
                 ...issue,
                 context
             })),
@@ -43,9 +43,9 @@ function parseFetch(context, {
 
     rootCommit(
         vuex.mutations.SET_STATE,
-        vuex.modules.COMPLAINT, {
+        vuex.modules.ISSUE, {
             key: 'totalItems',
-            value: !total ? rootGetters[`${vuex.modules.COMPLAINT}/${vuex.getters.ALL_COUNT}`] : total
+            value: !total ? rootGetters[`${vuex.modules.ISSUE}/${vuex.getters.ALL_COUNT}`] : total
         }
     );
 };
@@ -78,7 +78,7 @@ function parseEdit(context, {
     });
 
     const oldComplaint = rootGetters[
-        `${vuex.modules.COMPLAINT}/${vuex.getters.BY_KEY}`
+        `${vuex.modules.ISSUE}/${vuex.getters.BY_KEY}`
     ](issue.id) || {};
 
     const updatedCompaint = _.merge({
@@ -87,9 +87,9 @@ function parseEdit(context, {
 
     rootCommit(
         vuex.mutations.UPDATE,
-        vuex.modules.COMPLAINT, {
+        vuex.modules.ISSUE, {
             key: issue.id,
-            value: new models.COMPLAINT({
+            value: new models.ISSUE({
                 ...updatedCompaint,
                 context
             })
@@ -117,7 +117,7 @@ function parseStore(context, {
         status,
         attachments,
         total: rootGetters[
-            `${vuex.modules.COMPLAINT}/${vuex.getters.GET_STATE}`
+            `${vuex.modules.ISSUE}/${vuex.getters.GET_STATE}`
         ]('totalItems') + issues.length,
         strategy: 'merge'
     });
@@ -134,18 +134,18 @@ function parseDelete(context, {
 
     rootCommit(
         vuex.mutations.DELETE,
-        vuex.modules.COMPLAINT, {
+        vuex.modules.ISSUE, {
             id
         }
     );
 };
 
 export default {
-    [actions.COMPLAINT.FETCH]: parseFetch,
-    [actions.COMPLAINT.SHOW]: parseStore,
-    [actions.COMPLAINT.EDIT]: parseEdit,
-    [actions.COMPLAINT.UPDATE]: parseEdit,
-    [actions.COMPLAINT.STORE]: parseStore,
-    [actions.COMPLAINT.DELETE]: parseDelete,
-    [actions.COMPLAINT.RESTORE]: parseStore
+    [actions.ISSUE.FETCH]: parseFetch,
+    [actions.ISSUE.SHOW]: parseStore,
+    [actions.ISSUE.EDIT]: parseEdit,
+    [actions.ISSUE.UPDATE]: parseEdit,
+    [actions.ISSUE.STORE]: parseStore,
+    [actions.ISSUE.DELETE]: parseDelete,
+    [actions.ISSUE.RESTORE]: parseStore
 }

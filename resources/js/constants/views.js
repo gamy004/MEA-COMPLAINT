@@ -1,4 +1,4 @@
-export const COMPLAINT = {
+export const ISSUE = {
     INDEX: 'complaintIndex',
     SHOW: 'complaintShow'
 };

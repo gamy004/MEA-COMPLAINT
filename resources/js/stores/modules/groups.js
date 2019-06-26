@@ -28,7 +28,7 @@ const GroupStore = {
                 // let {
                 //     issues = [], issuer = [], total = 0
                 // } = await Complaint[
-                //     vuex.actions.COMPLAINT.FETCH
+                //     vuex.actions.ISSUE.FETCH
                 // ](state.base.pagination);
 
                 // commit(vuex.mutations.STORE, {
@@ -50,7 +50,7 @@ const GroupStore = {
                 throw error;
             }
         }
-        // async [vuex.actions.COMPLAINT.FETCH]({
+        // async [vuex.actions.ISSUE.FETCH]({
         //     state,
         //     commit
         // }) {
@@ -58,7 +58,7 @@ const GroupStore = {
         //         let {
         //             issues = [], total = 0
         //         } = await Complaint[
-        //             vuex.actions.COMPLAINT.FETCH
+        //             vuex.actions.ISSUE.FETCH
         //         ](state.base.pagination);
 
         //         commit(vuex.mutations.STORE, {

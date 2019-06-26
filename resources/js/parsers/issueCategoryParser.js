@@ -16,9 +16,9 @@ function parseFetch(context, {
 
     rootCommit(
         vuex.mutations.STORE,
-        vuex.modules.COMPLAINT_CATEGORY, {
+        vuex.modules.ISSUE_CATEGORY, {
             strategy,
-            value: issue_categories.map(x => new models.COMPLAINT_CATEGORY({
+            value: issue_categories.map(x => new models.ISSUE_CATEGORY({
                 ...x,
                 context
             }))
@@ -27,13 +27,13 @@ function parseFetch(context, {
 
     rootCommit(
         vuex.mutations.SET_STATE,
-        vuex.modules.COMPLAINT_CATEGORY, {
+        vuex.modules.ISSUE_CATEGORY, {
             key: 'totalItems',
-            value: !total ? rootGetters[`${vuex.modules.COMPLAINT_CATEGORY}/${vuex.getters.ALL_COUNT}`] : total
+            value: !total ? rootGetters[`${vuex.modules.ISSUE_CATEGORY}/${vuex.getters.ALL_COUNT}`] : total
         }
     );
 };
 
 export default {
-    [actions.COMPLAINT_CATEGORY.FETCH]: parseFetch
+    [actions.ISSUE_CATEGORY.FETCH]: parseFetch
 }

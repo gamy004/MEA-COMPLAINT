@@ -47,7 +47,7 @@
                         key: "dialog",
                         value: true
                     },
-                    vuex.modules.COMPLAINT
+                    vuex.modules.ISSUE
                 );
 
                 this.$emit("click", event);
@@ -67,4 +67,3 @@
         }
     }
 </style>
-

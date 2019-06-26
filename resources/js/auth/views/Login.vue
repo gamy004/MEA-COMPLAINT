@@ -5,7 +5,7 @@
         <v-layout column justify-end fill-height id="loginLeftColumnInner" class="white--text">
           <div class="overlay-text"></div>
           <div class="content">
-            <div class="display-3 font-weight-bold mb-4">MEA COMPLAINT</div>
+            <div class="display-3 font-weight-bold mb-4">MEA ISSUE</div>
             <div class="headline">Welcome back</div>
           </div>
         </v-layout>
@@ -125,7 +125,7 @@ export default {
     goToComplaintPage() {
       return setTimeout(() => {
         this.$router.push({
-          name: views.COMPLAINT.INDEX
+          name: views.ISSUE.INDEX
         });
       }, 300);
     }
@@ -167,5 +167,3 @@ export default {
   left: -10px;
 }
 </style>
-
-

@@ -16,8 +16,15 @@ const complaintItemMixin = {
         complaint() {
             return this.$_vuexable_getByKey(
                 this.issueId,
-                vuex.modules.COMPLAINT
+                vuex.modules.ISSUE
             )
+        },
+
+        complaintCategory() {
+            return this.complaint ? this.$_vuexable_getByKey(
+                this.complaint.issue_category_id,
+                vuex.modules.ISSUE_CATEGORY
+            ) : null;
         },
 
         complaintAttachments() {
