@@ -17,7 +17,7 @@ class CreateIssueNotesTable extends Migration
             $table->bigIncrements('id');
             $table->text('description')->nullable();
             $table->bigInteger('issue_id')->unsigned();
-            $table->bigInteger('created_by')->unsigned();
+            $table->bigInteger('created_by')->unsigned()->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

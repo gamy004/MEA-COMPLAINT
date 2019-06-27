@@ -7,6 +7,7 @@ export const ALL_VALUES = 'allVaules';
 export const ALL_COUNT = 'allCount';
 
 export const ACTIVE = 'active';
+export const EDIT = 'edit';
 export const ACTIVE_SLUG = 'activeSlug';
 export const ACTIVE_VALUES = 'activeVaules';
 export const IS_ACTIVE = 'isActive';

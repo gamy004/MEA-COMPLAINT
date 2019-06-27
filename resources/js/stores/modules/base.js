@@ -25,6 +25,7 @@ export default {
             },
             totalItems: 0,
             active: null,
+            edit: null,
             dialog: false
         };
     },
@@ -48,6 +49,8 @@ export default {
             }
 
             let response;
+
+            // console.log(requestModel, requestAction);
 
             try {
                 response = await requestModel[requestAction](params);
@@ -134,6 +137,16 @@ export default {
 
             if (active !== null && v.hasOwnProperty(active)) {
                 return v[active];
+            }
+        },
+        [vuex.getters.EDIT]: (state, getters) => {
+            const v = getters[vuex.getters.ALL],
+                {
+                    edit
+                } = state;
+
+            if (edit !== null && v.hasOwnProperty(edit)) {
+                return v[edit];
             }
         },
         [vuex.getters.ACTIVE_SLUG]: (state, getters) => (key) => {
@@ -294,6 +307,10 @@ export default {
 
         [vuex.mutations.SET_ACTIVE](state, value) {
             state.active = value;
+        },
+
+        [vuex.mutations.SET_EDIT](state, value) {
+            state.edit = value;
         },
 
         [vuex.mutations.STORE](state, {

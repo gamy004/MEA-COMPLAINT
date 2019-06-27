@@ -78,6 +78,18 @@ export const vuexable = {
             );
         },
 
+        $_vuexable_getEdit(module = '') {
+            return this.$_vuexable_getter(getters.EDIT, module);
+        },
+
+        $_vuexable_setEdit(key, module = '') {
+            return this.$_vuexable_commit(
+                mutations.SET_EDIT,
+                module,
+                key
+            );
+        },
+
         $_vuexable_setPagination(pagination, module = '') {
             this.$_vuexable_commit(
                 mutations.SET_PAGINATION,

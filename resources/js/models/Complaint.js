@@ -51,6 +51,7 @@ class Complaint extends BaseVuexModel {
                     'status:sideload',
                     'attachments:sideload',
                     'category:sideload',
+                    'issuer:sideload',
                     'notes:ids'
                 ],
                 ...data,
@@ -70,7 +71,7 @@ class Complaint extends BaseVuexModel {
                 includes: [
                     'recipients:sideload',
                     'status:sideload',
-                    'attachments:sideload',,
+                    'attachments:sideload',
                     'category:sideload',
                     // 'notes:ids'
                 ],

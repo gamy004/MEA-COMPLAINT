@@ -10,6 +10,8 @@ class IssueNote extends Model
 {
     use SoftDeletes;
 
+    const FK = 'issue_note_id';
+
     protected $fillable = [
         DBCol::DESCRIPTION,
         Issue::FK,
@@ -24,5 +26,12 @@ class IssueNote extends Model
     public function creator()
     {
         return $this->belongsTo(Group::class, DBCol::CREATED_BY);
+    }
+
+    public function attachments()
+    {
+        return $this->belongsToMany(
+            File::class, 'issue_note_attachment', self::FK, 'attachment_id'
+        )->using(IssueNoteAttachment::class);
     }
 }

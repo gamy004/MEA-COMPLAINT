@@ -38,7 +38,7 @@ class File extends Model
     }
 
     /**
-     * Relation with roles table
+     * Relation with issues table
      *
      * @return void
      */
@@ -47,5 +47,17 @@ class File extends Model
         return $this->belongsToMany(
             Issue::class, 'issue_attachment', 'attachment_id', Issue::FK
         )->using(IssueAttachment::class);
+    }
+
+    /**
+     * Relation with issue_notes table
+     *
+     * @return void
+     */
+    public function issueNotes()
+    {
+        return $this->belongsToMany(
+            IssueNote::class, 'issue_note_attachment', 'attachment_id', IssueNote::FK
+        )->using(IssueNoteAttachment::class);
     }
 }

@@ -133,7 +133,7 @@ export default {
         vuex.modules.ISSUE
       );
 
-      this.$_vuexable_setActive(id, vuex.modules.ISSUE);
+      this.$_vuexable_setEdit(id, vuex.modules.ISSUE);
     },
 
     async onDeleteItem(item, itemIndex) {

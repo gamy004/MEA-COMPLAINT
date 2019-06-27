@@ -24,31 +24,53 @@ const IssueNoteStore = {
                     params
                 });
 
-                // let {
-                //     issues = [], issuer = [], total = 0
-                // } = await Complaint[
-                //     vuex.actions.ISSUE.FETCH
-                // ](state.base.pagination);
-
-                // commit(vuex.mutations.STORE, {
-                //     value: issues
-                // });
-
-                // commit(vuex.mutations.STORE, {
-                //     value: issues
-                // });
-
-                // commit(vuex.mutations.UPDATE_PAGINATION, {
-                //     key: 'totalItems',
-                //     value: total
-                // });
-
-                // return issues;
-
             } catch (error) {
                 throw error;
             }
-        }
+        },
+
+        async [vuex.actions.STORE](context, input) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'ISSUE_NOTE',
+                    action: 'STORE',
+                    params: input
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        async [vuex.actions.UPDATE](context, input) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'ISSUE_NOTE',
+                    action: 'UPDATE',
+                    params: input
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        async [vuex.actions.ISSUE_NOTE.DELETE](context, {
+            id: issue_note
+        }) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'ISSUE_NOTE',
+                    action: 'DELETE',
+                    params: {
+                        routeParam: {
+                            issue_note
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
         // async [vuex.actions.ISSUE.FETCH]({
         //     state,
         //     commit

@@ -33,7 +33,7 @@
 
       <v-sheet
         v-else
-        class="mt-auto d-flex align-center justify-start file-sheet__footer py-3 px-2"
+        class="mt-auto d-flex align-center justify-start file-sheet__footer py-2 px-2"
         color="grey lighten-3"
       >
         <!-- <file-icon :mime="$fileitem_mixin_fileExtension" class="mr-1"/> -->

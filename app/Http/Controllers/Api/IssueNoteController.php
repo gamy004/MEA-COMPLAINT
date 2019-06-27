@@ -6,6 +6,7 @@ use App\IOCs\DBCol;
 use App\Models\Issue;
 use App\Models\IssueNote;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreIssueNoteRequest;
 
 class IssueNoteController extends BaseApiController
 {
@@ -35,9 +36,11 @@ class IssueNoteController extends BaseApiController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreIssueNoteRequest $request)
     {
-        //
+        return $this->api->store(
+            $request->all()
+        );
     }
 
     /**

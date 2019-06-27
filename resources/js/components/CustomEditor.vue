@@ -51,6 +51,14 @@ export default {
     fullScreenFactor: {
       type: Number,
       default: 0.7
+    },
+    minHeight: {
+      type: [String, Number],
+      default: 350
+    },
+    maxHeight: {
+      type: [String, Number],
+      default: 650
     }
   },
 
@@ -85,7 +93,9 @@ export default {
         paste_data_images: true,
         statusbar: false,
         menubar: false,
-        min_height: this.fullScreen ? this.fullScreenHeight - 100 : 350,
+        min_height: this.fullScreen
+          ? this.fullScreenHeight - 100
+          : this.minHeight,
         // max_height: this.fullScreen ? this.fullScreenHeight : 650,
         autoresize: true,
         // toolbar: "undo redo | styleselect | bold italic | outdent indent",
@@ -100,8 +110,10 @@ export default {
 
     editorStyles() {
       return {
-        minHeight: (this.fullScreen ? this.fullScreenHeight : 350) + "px",
-        maxHeight: (this.fullScreen ? this.fullScreenHeight : 650) + "px",
+        minHeight:
+          (this.fullScreen ? this.fullScreenHeight : this.minHeight) + "px",
+        maxHeight:
+          (this.fullScreen ? this.fullScreenHeight : this.maxHeight) + "px",
         overflow: "auto"
       };
     }
@@ -156,6 +168,16 @@ export default {
     transition: all 200ms ease-in-out;
     box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
       0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12) !important;
+  }
+
+  .tox {
+    .tox {
+      &-toolbar,
+      &-toolbar__overflow,
+      &-toolbar__primary {
+        background: none !important;
+      }
+    }
   }
 
   &.show-toolbar {

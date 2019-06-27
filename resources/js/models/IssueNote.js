@@ -17,8 +17,52 @@ class IssueNote extends BaseVuexModel {
 
         try {
             response = await api.get('api:issue-notes.index', {
-                includes: ["creator:sideload"],
+                includes: ["creator:sideload", "attachments:sideload"],
                 ...props,
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
+    static async [actions.ISSUE_NOTE.STORE](data) {
+        let response;
+
+        try {
+            response = await api.post('api:issue-notes.store', {
+                includes: ["creator:sideload", "attachments:sideload"],
+                ...data,
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
+    static async [actions.ISSUE_NOTE.UPDATE](data) {
+        let response;
+
+        try {
+            response = await api.put('api:issue-notes.update', {
+                includes: ["creator:sideload", "attachments:sideload"],
+                ...data,
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
+    static async [actions.ISSUE_NOTE.DELETE](data) {
+        let response;
+
+        try {
+            response = await api.delete('api:issue-notes.destroy', {
+                ...data
             });
         } catch (error) {
             throw error;

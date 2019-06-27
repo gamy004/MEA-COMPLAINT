@@ -15,6 +15,7 @@ export const SHOW = 'show';
 export const CLOSE = 'close';
 export const CLEAR_PAGINATION = 'clearPagination';
 export const SET_ACTIVE = 'setActive';
+export const SET_EDIT = 'setEdit';
 export const SET_STATE = 'setState';
 export const SET_PAGINATION = 'setPagination';
 export const UPDATE_PAGINATION = 'updatePagination';

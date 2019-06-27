@@ -4,10 +4,11 @@ import {
 
 function parseFetch(context, {
     issues = [],
-    recipients: groups = [],
+    recipients = [],
     status: issue_statuses = [],
     notes: issue_notes = [],
     attachments: files = [],
+    issuer = [],
     total = 0,
     strategy = 'replace'
 } = {}) {
@@ -20,7 +21,7 @@ function parseFetch(context, {
     } = context;
 
     parsers.GROUP[vuex.actions.GROUP.FETCH](context, {
-        groups
+        groups: [...recipients, ...issuer]
     });
 
     parsers.ISSUE_STATUS[vuex.actions.ISSUE_STATUS.FETCH](context, {
@@ -57,10 +58,11 @@ function parseFetch(context, {
 
 function parseEdit(context, {
     issues: issue,
-    recipients: groups = [],
+    recipients = [],
     status: issue_statuses = [],
     notes: issue_notes = [],
-    attachments: files = []
+    attachments: files = [],
+    issuer = []
 } = {}) {
 
     const {
@@ -72,7 +74,7 @@ function parseEdit(context, {
     } = context;
 
     parsers.GROUP[vuex.actions.GROUP.FETCH](context, {
-        groups
+        groups: [...recipients, ...issuer]
     });
 
     parsers.ISSUE_STATUS[vuex.actions.ISSUE_STATUS.FETCH](context, {
@@ -112,7 +114,8 @@ function parseStore(context, {
     recipients = [],
     status = [],
     notes = [],
-    attachments = []
+    attachments = [],
+    issuer = []
 } = {}) {
 
     const {
@@ -130,7 +133,8 @@ function parseStore(context, {
             recipients,
             status,
             notes,
-            attachments
+            attachments,
+            issuer
         });
     } else {
         const issues = [issue];
@@ -141,6 +145,7 @@ function parseStore(context, {
             status,
             notes,
             attachments,
+            issuer,
             total: rootGetters[
                 `${vuex.modules.ISSUE}/${vuex.getters.GET_STATE}`
             ]('totalItems') + issues.length,
