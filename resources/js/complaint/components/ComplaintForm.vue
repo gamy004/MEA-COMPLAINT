@@ -626,11 +626,6 @@
                 display: none;
             }
         }
-        .custom-toolbar {
-            background: white !important;
-            padding-bottom: 8px;
-            z-index: 1;
-        }
 
         .editor {
             &__progress {

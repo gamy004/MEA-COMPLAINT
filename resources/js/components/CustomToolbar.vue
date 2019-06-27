@@ -123,6 +123,10 @@ export default {
 
 <style lang="scss" scoped>
 .custom-toolbar {
+  background: white !important;
+  padding-bottom: 8px;
+  z-index: 1;
+
   &__divider {
     min-height: 45%;
     max-height: 45%;

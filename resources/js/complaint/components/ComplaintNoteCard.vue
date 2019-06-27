@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="$_issue_note_item_mixin_noteItem" flat light>
+  <v-card v-if="$_issue_note_item_mixin_noteItem" flat light class="complaint-note-card">
     <v-card-title primary-title>
       <v-layout>
         <div>
@@ -66,6 +66,63 @@
         </template>
       </v-layout>
     </v-card-text> -->
+    <v-card-actions>
+      <custom-toolbar :items="[]" class="elevation-0">
+        <template v-slot:left>
+            <v-btn
+                small
+                color="primary"
+                class="mr-2 complaint-form__btn-submit"
+                @click.prevent.stop="onSubmit"
+                :loading="form.isSubmitting"
+                :disabled="uploadable_uploading"
+            >{{ managableEdit ? "Update" : "Send" }}</v-btn>
+
+            <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                    <v-icon
+                        medium
+                        v-on="on"
+                        class="clickable mr-2"
+                        @click.prevent.stop="showFormatting = !showFormatting"
+                    >text_format</v-icon>
+                </template>
+                <span>Formatting options</span>
+            </v-tooltip>
+
+            <uploader
+                :ref="uploadable_uploaderRef"
+                :end-point="endpoint"
+                :multipart="multipart"
+                :show-errors="false"
+                :max-uploads="999"
+                multiple
+                @startUpload="onStartUpload"
+                @chunkUploaded="onChunkUploaded"
+                @fileUploaded="onFileUploaded"
+                @error="onUploadError"
+            >
+                <template slot="browse-btn">
+                    <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                            <v-icon v-on="on">attach_file</v-icon>
+                        </template>
+                        <span>Upload files</span>
+                    </v-tooltip>
+                </template>
+            </uploader>
+
+            <v-spacer></v-spacer>
+
+            <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                    <v-icon v-on="on" class="clickable">delete</v-icon>
+                </template>
+                <span>Discard draft</span>
+            </v-tooltip>
+        </template>
+      </custom-toolbar>
+    </v-card-actions>
   </v-card>
 </template>
 
@@ -75,12 +132,14 @@ import { vuex } from '../../mixins/vuexable';
 import managable from '../../mixins/managable';
 import uploadable from '../../mixins/uploadable';
 import CustomEditor from '../../components/CustomEditor';
+import CustomToolbar from '../../components/CustomToolbar';
 
 export default {
     mixins: [issueNoteItemMixin, managable, uploadable],
 
     components: {
-      CustomEditor
+      CustomEditor,
+      CustomToolbar
     },
 
     data() {
@@ -88,7 +147,8 @@ export default {
         form: vuex.models.FORM.make({
             description: "",
             uploaded_files: []
-        })
+        }),
+        showFormatting: false
       }
     },
 
@@ -113,3 +173,15 @@ export default {
     }
 }
 </script>
+
+<style lang="scss">
+.complaint-note-card {
+  .vuejs-uploader {
+      &__btn--clear,
+      &__btn--upload,
+      &__queue {
+          display: none;
+      }
+  }
+}
+</style>
