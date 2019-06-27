@@ -16,9 +16,10 @@
 
         <v-spacer/>
 
-        <v-layout align-baseline justify-end no-wrap>
+        <v-layout align-center justify-end no-wrap>
           <v-icon
             v-if="$_issue_note_item_mixin_hasAttachments"
+            small
             class="mr-1 complaint-detail__attachment-icon"
           >attachment</v-icon>
 
@@ -35,7 +36,10 @@
       <v-sheet v-html="$_issue_note_item_mixin_noteItem.description"/>
     </v-card-text>
 
-    <v-divider v-if="displayInformation && $_issue_note_item_mixin_hasAttachments"></v-divider>
+    <v-divider
+      v-if="displayInformation && $_issue_note_item_mixin_hasAttachments"
+      class="mx-3 mb-3"
+    ></v-divider>
 
     <v-card-text v-if="displayInformation && $_issue_note_item_mixin_hasAttachments" class="pt-0">
       <v-subheader class="px-0">Attachments</v-subheader>
