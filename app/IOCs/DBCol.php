@@ -42,6 +42,10 @@ class DBCol
     const STATUS = 'status';
     const DEFAULT = 'default';
     /**
+     * ISSUE NOTE
+     */
+    const CREATED_BY = 'created_by';
+    /**
      * File
      */
     const DISPLAY_NAME = 'display_name';
@@ -52,7 +56,7 @@ class DBCol
     const PATH = 'path';
     const URL = 'url';
     const _PUBLIC = 'public';
-    
+
     const GROUP_ID = 'group_id';
     const ROLE_ID = 'role_id';
     const TYPE_ID = 'type_id';

@@ -15,11 +15,11 @@ const IssueCategoryStore = {
     },
 
     actions: {
-        async [vuex.actions.COMPLAINT_CATEGORY.FETCH](context, params) {
+        async [vuex.actions.ISSUE_CATEGORY.FETCH](context, params = {}) {
             try {
 
                 context.dispatch(vuex.actions.REQUEST, {
-                    model: 'COMPLAINT_CATEGORY',
+                    model: 'ISSUE_CATEGORY',
                     action: 'FETCH',
                     params
                 });
@@ -27,7 +27,7 @@ const IssueCategoryStore = {
                 // let {
                 //     issues = [], issuer = [], total = 0
                 // } = await Complaint[
-                //     vuex.actions.COMPLAINT.FETCH
+                //     vuex.actions.ISSUE.FETCH
                 // ](state.base.pagination);
 
                 // commit(vuex.mutations.STORE, {
@@ -49,7 +49,7 @@ const IssueCategoryStore = {
                 throw error;
             }
         }
-        // async [vuex.actions.COMPLAINT.FETCH]({
+        // async [vuex.actions.ISSUE.FETCH]({
         //     state,
         //     commit
         // }) {
@@ -57,7 +57,7 @@ const IssueCategoryStore = {
         //         let {
         //             issues = [], total = 0
         //         } = await Complaint[
-        //             vuex.actions.COMPLAINT.FETCH
+        //             vuex.actions.ISSUE.FETCH
         //         ](state.base.pagination);
 
         //         commit(vuex.mutations.STORE, {

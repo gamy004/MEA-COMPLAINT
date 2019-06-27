@@ -14,6 +14,7 @@ class ApiServiceProvider extends ServiceProvider
         \App\Http\Controllers\Api\GroupController::class => \App\Api\Providers\GroupApi::class,
         \App\Http\Controllers\Api\IssueCategoryController::class => \App\Api\Providers\IssueCategoryApi::class,
         \App\Http\Controllers\Api\IssueStatusController::class => \App\Api\Providers\IssueStatusApi::class,
+        \App\Http\Controllers\Api\IssueNoteController::class => \App\Api\Providers\IssueNoteApi::class,
     ];
 
     /**

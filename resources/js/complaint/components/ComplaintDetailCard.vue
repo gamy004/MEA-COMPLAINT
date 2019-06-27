@@ -3,33 +3,33 @@
     <v-card-title primary-title>
       <v-layout>
         <div>
-          <div class="headline">{{ complaint.title }}</div>
-          <span class="caption">to {{ complaint.joinedRecipientName }}</span>
+          <div class="headline">{{ $_complaint_item_mixin_complaint.title }}</div>
+          <span class="caption">to {{ $_complaint_item_mixin_complaint.joinedRecipientName }}</span>
           <!-- <span>Listen to your favorite artists and albums whenever and wherever, online and offline.</span> -->
         </div>
 
         <v-spacer/>
 
         <v-layout align-baseline justify-end no-wrap>
-          <v-icon v-if="hasAttachments" class="mr-1 complaint-detail__attachment-icon">attachment</v-icon>
+          <v-icon v-if="$_complaint_item_mixin_hasAttachments" class="mr-1 complaint-detail__attachment-icon">attachment</v-icon>
 
-          <span class="caption">{{ complaint.longUpdatedAt }}</span>
+          <span class="caption">{{ $_complaint_item_mixin_complaint.longUpdatedAt }}</span>
           <!-- <span>Listen to your favorite artists and albums whenever and wherever, online and offline.</span> -->
         </v-layout>
       </v-layout>
     </v-card-title>
 
     <v-card-text>
-      <v-sheet v-html="complaint.description"></v-sheet>
+      <v-sheet v-html="$_complaint_item_mixin_complaint.description"></v-sheet>
     </v-card-text>
 
-    <v-divider v-if="hasAttachments"></v-divider>
+    <v-divider v-if="$_complaint_item_mixin_hasAttachments"></v-divider>
 
-    <v-card-text v-if="hasAttachments" class="pt-0">
+    <v-card-text v-if="$_complaint_item_mixin_hasAttachments" class="pt-0">
       <v-subheader class="px-0">Attachments</v-subheader>
 
       <v-layout row wrap>
-        <template v-for="(attachment, attachmentIndex) in complaintAttachments">
+        <template v-for="(attachment, attachmentIndex) in $_complaint_item_mixin_complaintAttachments">
           <file-sheet-item :file="attachment" :key="`complaintAttachment-${attachmentIndex}`"/>
         </template>
       </v-layout>
@@ -58,5 +58,3 @@ export default {
   }
 }
 </style>
-
-

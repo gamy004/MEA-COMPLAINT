@@ -1,13 +1,15 @@
-import COMPLAINT from './complaintParser';
+import ISSUE from './complaintParser';
 import GROUP from './groupParser';
 import ISSUE_STATUS from './issueStatusParser';
-import COMPLAINT_CATEGORY from './issueCategoryParser';
+import ISSUE_CATEGORY from './issueCategoryParser';
+import ISSUE_NOTE from './issueNoteParser';
 import FILE from './fileParser';
 
 export default {
-    COMPLAINT,
+    ISSUE,
     GROUP,
     ISSUE_STATUS,
-    COMPLAINT_CATEGORY,
+    ISSUE_CATEGORY,
+    ISSUE_NOTE,
     FILE
 };

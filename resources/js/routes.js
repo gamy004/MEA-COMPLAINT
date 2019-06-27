@@ -16,12 +16,12 @@ const routes = [{
         component: views.auth.index,
         children: [{
                 path: 'complaints',
-                name: constants.views.COMPLAINT.INDEX,
+                name: constants.views.ISSUE.INDEX,
                 component: views.complaint.index
             },
             {
                 path: 'complaints/:issue',
-                name: constants.views.COMPLAINT.SHOW,
+                name: constants.views.ISSUE.SHOW,
                 component: views.complaint.show
             }
         ]

@@ -11,7 +11,7 @@ export const USER = {
     GET_AUTH: 'userGetAuth'
 };
 
-export const COMPLAINT = {
+export const ISSUE = {
     FETCH: 'complaintFetch',
     SHOW: 'complaintShow',
     STORE: 'complaintStore',
@@ -36,6 +36,10 @@ export const ISSUE_STATUS = {
     FETCH: 'issueStatusFetch'
 };
 
-export const COMPLAINT_CATEGORY = {
+export const ISSUE_CATEGORY = {
     FETCH: 'issueCategoryFetch'
+};
+
+export const ISSUE_NOTE = {
+    FETCH: 'issueNoteFetch'
 };

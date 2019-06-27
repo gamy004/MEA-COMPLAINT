@@ -2,7 +2,6 @@
     <v-layout row wrap>
         <v-flex xs12>
             <custom-toolbar id="showComplaintToolbar" v-if="activeComplaint" :items="items"></custom-toolbar>
-
             <v-layout align-center justify-center class="loading__wrapper">
                 <v-flex xs12>
                     <transition name="slide-y-reverse-transition" appear>
@@ -16,16 +15,55 @@
                     </transition>
                 </v-flex>
             </v-layout>
-
-            <v-layout class="content__wrapper">
+            <v-layout v-if="activeComplaint" class="content__wrapper" column pl-5 pr-4>
                 <v-flex xs12>
-                    <transition name="slide-y-reverse-transition" appear>
+                    <transition-group name="slide-y-reverse-transition" appear>
                         <complaint-detail-card
                             v-if="!$_complaint_mixin_isFetchingShowComplaint"
-                            :issue-id="$route.params.issue"
-                            class="pl-5 pr-4"
+                            key="complaintDetailCard"
+                            :issue-id="activeComplaint.id"
                         />
-                    </transition>
+                    </transition-group>
+                    <transition-group name="slide-y-reverse-transition" appear mode="out-in">
+                        <v-progress-linear
+                            v-if="$_issue_note_mixin_isFetchingNote"
+                            key="loadingComplaintNotes"
+                            :indeterminate="true"
+                            color="deep-orange"
+                        ></v-progress-linear>
+                        <template
+                            v-else
+                            v-for="(note, noteIndex) in $_issue_note_mixin_complaintNotes"
+                        >
+                            <v-divider :key="`divider-note-${noteIndex}`" class="mx-3 mt-3"></v-divider>
+                            <complaint-note-card
+                                :key="`issueNoteCard-${activeComplaint.id}__${note.id}`"
+                                :issue-id="activeComplaint.id"
+                                :note-id="note.id"
+                                :delay="noteIndex * 100"
+                                :managable-module="vuex.modules.ISSUE_NOTE"
+                                :managable-route-param="$_issue_note_mixin_issueNoteRouteParam"
+                                :managable-edit="$_issue_note_mixin_hasActiveIssueNote"
+                            />
+                        </template>
+                        <complaint-note-card
+                            key="issueNoteCardForm"
+                            v-if="$_issue_note_mixin_issueNoteDialog"
+                            :issue-id="activeComplaint.id"
+                            :managable-module="vuex.modules.ISSUE_NOTE"
+                            :managable-route-param="$_issue_note_mixin_issueNoteRouteParam"
+                            :managable-edit="$_issue_note_mixin_hasActiveIssueNote"
+                        />
+                        <v-btn
+                            key="btnAddRemark"
+                            color="light"
+                            @click="showRemarkForm"
+                            class="mt-3"
+                        >
+                            <v-icon>reply</v-icon>
+                            <span>Remark</span>
+                        </v-btn>
+                    </transition-group>
                 </v-flex>
             </v-layout>
             <!-- <v-tabs-items v-model="tab">
@@ -38,14 +76,12 @@
         </v-tab-item>
             </v-tabs-items>-->
         </v-flex>
-
         <complaint-form
             v-if="complaintDialog"
-            :managable-module="vuex.modules.COMPLAINT"
+            :managable-module="vuex.modules.ISSUE"
             :managable-route-param="complaintRouteParam"
             :managable-edit="hasActiveComplaint"
         />
-
         <message-alert
             key="alertComplaintShow"
             :alertable-visible.sync="alertable_alert"
@@ -55,27 +91,26 @@
         ></message-alert>
     </v-layout>
 </template>
-
 <script>
     import { vuex } from "../../mixins/vuexable";
     import alertable from "../../mixins/alertable";
+    import issueNoteMixin from "../../mixins/issue-note-mixin";
     import CustomToolbar from "../../components/CustomToolbar";
     import MessageAlert from "../../components/MessageAlert";
     import ComplaintForm from "../components/ComplaintForm";
     import complaintMixin from "../../mixins/complaint-mixin";
     import ComplaintStatus from "../components/ComplaintStatus";
     import ComplaintDetailCard from "../components/ComplaintDetailCard";
-
+    import ComplaintNoteCard from "../components/ComplaintNoteCard";
     export default {
-        mixins: [alertable, complaintMixin],
-
+        mixins: [alertable, complaintMixin, issueNoteMixin],
         components: {
             CustomToolbar,
             MessageAlert,
             ComplaintForm,
-            ComplaintDetailCard
+            ComplaintDetailCard,
+            ComplaintNoteCard
         },
-
         data() {
             return {
                 alertable_messages: {
@@ -86,12 +121,23 @@
                 }
             };
         },
-
+        watch: {
+            activeComplaintId: {
+                immediate: true,
+                async handler(v = null) {
+                    if (v) {
+                        this[vuex.actions.ISSUE.SHOW](v);
+                        this[vuex.actions.ISSUE_NOTE.FETCH]({
+                            filters: { issue_id: v }
+                        });
+                    }
+                }
+            }
+        },
         computed: {
             ...vuex.mapWaitingGetters({
                 isUpdatingStatus: "updating complaint status"
             }),
-
             items() {
                 return [
                     {
@@ -106,7 +152,6 @@
                         text: "Archive",
                         onClick: async () => {
                             // archive complaint
-
                             // go back
                             this.$router.go(-1);
                         }
@@ -116,7 +161,6 @@
                         text: "Delete",
                         onClick: async () => {
                             // delete complaint
-
                             // go back
                             this.$router.go(-1);
                         }
@@ -152,11 +196,9 @@
                     { icon: "settings", text: "Settings" }
                 ];
             },
-
             statuses() {
                 return this.$_vuexable_getSortedValues(vuex.modules.ISSUE_STATUS);
             },
-
             statusesItems() {
                 return this.statuses.map(({ id, status }) => {
                     return {
@@ -171,22 +213,22 @@
                                     issue: this.activeComplaintId
                                 }
                             });
-
                             this.$_alertable_alert("update_status_success");
                         }
                     };
                 });
             }
         },
-
         methods: {
-            ...vuex.mapWaitingActions(vuex.modules.COMPLAINT, {
+            ...vuex.mapWaitingActions(vuex.modules.ISSUE, {
                 [vuex.actions.UPDATE]: "updating complaint status"
-            })
+            }),
+            showRemarkForm() {
+                this.$_issue_note_mixin_setDialog(true);
+            }
         }
     };
 </script>
-
 <style lang="scss" scoped>
     .content {
         &__wrapper {
@@ -196,5 +238,3 @@
         }
     }
 </style>
-
-

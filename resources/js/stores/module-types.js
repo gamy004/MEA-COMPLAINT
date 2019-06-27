@@ -1,8 +1,9 @@
 export const BASE = 'base';
 export const USER = 'users';
-export const COMPLAINT = 'complaints';
+export const ISSUE = 'complaints';
 export const GROUP = 'groups';
+export const ISSUE_NOTE = 'issueNotes';
 export const ISSUE_STATUS = 'issueStatuses';
-export const COMPLAINT_CATEGORY = 'complaintCategories';
+export const ISSUE_CATEGORY = 'issueCategories';
 export const FILE = 'files';
 export const LANG = 'i18n';

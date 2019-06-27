@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Issue extends Model
 {
     use SoftDeletes;
-    
+
     const FK = 'issue_id';
 
     protected $fillable = [
@@ -49,7 +49,7 @@ class Issue extends Model
             File::class, 'issue_attachment', self::FK, 'attachment_id'
         )->using(IssueAttachment::class);
     }
-    
+
     public function issuer()
     {
         return $this->belongsTo(Group::class, DBCol::ISSUED_BY);
@@ -62,5 +62,9 @@ class Issue extends Model
 
     public function status() {
         return $this->belongsTo(IssueStatus::class, IssueStatus::FK);
+    }
+
+    public function notes() {
+        return $this->hasMany(IssueNote::class);
     }
 }

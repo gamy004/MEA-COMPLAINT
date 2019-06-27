@@ -1,7 +1,9 @@
 import {
     get,
     set,
-    toggle
+    toggle,
+    formatShortDateTime,
+    formatLongDateTime
 } from "../helpers";
 
 class BaseModel {
@@ -123,6 +125,14 @@ class BaseModel {
         };
 
         return this;
+    }
+
+    get shortUpdatedAt() {
+        return formatShortDateTime(this.updated_at);
+    }
+
+    get longUpdatedAt() {
+        return formatLongDateTime(this.updated_at);
     }
 }
 

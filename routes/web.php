@@ -42,8 +42,8 @@ Route::group([
             /**
              * Custom route IssueController
              */
-            Route::group(['as' => 'issues.', 'prefix' => 'issues'], function () {
-                Route::post('/{issue}/restore', 'IssueController@restore')->name('restore');
+            Route::group(['as' => 'issues.', 'prefix' => 'issues/{issue}'], function () {
+                Route::post('/restore', 'IssueController@restore')->name('restore');
             });
 
             Route::resources([
@@ -51,6 +51,7 @@ Route::group([
                 'groups' => 'GroupController',
                 'issue-statuses' => 'IssueStatusController',
                 'issue-categories' => 'IssueCategoryController',
+                'issue-notes' => 'IssueNoteController',
                 'files' => 'FileController'
             ]);
         });
@@ -60,5 +61,5 @@ Route::group([
 Route::get('/{vue_capture?}', 'HomeController@index')
     ->where('vue_capture', '[\/\w\.-]*')
     ->name('magicRoute');
-    
+
 // Route::get('/home', 'HomeController@index')->name('home');

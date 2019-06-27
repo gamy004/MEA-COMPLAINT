@@ -4,6 +4,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\Group;
 use App\Models\Issue;
+use App\Models\IssueNote;
 use App\Models\IssueStatus;
 use Illuminate\Support\Arr;
 use App\Models\IssueCategory;
@@ -22,15 +23,15 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         Schema::disableForeignKeyConstraints();
-        
+
         Group::truncate();
         IssueRecipient::truncate();
         User::truncate();
-        Issue::truncate(); 
-        
+        Issue::truncate();
+
         $issue_statuses = IssueStatus::all();
         $issue_categories = IssueCategory::all();
-        
+
         $roles = Role::all()->each(
             function($r) use ($issue_statuses, $issue_categories) {
                 $user_ids = [];
@@ -45,20 +46,20 @@ class UsersTableSeeder extends Seeder
                 }
 
                 $i = 1;
-                
+
                 foreach ($group_ids as $group_id) {
                     // loop user
                     for ($j=1; $j <= 10; $j++) {
                         $username = $r->role.$i;
                         $password = Hash::make($username.'password');
-                        
+
                         $user = factory(User::class)
                             ->create(
                                 compact('username', 'password', 'group_id')
                             );
-                            
+
                         array_push($user_ids, $user->id);
-                        
+
                         unset($user);
 
                         $i += 1;
@@ -72,7 +73,7 @@ class UsersTableSeeder extends Seeder
                     }
 
                     $other_group_ids = Arr::except($group_ids, $group_index);
-                    
+
                     foreach ($issue_statuses as $status_index => $issue_status) {
                         $issue_status_id = $issue_status->id;
 
@@ -90,47 +91,53 @@ class UsersTableSeeder extends Seeder
                                         'issue_category_id'
                                     )
                                 );
-                                
+
                             $random_recipients = Arr::random(
                                 $other_group_ids,
                                 rand(1, count($other_group_ids))
                             );
 
+                            $notes = factory(IssueNote::class, 3)
+                                ->create([
+                                    'issue_id' => $issue->id,
+                                    'created_by' => head($random_recipients)
+                                ]);
+
                             $issue->recipients()->sync($random_recipients);
-                            
+
                             $rand_is_referenced_to = rand(0, 1);
 
-                            if ($rand_is_referenced_to) {
-                                $referenced_to = $issue->id;
-                                $referenced_issued_by = Arr::random($random_recipients);
+                            // if ($rand_is_referenced_to) {
+                            //     $referenced_to = $issue->id;
+                            //     $referenced_issued_by = Arr::random($random_recipients);
 
-                                $referenced_issue = factory(Issue::class)
-                                    ->create([
-                                        'subject' => "Re: ".$issue->subject,
-                                        'issued_by' => $referenced_issued_by,
-                                        'referenced_to' => $referenced_to,
-                                        'issue_status_id' => $issue_status_id,
-                                        'issue_category_id' => $issue_category_id
-                                    ]);
-                                        
-                                $referenced_recipients = Arr::except(
-                                    $random_recipients,
-                                    $referenced_issued_by
-                                );
-                                
-                                $result = $referenced_issue->recipients()->sync(array_merge(
-                                    [$issued_by],
-                                    Arr::random(
-                                        $referenced_recipients,
-                                        rand(1, count($referenced_recipients))
-                                    )
-                                ));
-                            }
+                            //     $referenced_issue = factory(Issue::class)
+                            //         ->create([
+                            //             'subject' => "Re: ".$issue->subject,
+                            //             'issued_by' => $referenced_issued_by,
+                            //             'referenced_to' => $referenced_to,
+                            //             'issue_status_id' => $issue_status_id,
+                            //             'issue_category_id' => $issue_category_id
+                            //         ]);
+
+                            //     $referenced_recipients = Arr::except(
+                            //         $random_recipients,
+                            //         $referenced_issued_by
+                            //     );
+
+                            //     $result = $referenced_issue->recipients()->sync(array_merge(
+                            //         [$issued_by],
+                            //         Arr::random(
+                            //             $referenced_recipients,
+                            //             rand(1, count($referenced_recipients))
+                            //         )
+                            //     ));
+                            // }
                         }
                     }
                 }
 
-                
+
                 $r->users()->sync($user_ids);
             }
         );
