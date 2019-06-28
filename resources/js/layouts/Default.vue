@@ -108,11 +108,9 @@
             display: none;
         }
 
-        .v-toolbar {
-            border-bottom: 1px solid #E0E0E0;
-        }
-
         #toolbarLayoutDefault {
+            border-bottom: 1px solid #E0E0E0;
+
             .title + * {
                 margin-left: 4rem;
             }

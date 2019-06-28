@@ -14,7 +14,10 @@
           <v-icon v-if="$_complaint_item_mixin_hasAttachments" class="mr-1 complaint-detail__attachment-icon">attachment</v-icon>
 
           <span class="caption">{{ $_complaint_item_mixin_complaint.longUpdatedAt }}</span>
-          <!-- <span>Listen to your favorite artists and albums whenever and wherever, online and offline.</span> -->
+
+          <v-btn icon>
+            <v-icon v-if="$_complaint_item_mixin_complaintEditable" class="ml-1 complaint-detail__edit-icon">edit</v-icon>
+          </v-btn>
         </v-layout>
       </v-layout>
     </v-card-title>
