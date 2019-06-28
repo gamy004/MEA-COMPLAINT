@@ -1,155 +1,182 @@
 <template>
-  <v-card flat light class="complaint-note-card" :class="noteClasses">
-    <v-card-title primary-title>
-      <v-layout>
-        <div>
-          <span
-            v-if="displayInformation"
-            class="caption"
-          >Remark by: {{ $_issue_note_item_mixin_noteCreator ? $_issue_note_item_mixin_noteCreator.name : "Admin" }}</span>
+  <v-layout>
+    <v-flex xs12>
+      <v-card flat light class="complaint-note-card" :class="noteClasses">
+        <v-progress-linear
+          v-if="!displayInformation && $_issue_note_item_mixin_isFetchingEditIssueNote"
+          key="loadingComplaintEditNotes"
+          :indeterminate="true"
+          color="info"
+        ></v-progress-linear>
 
-          <span
-            v-if="!displayInformation && $_issue_note_item_mixin_complaintIssuer"
-            class="caption"
-          >To: {{ $_issue_note_item_mixin_complaintIssuer.name }}</span>
-        </div>
+        <v-card-title primary-title>
+          <v-layout>
+            <div>
+              <span
+                v-if="displayInformation"
+                class="caption"
+              >Remark by: {{ $_issue_note_item_mixin_noteCreator ? $_issue_note_item_mixin_noteCreator.name : "Admin" }}</span>
 
-        <v-spacer/>
+              <v-btn
+                icon
+                v-if="$_issue_note_item_mixin_noteItem && !displayInformation"
+                small
+                @click.prevent.stop="onCloseEdit"
+              >
+                <v-icon small>arrow_back</v-icon>
+              </v-btn>
 
-        <v-layout align-center justify-end no-wrap>
-          <v-icon
-            v-if="$_issue_note_item_mixin_hasAttachments"
-            small
-            class="mr-1 complaint-detail__attachment-icon"
-          >attachment</v-icon>
+              <span
+                v-if="!displayInformation"
+                class="caption"
+              >To: {{ $_issue_note_item_mixin_complaintIssuer ? $_issue_note_item_mixin_complaintIssuer.name : "Admin" }}</span>
 
-          <span
-            v-if="displayInformation && $_issue_note_item_mixin_noteItem"
-            class="caption"
-          >{{ $_issue_note_item_mixin_noteItem.longUpdatedAt }}</span>
-          <!-- <span>Listen to your favorite artists and albums whenever and wherever, online and offline.</span> -->
-        </v-layout>
-      </v-layout>
-    </v-card-title>
+              <v-btn
+                icon
+                v-if="displayInformation && $_issue_note_item_mixin_noteEditable"
+                class="complaint-detail-card__edit-icon"
+                small
+                @click.prevent.stop="onEdit"
+              >
+                <v-icon small>edit</v-icon>
+              </v-btn>
+            </div>
 
-    <v-card-text v-if="displayInformation && $_issue_note_item_mixin_noteItem" class="pt-0">
-      <v-sheet v-html="$_issue_note_item_mixin_noteItem.description"/>
-    </v-card-text>
+            <v-spacer/>
 
-    <v-divider
-      v-if="displayInformation && $_issue_note_item_mixin_hasAttachments"
-      class="mx-3 mb-3"
-    ></v-divider>
+            <v-layout align-center justify-end no-wrap>
+              <v-icon
+                v-if="$_issue_note_item_mixin_hasAttachments"
+                small
+                class="mr-1 complaint-detail__attachment-icon"
+              >attachment</v-icon>
 
-    <v-card-text v-if="displayInformation && $_issue_note_item_mixin_hasAttachments" class="pt-0">
-      <v-subheader class="px-0">Attachments</v-subheader>
+              <span
+                v-if="displayInformation && $_issue_note_item_mixin_noteItem"
+                class="caption"
+              >{{ $_issue_note_item_mixin_noteItem.longUpdatedAt }}</span>
+              <!-- <span>Listen to your favorite artists and albums whenever and wherever, online and offline.</span> -->
+            </v-layout>
+          </v-layout>
+        </v-card-title>
 
-      <v-layout row wrap>
-        <template v-for="(attachment, attachmentIndex) in $_issue_note_item_mixin_noteAttachments">
-          <file-sheet-item :file="attachment" :key="`complaintNoteAttachment-${attachmentIndex}`"/>
-        </template>
-      </v-layout>
-    </v-card-text>
+        <v-card-text v-if="displayInformation && $_issue_note_item_mixin_noteItem" class="pt-0">
+          <v-sheet v-html="$_issue_note_item_mixin_noteItem.description"/>
+        </v-card-text>
 
-    <v-card-text v-if="!displayInformation" class="pt-0">
-      <custom-editor
-        v-if="!displayInformation"
-        v-model="formDescription"
-        :show-toolbar.sync="showFormatting"
-        :full-screen="false"
-        :min-height="150"
-        :max-height="350"
-        @editor:drop="dropFiles"
-        @editor:dragover="dragover"
-        @editor:dragleave="dragleave"
-        @change="onChange"
-      >
-        <!-- file list here -->
-        <file-list
-          class="editor__filelist editor__filelist--front px-2"
-          v-if="uploadable_uploader"
-          :files="noteAttachments"
-          :uploader="uploadable_uploader"
-          @remove="onFileRemoved"
-        />
+        <v-divider
+          v-if="displayInformation && $_issue_note_item_mixin_hasAttachments"
+          class="mx-3 mb-3"
+        ></v-divider>
 
-        <file-list
-          class="editor__filelist editor__filelist--back px-2"
-          v-if="uploadable_uploader"
-          :files="$_uploadable_uploaderFiles"
-          :uploader="uploadable_uploader"
-        />
-      </custom-editor>
+        <v-card-text
+          v-if="displayInformation && $_issue_note_item_mixin_hasAttachments"
+          class="pt-0"
+        >
+          <v-subheader class="caption px-0">Attachments</v-subheader>
 
-      <v-card-actions class="pa-0">
-        <custom-toolbar :items="[]" class="elevation-0">
-          <template v-slot:left>
-            <v-btn
-              small
-              color="primary"
-              class="mr-2 complaint-form__btn-submit"
-              @click.prevent.stop="onSubmit"
-              :loading="form.isSubmitting"
-              :disabled="uploadable_uploading || !canSubmitNote"
-            >{{ managableEdit ? "Update" : "Send" }}</v-btn>
-
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-icon
-                  medium
-                  v-on="on"
-                  class="clickable mr-2"
-                  @click.prevent.stop="showFormatting = !showFormatting"
-                >text_format</v-icon>
-              </template>
-              <span>Formatting options</span>
-            </v-tooltip>
-
-            <uploader
-              :ref="uploadable_uploaderRef"
-              :end-point="endpoint"
-              :multipart="multipart"
-              :show-errors="false"
-              :max-uploads="999"
-              multiple
-              @startUpload="onStartUpload"
-              @chunkUploaded="onChunkUploaded"
-              @fileUploaded="onFileUploaded"
-              @error="onUploadError"
+          <v-layout row wrap>
+            <template
+              v-for="(attachment, attachmentIndex) in $_issue_note_item_mixin_noteAttachments"
             >
-              <template slot="browse-btn">
+              <file-sheet-item
+                :file="attachment"
+                :key="`complaintNoteAttachment-${attachmentIndex}`"
+              />
+            </template>
+          </v-layout>
+        </v-card-text>
+
+        <v-card-text v-if="!displayInformation" class="pt-0 mb-3">
+          <custom-editor
+            v-model="formDescription"
+            :show-toolbar.sync="showFormatting"
+            :full-screen="false"
+            :min-height="150"
+            :max-height="350"
+            @editor:drop="dropFiles"
+            @editor:dragover="dragover"
+            @editor:dragleave="dragleave"
+            @change="onChange"
+          >
+            <!-- file list here -->
+            <file-list
+              class="editor__filelist editor__filelist--front px-2"
+              v-if="uploadable_uploader"
+              :files="noteAttachments"
+              :uploader="uploadable_uploader"
+              @remove="onFileRemoved"
+            />
+
+            <file-list
+              class="editor__filelist editor__filelist--back px-2"
+              v-if="uploadable_uploader"
+              :files="$_uploadable_uploaderFiles"
+              :uploader="uploadable_uploader"
+            />
+          </custom-editor>
+
+          <v-card-actions>
+            <custom-toolbar :items="[]" class="elevation-0">
+              <template v-slot:left>
+                <v-btn
+                  small
+                  color="primary"
+                  class="ml-1 mr-2 complaint-form__btn-submit"
+                  @click.prevent.stop="onSubmit"
+                  :loading="form.isSubmitting"
+                  :disabled="uploadable_uploading || !canSubmitNote || !form.isChanged"
+                >{{ managableEdit ? "Update" : "Send" }}</v-btn>
+
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
-                    <v-icon v-on="on">attach_file</v-icon>
+                    <v-icon
+                      medium
+                      v-on="on"
+                      class="clickable mr-2"
+                      @click.prevent.stop="showFormatting = !showFormatting"
+                    >text_format</v-icon>
                   </template>
-                  <span>Upload files</span>
+                  <span>Formatting options</span>
+                </v-tooltip>
+
+                <uploader
+                  :ref="uploadable_uploaderRef"
+                  :end-point="endpoint"
+                  :multipart="multipart"
+                  :show-errors="false"
+                  :max-uploads="999"
+                  multiple
+                  @startUpload="onStartUpload"
+                  @chunkUploaded="onChunkUploaded"
+                  @fileUploaded="onFileUploaded"
+                  @error="onUploadError"
+                >
+                  <template slot="browse-btn">
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <v-icon v-on="on">attach_file</v-icon>
+                      </template>
+                      <span>Upload files</span>
+                    </v-tooltip>
+                  </template>
+                </uploader>
+
+                <v-spacer></v-spacer>
+
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on" @click="onRemove" class="mr-2">
+                      <v-icon>delete</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Discard draft</span>
                 </v-tooltip>
               </template>
-            </uploader>
-
-            <v-spacer></v-spacer>
-
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-btn icon v-on="on" @click="onRemove">
-                  <v-icon>delete</v-icon>
-                </v-btn>
-              </template>
-              <span>Discard draft</span>
-            </v-tooltip>
-          </template>
-        </custom-toolbar>
-      </v-card-actions>
-    </v-card-text>
-
-    <message-alert
-      key="alertComplaintNoteCard"
-      :alertable-visible.sync="alertable_alert"
-      :alertable-type="alertable_type"
-      :alertable-messages="alertable_messages"
-      :alertable-props="alertable_props"
-    ></message-alert>
-    <!-- <v-divider v-if="$_complaint_item_mixin_hasAttachments"></v-divider>
+            </custom-toolbar>
+          </v-card-actions>
+        </v-card-text>
+        <!-- <v-divider v-if="$_complaint_item_mixin_hasAttachments"></v-divider>
 
     <v-card-text v-if="$_complaint_item_mixin_hasAttachments" class="pt-0">
       <v-subheader class="px-0">Attachments</v-subheader>
@@ -159,8 +186,18 @@
           <file-sheet-item :file="attachment" :key="`complaintAttachment-${attachmentIndex}`"/>
         </template>
       </v-layout>
-    </v-card-text>-->
-  </v-card>
+        </v-card-text>-->
+      </v-card>
+    </v-flex>
+
+    <message-alert
+      key="alertComplaintNoteCard"
+      :alertable-visible.sync="alertable_alert"
+      :alertable-type="alertable_type"
+      :alertable-messages="alertable_messages"
+      :alertable-props="alertable_props"
+    ></message-alert>
+  </v-layout>
 </template>
 
 <script>
@@ -227,6 +264,21 @@ export default {
     };
   },
 
+  watch: {
+    displayInformation(v) {
+      if (!v) {
+        this.$_uploadable_UpdateUploader();
+      }
+    },
+
+    $_uploadable_metaData: {
+      deep: true,
+      handler(uploadable_metaData = []) {
+        this.form.set("uploaded_files", uploadable_metaData);
+      }
+    }
+  },
+
   computed: {
     formDescription: {
       get(v) {
@@ -262,13 +314,29 @@ export default {
 
     canSubmitNote() {
       return (
-        this.formDescription.length || this.uploadable_uploadedFiles.length
+        this.formDescription.length > 0 ||
+        this.uploadable_uploadedFiles.length > 0
       );
     }
   },
 
   methods: {
     onChange() {},
+
+    onEdit() {
+      this.form = vuex.models.FORM.make({
+        ...this.$_issue_note_item_mixin_noteItem.data,
+        uploaded_files: []
+      });
+
+      this.$_issue_note_item_mixin_onEditIssueNote(
+        this.$_issue_note_item_mixin_noteItem
+      );
+    },
+
+    onCloseEdit() {
+      this.$_issue_note_item_mixin_setEdit(null);
+    },
 
     onSubmit() {
       if (this.canSubmitNote) {
@@ -279,9 +347,9 @@ export default {
     async submitComplaintNote() {
       const { form, $_uploadable_metaData = [] } = this;
 
-      if ($_uploadable_metaData.length) {
-        form.set("uploaded_files", $_uploadable_metaData);
-      }
+      // if ($_uploadable_metaData.length) {
+      //   form.set("uploaded_files", $_uploadable_metaData);
+      // }
 
       let v;
 

@@ -51,7 +51,7 @@ class IssueNoteController extends BaseApiController
      */
     public function show(IssueNote $issue_note)
     {
-        //
+        return $this->api->find($issue_note->{DBCol::ID});
     }
 
     /**
@@ -62,7 +62,7 @@ class IssueNoteController extends BaseApiController
      */
     public function edit(IssueNote $issue_note)
     {
-        //
+        return $this->api->find($issue_note->{DBCol::ID});
     }
 
     /**
@@ -74,7 +74,10 @@ class IssueNoteController extends BaseApiController
      */
     public function update(Request $request, IssueNote $issue_note)
     {
-        //
+        return $this->api->update(
+            $issue_note,
+            $request->all()
+        );
     }
 
     /**
@@ -85,6 +88,17 @@ class IssueNoteController extends BaseApiController
      */
     public function destroy(IssueNote $issue_note)
     {
-        //
+        return $this->api->destroy($issue_note);
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     *
+     * @param  \App\Models\IssueNote  $issue_note
+     * @return \Illuminate\Http\Response
+     */
+    public function restore($issue_note)
+    {
+        return $this->api->restore($issue_note);
     }
 }

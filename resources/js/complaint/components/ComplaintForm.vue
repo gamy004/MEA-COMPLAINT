@@ -293,8 +293,18 @@ export default {
       immediate: true,
       handler(complaint) {
         if (complaint) {
-          this.form.record({ ...complaint.getData() });
+          this.form = vuex.models.FORM.make({
+            ...complaint.data,
+            uploaded_files: []
+          });
         }
+      }
+    },
+
+    $_uploadable_metaData: {
+      deep: true,
+      handler(uploadable_metaData = []) {
+        this.form.set("uploaded_files", uploadable_metaData);
       }
     }
   },

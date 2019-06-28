@@ -15,57 +15,61 @@
           </transition>
         </v-flex>
       </v-layout>
-      <v-layout v-if="activeComplaint" class="content__wrapper" column pl-5 pr-4>
+      <v-layout v-if="activeComplaint" class="content__wrapper" column>
         <v-flex xs12>
-          <transition-group name="slide-y-reverse-transition" appear>
-            <complaint-detail-card
-              v-if="!$_complaint_mixin_isFetchingShowComplaint"
-              key="complaintDetailCard"
-              :issue-id="activeComplaint.id"
-            />
-          </transition-group>
-          <transition-group name="slide-y-reverse-transition" appear mode="out-in">
-            <v-progress-linear
-              v-if="$_issue_note_mixin_isFetchingNote"
-              key="loadingComplaintNotes"
-              :indeterminate="true"
-              color="deep-orange"
-            ></v-progress-linear>
-            <template v-else v-for="(note, noteIndex) in $_issue_note_mixin_complaintNotes">
-              <v-divider :key="`divider-note-${noteIndex}`" class="mx-3 mt-3"></v-divider>
-              <complaint-note-card
-                :key="`issueNoteCard-${activeComplaint.id}__${note.id}`"
-                :issue-id="activeComplaint.id"
-                :note-id="note.id"
-                :delay="noteIndex * 100"
-                :managable-module="vuex.modules.ISSUE_NOTE"
-                :managable-route-param="$_issue_note_mixin_issueNoteRouteParam"
-                :managable-edit="$_issue_note_mixin_hasActiveIssueNote"
-              />
-            </template>
+          <!-- <transition-group name="slide-y-reverse-transition" appear> -->
+          <complaint-detail-card
+            v-if="!$_complaint_mixin_isFetchingShowComplaint"
+            key="complaintDetailCard"
+            :issue-id="activeComplaint.id"
+            class="pl-5 pr-4"
+          />
+          <!-- </transition-group> -->
+          <!-- <transition-group name="slide-y-reverse-transition" appear mode="out-in"> -->
+          <v-progress-linear
+            v-if="$_issue_note_mixin_isFetchingNote"
+            key="loadingComplaintNotes"
+            :indeterminate="true"
+            color="deep-orange"
+          ></v-progress-linear>
+          <template v-else v-for="(note, noteIndex) in $_issue_note_mixin_complaintNotes">
+            <v-divider :key="`divider-note-${noteIndex}`" class="mt-1"></v-divider>
 
             <complaint-note-card
-              key="issueNoteCardForm"
-              v-if="$_issue_note_mixin_issueNoteDialog"
+              :key="`issueNoteCard-${activeComplaint.id}__${note.id}`"
               :issue-id="activeComplaint.id"
+              :note-id="note.id"
+              :delay="noteIndex * 100"
               :managable-module="vuex.modules.ISSUE_NOTE"
-              :managable-route-param="$_issue_note_mixin_issueNoteRouteParam"
-              :managable-edit="$_issue_note_mixin_hasActiveIssueNote"
-              :created-by="auth.group_id"
-              @remove="$_issue_note_mixin_setDialog(false)"
+              :managable-route-param="{ issue_note: note.id }"
+              :managable-edit="$_issue_note_mixin_isEditingNote(note)"
+              class="pl-5 pr-4"
             />
+          </template>
 
-            <v-btn
-              v-if="!$_issue_note_mixin_issueNoteDialog"
-              key="btnAddRemark"
-              color="light"
-              @click="$_issue_note_mixin_setDialog(true)"
-              class="mt-3 ml-3"
-            >
-              <v-icon>reply</v-icon>
-              <span>Remark</span>
-            </v-btn>
-          </transition-group>
+          <complaint-note-card
+            key="issueNoteCardForm"
+            v-if="$_issue_note_mixin_issueNoteDialog"
+            :issue-id="activeComplaint.id"
+            :managable-module="vuex.modules.ISSUE_NOTE"
+            :managable-route-param="{}"
+            :managable-edit="false"
+            :created-by="auth.group_id"
+            @remove="$_issue_note_mixin_setDialog(false)"
+            class="pl-5 pr-4"
+          />
+
+          <v-btn
+            v-if="!$_issue_note_mixin_issueNoteDialog"
+            key="btnAddRemark"
+            color="light"
+            @click="$_issue_note_mixin_setDialog(true)"
+            class="mt-3 btn-add-remark"
+          >
+            <v-icon class="mr-1">reply</v-icon>
+            <span>Remark</span>
+          </v-btn>
+          <!-- </transition-group> -->
         </v-flex>
       </v-layout>
       <!-- <v-tabs-items v-model="tab">
@@ -237,5 +241,9 @@ export default {
     overflow: auto;
     background: white;
   }
+}
+
+.btn-add-remark {
+  margin-left: 4.5rem;
 }
 </style>

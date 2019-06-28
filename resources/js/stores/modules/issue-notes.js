@@ -29,6 +29,24 @@ const IssueNoteStore = {
             }
         },
 
+        async [vuex.actions.ISSUE_NOTE.EDIT](context, {
+            id: issue_note
+        }) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'ISSUE_NOTE',
+                    action: 'EDIT',
+                    params: {
+                        routeParam: {
+                            issue_note
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
         async [vuex.actions.STORE](context, input) {
             try {
                 return await context.dispatch(vuex.actions.REQUEST, {

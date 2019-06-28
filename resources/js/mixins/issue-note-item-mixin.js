@@ -24,6 +24,10 @@ const issueNoteItemMixin = {
     },
 
     computed: {
+        ...vuex.mapWaitingGetters({
+            $_issue_note_item_mixin_isFetchingEditIssueNote: 'editing note'
+        }),
+
         $_issue_note_item_mixin_complaint() {
             return this.$_vuexable_getByKey(
                 this.issueId,
@@ -62,6 +66,42 @@ const issueNoteItemMixin = {
 
         $_issue_note_item_mixin_hasAttachments() {
             return this.$_issue_note_item_mixin_noteAttachments.length > 0;
+        },
+
+        $_issue_note_item_mixin_noteEditable() {
+            if (this.$_vuexable_auth.isAdmin) {
+                return true;
+            }
+
+            return this.$_issue_note_item_mixin_noteItem && this.$_vuexable_auth ?
+                this.$_issue_note_item_mixin_noteItem.created_by === this.$_vuexable_auth.group_id : false;
+        },
+    },
+
+    methods: {
+        ...vuex.mapWaitingActions(vuex.modules.ISSUE_NOTE, {
+            $_issue_note_item_mixin_editIssueNote: {
+                action: vuex.actions.ISSUE_NOTE.EDIT,
+                loader: 'editing note'
+            }
+        }),
+
+        async $_issue_note_item_mixin_onEditIssueNote(item) {
+            const {
+                id
+            } = item;
+
+            try {
+                this.$_vuexable_setEdit(id, vuex.modules.ISSUE_NOTE);
+
+                await this.$_issue_note_item_mixin_editIssueNote(item);
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        $_issue_note_item_mixin_setEdit(id) {
+            this.$_vuexable_setEdit(id, vuex.modules.ISSUE_NOTE);
         }
     }
 }

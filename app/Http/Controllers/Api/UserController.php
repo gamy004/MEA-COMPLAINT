@@ -26,7 +26,7 @@ class UserController extends Controller
      */
     public function auth(Request $request)
     {
-        $user = $request->user();
+        $user = $request->user()->load('roles');
 
         return compact('user');
     }

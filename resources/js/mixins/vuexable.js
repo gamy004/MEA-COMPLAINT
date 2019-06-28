@@ -32,6 +32,11 @@ export const vuex = {
 };
 
 export const vuexable = {
+    computed: {
+        $_vuexable_auth() {
+            return this.$store.state["auth"];
+        }
+    },
     methods: {
         $_vuexable_getState(key, module = '') {
             return this.$_vuexable_getter(getters.GET_STATE, module, key);

@@ -18,8 +18,11 @@ class User extends BaseModel {
             email: null,
             phone: null,
             avatar: '',
+            roles: [],
             ...data
         });
+
+        this.$initRoleMapping();
     }
 
     static get defaultAvatar() {
@@ -63,6 +66,34 @@ class User extends BaseModel {
         return new User({
             ...user
         });
+    }
+
+    $initRoleMapping() {
+        const {
+            roles = []
+        } = this;
+
+        this.$roleMapping = {};
+
+        for (const key in roles) {
+            if (roles.hasOwnProperty(key)) {
+                const role = roles[key];
+
+                Vue.set(this.$roleMapping, role.role, role.id);
+            }
+        }
+    }
+
+    get isAdmin() {
+        return this.hasRole("admin");
+    }
+
+    hasRole(roleName) {
+        const {
+            $roleMapping = {}
+        } = this;
+
+        return $roleMapping.hasOwnProperty(roleName);
     }
 
     // async verify() {

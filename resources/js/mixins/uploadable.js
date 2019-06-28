@@ -65,6 +65,10 @@ const uploadable = {
                     return acc;
                 }, []
             );
+        },
+
+        $_uploadable_hasUploadedFiles() {
+            return this.uploadable_uploadedFiles.length;
         }
     },
 

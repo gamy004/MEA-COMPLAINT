@@ -68,6 +68,7 @@ class Form extends BaseModel {
             backup,
             data
         } = this;
+        console.log(backup, data);
 
         return !_.isEqual(data, backup);
     }

@@ -58,12 +58,24 @@ const issueNoteMixin = {
             return this.$_vuexable_getState("active", vuex.modules.ISSUE_NOTE);
         },
 
+        $_issue_note_mixin_editingIssueNoteId() {
+            return this.$_vuexable_getState("edit", vuex.modules.ISSUE_NOTE);
+        },
+
         $_issue_note_mixin_activeIssueNote() {
             return this.$_vuexable_getActive(vuex.modules.ISSUE_NOTE);
         },
 
+        $_issue_note_mixin_editingIssueNote() {
+            return this.$_vuexable_getEdit(vuex.modules.ISSUE_NOTE);
+        },
+
         $_issue_note_mixin_hasActiveIssueNote() {
             return !_.isNull(this.$_issue_note_mixin_activeIssueNoteId);
+        },
+
+        $_issue_note_mixin_hasEditingIssueNote() {
+            return !_.isNull(this.$_issue_note_mixin_editingIssueNoteId);
         },
 
         $_issue_note_mixin_issueNoteRouteParam() {
@@ -91,6 +103,12 @@ const issueNoteMixin = {
                 key: "dialog",
                 value
             }, vuex.modules.ISSUE_NOTE);
+        },
+
+        $_issue_note_mixin_isEditingNote({
+            id
+        }) {
+            return id === this.$_issue_note_mixin_editingIssueNoteId;
         }
     },
 

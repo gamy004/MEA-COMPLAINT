@@ -42,6 +42,7 @@ export const ISSUE_CATEGORY = {
 
 export const ISSUE_NOTE = {
     FETCH: 'issueNoteFetch',
+    EDIT: 'issueNoteEdit',
     STORE: 'issueNoteStore',
     UPDATE: 'issueNoteUpdate',
     DELETE: 'issueNoteDelete'

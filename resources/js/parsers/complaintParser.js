@@ -6,6 +6,7 @@ function parseFetch(context, {
     issues = [],
     recipients = [],
     status: issue_statuses = [],
+    category: issue_categories = [],
     notes: issue_notes = [],
     attachments: files = [],
     issuer = [],
@@ -22,6 +23,10 @@ function parseFetch(context, {
 
     parsers.GROUP[vuex.actions.GROUP.FETCH](context, {
         groups: [...recipients, ...issuer]
+    });
+
+    parsers.ISSUE_CATEGORY[vuex.actions.ISSUE_CATEGORY.FETCH](context, {
+        issue_categories
     });
 
     parsers.ISSUE_STATUS[vuex.actions.ISSUE_STATUS.FETCH](context, {
@@ -60,6 +65,7 @@ function parseEdit(context, {
     issues: issue,
     recipients = [],
     status: issue_statuses = [],
+    category: issue_categories = [],
     notes: issue_notes = [],
     attachments: files = [],
     issuer = []
@@ -75,6 +81,10 @@ function parseEdit(context, {
 
     parsers.GROUP[vuex.actions.GROUP.FETCH](context, {
         groups: [...recipients, ...issuer]
+    });
+
+    parsers.ISSUE_CATEGORY[vuex.actions.ISSUE_CATEGORY.FETCH](context, {
+        issue_categories
     });
 
     parsers.ISSUE_STATUS[vuex.actions.ISSUE_STATUS.FETCH](context, {
@@ -113,6 +123,7 @@ function parseStore(context, {
     issues: issue,
     recipients = [],
     status = [],
+    category = [],
     notes = [],
     attachments = [],
     issuer = []
@@ -132,6 +143,7 @@ function parseStore(context, {
             issues: issue,
             recipients,
             status,
+            category,
             notes,
             attachments,
             issuer
@@ -143,6 +155,7 @@ function parseStore(context, {
             issues,
             recipients,
             status,
+            category,
             notes,
             attachments,
             issuer,

@@ -62,7 +62,7 @@ class IssueNoteApi extends BaseApi implements ApiInterface
             $record = $this->parseGeneralFields($record, $raw);
 
             if (count($record)) {
-                $issue->update($record);
+                $issue_note->update($record);
             }
             
             $uploaded_file_ids = $this->setHasFileRelation('attachments')
@@ -72,13 +72,15 @@ class IssueNoteApi extends BaseApi implements ApiInterface
             $this->syncAttachments($issue_note, $raw, $uploaded_file_ids);
 
             DB::commit();
+
+            return $this->find($issue_note->id);
+
         } catch (Exception $exception) {
             DB::rollback();
             Log::error($exception);
+            dd($exception);
             throw new Exception("Error updating issue note request", 1);
         }
-
-        return $this->find($issue_note->id);
     }
 
     public function destroy(Model $model)
