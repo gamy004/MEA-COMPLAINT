@@ -146,7 +146,14 @@ class Complaint extends BaseVuexModel {
         try {
             response = await api.post('api:issues.restore', {
                 ...data,
-                includes: ['recipients:sideload', 'status:sideload']
+                includes: [
+                    'recipients:sideload',
+                    'status:sideload',
+                    'attachments:sideload',
+                    'category:sideload',
+                    'issuer:sideload',
+                    'notes:ids'
+                ]
             });
         } catch (error) {
             throw error;

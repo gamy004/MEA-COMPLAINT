@@ -45,5 +45,6 @@ export const ISSUE_NOTE = {
     EDIT: 'issueNoteEdit',
     STORE: 'issueNoteStore',
     UPDATE: 'issueNoteUpdate',
-    DELETE: 'issueNoteDelete'
+    DELETE: 'issueNoteDelete',
+    RESTORE: 'issueNoteRestore'
 };

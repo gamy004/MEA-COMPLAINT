@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <custom-toolbar id="complaintToolbar" :items="items">
+      <custom-toolbar id="complaintToolbar" class="bb-1 pb-0" :items="items">
         <template v-slot:extension>
           <v-tabs v-model="tab" v-if="showTab" slider-color="deep-orange">
             <v-tab

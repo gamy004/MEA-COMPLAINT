@@ -47,6 +47,10 @@ const alertable = {
             if (v && this.alertableAutoClose) {
                 this.$_alertable_updateTimer();
             }
+        },
+
+        alertableType(v) {
+            this.$_alertable_updateTimer();
         }
     },
 

@@ -93,7 +93,7 @@ function parseStore(context, {
                 vuex.mutations.UPDATE,
                 vuex.modules.ISSUE, {
                     key: complaint.id,
-                    value: [...notes, issue_note.id],
+                    value: Array.from(new Set([...notes, issue_note.id])),
                     attr: 'notes'
                 }
             );
@@ -164,5 +164,6 @@ export default {
     [actions.ISSUE_NOTE.FETCH]: parseFetch,
     [actions.ISSUE_NOTE.STORE]: parseStore,
     [actions.ISSUE_NOTE.UPDATE]: parseEdit,
-    [actions.ISSUE_NOTE.DELETE]: parseDelete
+    [actions.ISSUE_NOTE.DELETE]: parseDelete,
+    [actions.ISSUE_NOTE.RESTORE]: parseStore
 }

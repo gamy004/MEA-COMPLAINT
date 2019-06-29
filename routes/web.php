@@ -46,6 +46,13 @@ Route::group([
                 Route::post('/restore', 'IssueController@restore')->name('restore');
             });
 
+            /**
+             * Custom route IssueNoteController
+             */
+            Route::group(['as' => 'issue-notes.', 'prefix' => 'issue-notes/{issue_note}'], function () {
+                Route::post('/restore', 'IssueNoteController@restore')->name('restore');
+            });
+
             Route::resources([
                 'issues' => 'IssueController',
                 'groups' => 'GroupController',

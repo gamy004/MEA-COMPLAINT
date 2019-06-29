@@ -55,7 +55,7 @@ const menuable = {
             x,
             y
         }) {
-            if (x === this.windowSize.x) return;
+            // if (x === this.windowSize.x) return;
 
             const mini = x <= this.mobileBreakPoint,
                 windowSize = {

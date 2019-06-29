@@ -39,7 +39,7 @@
                 @click.prevent.stop="onEdit"
               >
                 <v-icon small>edit</v-icon>
-              </v-btn> -->
+              </v-btn>-->
             </div>
 
             <v-spacer/>
@@ -59,7 +59,8 @@
               <more-vert-menu
                 v-if="$_issue_note_item_mixin_noteEditable"
                 :items="menuItems"
-                class="complaint-note-card__action-menu" />
+                class="complaint-note-card__action-menu"
+              />
             </v-layout>
           </v-layout>
         </v-card-title>
@@ -106,7 +107,7 @@
             <!-- file list here -->
             <file-list
               class="editor__filelist editor__filelist--front px-2"
-              v-if="uploadable_uploader"
+              v-if="uploadable_uploader && noteAttachments.length"
               :files="noteAttachments"
               :uploader="uploadable_uploader"
               @remove="onFileRemoved"
@@ -114,7 +115,7 @@
 
             <file-list
               class="editor__filelist editor__filelist--back px-2"
-              v-if="uploadable_uploader"
+              v-if="uploadable_uploader && $_uploadable_uploaderFiles.length"
               :files="$_uploadable_uploaderFiles"
               :uploader="uploadable_uploader"
             />
@@ -168,7 +169,7 @@
 
                 <v-spacer></v-spacer>
 
-                <v-tooltip top>
+                <v-tooltip v-if="!$_issue_note_item_mixin_noteItem" top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on" @click="onRemove" class="mr-2">
                       <v-icon>delete</v-icon>
@@ -241,8 +242,9 @@ export default {
       showFormatting: false,
       alertable_messages: {
         error: "Cannot create note, please try again.",
+
         delete_file_success: {
-          text: "Attachment was deleted successfully",
+          text: "Attachment was deleted successfully.",
           type: "success",
           color: "white",
           actions: [
@@ -257,10 +259,14 @@ export default {
         delete_uploadfile_success: {
           text: "Uploaded file was deleted successfully",
           type: "success"
+        },
+        action_done: {
+          text: "Action undone."
         }
       },
       menuItems: [
-        { action: "Edit", handler: (item) => this.onEdit(item) }
+        { action: "Edit", handler: item => this.onEdit(item) },
+        { action: "Delete", handler: item => this.onDelete(item) }
       ]
     };
   },
@@ -333,6 +339,12 @@ export default {
       await this.$_issue_note_item_mixin_onEditIssueNote(
         this.$_issue_note_item_mixin_noteItem
       );
+    },
+
+    async onDelete() {
+      const { id } = this.$_issue_note_item_mixin_noteItem;
+
+      this.$emit("delete", { id });
     },
 
     onCloseEdit() {
@@ -465,7 +477,7 @@ export default {
   }
 
   .tox-toolbar-overlord {
-    bottom: 80px;
+    bottom: 90px;
   }
 
   .v-toolbar__content {

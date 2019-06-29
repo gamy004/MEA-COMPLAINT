@@ -9,7 +9,7 @@ const issueNoteItemMixin = {
     props: {
         issueId: {
             type: [String, Number],
-            required: true
+            default: null
         },
 
         noteId: {
@@ -28,9 +28,13 @@ const issueNoteItemMixin = {
             $_issue_note_item_mixin_isFetchingEditIssueNote: 'editing note'
         }),
 
+        $_issue_note_item_mixin_complaintId() {
+            return this.issueId || _.toInteger(this.$route.params.issue);
+        },
+
         $_issue_note_item_mixin_complaint() {
             return this.$_vuexable_getByKey(
-                this.issueId,
+                this.$_issue_note_item_mixin_complaintId,
                 vuex.modules.ISSUE
             )
         },
@@ -83,6 +87,14 @@ const issueNoteItemMixin = {
             $_issue_note_item_mixin_editIssueNote: {
                 action: vuex.actions.ISSUE_NOTE.EDIT,
                 loader: 'editing note'
+            },
+            $_issue_note_item_mixin_deleteIssueNote: {
+                action: vuex.actions.ISSUE_NOTE.DELETE,
+                loader: 'deleting note'
+            },
+            $_issue_note_item_mixin_restoreIssueNote: {
+                action: vuex.actions.ISSUE_NOTE.RESTORE,
+                loader: 'restoring note'
             }
         }),
 
@@ -95,6 +107,14 @@ const issueNoteItemMixin = {
                 this.$_vuexable_setEdit(id, vuex.modules.ISSUE_NOTE);
 
                 return await this.$_issue_note_item_mixin_editIssueNote(item);
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        async $_issue_note_item_mixin_onDeleteIssueNote(item) {
+            try {
+                return await this.$_issue_note_item_mixin_deleteIssueNote(item);
             } catch (error) {
                 throw error;
             }

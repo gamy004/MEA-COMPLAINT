@@ -85,6 +85,21 @@ class IssueNote extends BaseVuexModel {
 
         return response;
     }
+
+    static async [actions.ISSUE_NOTE.RESTORE](data) {
+        let response;
+
+        try {
+            response = await api.post('api:issue-notes.restore', {
+                ...data,
+                includes: ["creator:sideload", "attachments:sideload"]
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
 }
 
 export default IssueNote;

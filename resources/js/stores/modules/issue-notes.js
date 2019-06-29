@@ -89,6 +89,24 @@ const IssueNoteStore = {
             }
         },
 
+        async [vuex.actions.ISSUE_NOTE.RESTORE](context, {
+            id: issue_note
+        }) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'ISSUE_NOTE',
+                    action: 'RESTORE',
+                    params: {
+                        routeParam: {
+                            issue_note
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
         // async [vuex.actions.ISSUE.FETCH]({
         //     state,
         //     commit

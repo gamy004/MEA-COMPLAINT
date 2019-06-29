@@ -240,13 +240,7 @@ export default {
     }
 
     &--hover {
-      background: rgb(255, 255, 255);
-      background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(250, 250, 250, 1) 20%,
-        rgba(255, 255, 255, 1) 100%
-      );
+      background: #f5f5f5;
       position: absolute;
       right: 0;
       padding-left: 16px;

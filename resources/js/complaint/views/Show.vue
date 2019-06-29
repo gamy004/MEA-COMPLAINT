@@ -1,7 +1,12 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <custom-toolbar id="showComplaintToolbar" v-if="activeComplaint" :items="items"></custom-toolbar>
+      <custom-toolbar
+        v-if="activeComplaint"
+        id="showComplaintToolbar"
+        class="bb-1 pb-0"
+        :items="items"
+      ></custom-toolbar>
       <v-layout align-center justify-center class="loading__wrapper">
         <v-flex xs12>
           <transition name="slide-y-reverse-transition" appear>
@@ -44,6 +49,7 @@
               :managable-route-param="{ issue_note: note.id }"
               :managable-edit="$_issue_note_mixin_isEditingNote(note)"
               @form:submitted="onNoteUpdated"
+              @delete="onNoteDeleted"
               class="pl-5 pr-4"
             />
           </template>
@@ -91,6 +97,7 @@
       :managable-edit="hasEdittedComplaint"
       :full-screenable="false"
       :is-full-screen="true"
+      @form:submitted="onComplaintUpdated"
     />
     <message-alert
       key="alertComplaintShow"
@@ -98,6 +105,7 @@
       :alertable-type="alertable_type"
       :alertable-messages="alertable_messages"
       :alertable-props="alertable_props"
+      :alertable-timeout="5000"
     ></message-alert>
   </v-layout>
 </template>
@@ -112,9 +120,17 @@ import complaintMixin from "../../mixins/complaint-mixin";
 import ComplaintStatus from "../components/ComplaintStatus";
 import ComplaintDetailCard from "../components/ComplaintDetailCard";
 import ComplaintNoteCard from "../components/ComplaintNoteCard";
-import complaintItemMixin from '../../mixins/complaint-item-mixin';
+import complaintItemMixin from "../../mixins/complaint-item-mixin";
+import issueNoteItemMixin from "../../mixins/issue-note-item-mixin";
+
 export default {
-  mixins: [alertable, complaintMixin, complaintItemMixin, issueNoteMixin],
+  mixins: [
+    alertable,
+    complaintMixin,
+    complaintItemMixin,
+    issueNoteMixin,
+    issueNoteItemMixin
+  ],
   components: {
     CustomToolbar,
     MessageAlert,
@@ -124,6 +140,7 @@ export default {
   },
   data() {
     return {
+      gobackTimer: null,
       alertable_messages: {
         update_status_success: {
           text: "Complaint Status was updated successfully.",
@@ -136,7 +153,39 @@ export default {
         edit_note_success: {
           text: "Note was updated successfully.",
           type: "success"
-        }
+        },
+        edit_complaint_success: {
+          text: "Complaint was updated successfully.",
+          type: "success"
+        },
+        remove_complaint_fail: "Cannot delete complaint, please try again.",
+        remove_complaint_success: {
+          text: "Complaint moved to Trash.",
+          actions: [
+            {
+              text: "Undo",
+              handler: async ({ id }) => {
+                this.gobackTimer = null;
+                this.$_complaint_item_mixin_restoreComplaint({ id });
+                this.$_alertable_alert("action_done");
+              }
+            }
+          ]
+        },
+        delete_note_success: {
+          text: "Remark was deleted successfully.",
+          actions: [
+            {
+              text: "Undo",
+              handler: async ({ id }) => {
+                this.$_issue_note_item_mixin_restoreIssueNote({ id });
+                this.$_alertable_alert("action_done");
+              }
+            }
+          ]
+        },
+        delete_note_fail: "Cannot delete note, please try again.",
+        action_done: "Action undone."
       }
     };
   },
@@ -193,8 +242,23 @@ export default {
           text: "Delete",
           onClick: async () => {
             // delete complaint
+            try {
+              const { id } = this.$_complaint_item_mixin_complaint;
+
+              await this.$_complaint_item_mixin_onDeleteComplaint(
+                this.$_complaint_item_mixin_complaint
+              );
+
+              this.$_alertable_alert("remove_complaint_success", {
+                id
+              });
+            } catch (error) {
+              this.$_alertable_alert("remove_complaint_fail");
+            }
             // go back
-            this.$router.go(-1);
+            this.gobackTimer = setTimeout(() => {
+              this.$router.go(-1);
+            }, 5000);
           }
         },
         { divider: true },
@@ -264,6 +328,22 @@ export default {
     onNoteUpdated() {
       this.$_alertable_alert("edit_note_success");
       this.$_issue_note_mixin_setEdit(null);
+    },
+
+    async onNoteDeleted({ id }) {
+      try {
+        await this.$_issue_note_item_mixin_onDeleteIssueNote({ id });
+
+        this.$_alertable_alert("delete_note_success", { id });
+      } catch (error) {
+        this.$_alertable_alert("delete_note_fail");
+      }
+    },
+
+    onComplaintUpdated() {
+      this.$_alertable_alert("edit_complaint_success");
+      this.$_complaint_mixin_setEdit(null);
+      this.$_complaint_mixin_setDialog(false);
     }
   }
 };

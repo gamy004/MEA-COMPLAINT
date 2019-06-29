@@ -77,7 +77,9 @@ const complaintMixin = {
         }),
 
         $_complaint_mixin_updateRouteParam() {
-            const { issue = null } = this.$route.params;
+            const {
+                issue = null
+            } = this.$route.params;
 
             this.$_complaint_mixin_setActive(issue);
         },
@@ -85,6 +87,22 @@ const complaintMixin = {
         $_complaint_mixin_setActive(value) {
             this.$_vuexable_setActive(
                 value,
+                vuex.modules.ISSUE
+            );
+        },
+
+        $_complaint_mixin_setEdit(value) {
+            this.$_vuexable_setEdit(
+                value,
+                vuex.modules.ISSUE
+            );
+        },
+
+        $_complaint_mixin_setDialog(value) {
+            this.$_vuexable_setState({
+                    key: "dialog",
+                    value
+                },
                 vuex.modules.ISSUE
             );
         }

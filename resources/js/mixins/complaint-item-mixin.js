@@ -64,6 +64,14 @@ const complaintItemMixin = {
             $_complaint_item_mixin_editComplaint: {
                 action: vuex.actions.ISSUE.EDIT,
                 loader: 'editing complaint'
+            },
+            $_complaint_item_mixin_deleteComplaint: {
+                action: vuex.actions.ISSUE.DELETE,
+                loader: 'deleting complaint'
+            },
+            $_complaint_item_mixin_restoreComplaint: {
+                action: vuex.actions.ISSUE.RESTORE,
+                loader: 'restoring complaint'
             }
         }),
 
@@ -87,6 +95,14 @@ const complaintItemMixin = {
 
             this.$_vuexable_setEdit(id, vuex.modules.ISSUE);
         },
+
+        async $_complaint_item_mixin_onDeleteComplaint(item) {
+            try {
+                return await this.$_complaint_item_mixin_deleteComplaint(item);
+            } catch (error) {
+                throw error;
+            }
+        }
     }
 }
 

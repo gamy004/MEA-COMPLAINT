@@ -8,7 +8,7 @@
     </v-layout>
 
     <editor
-      :key="editorKey"
+      :key="`${editorKey}-${windowSize.y}`"
       ref="editor"
       api-key="2p4wbftum5afmu5eugdcvsugrwvv6ivinukanpci7rgi9oru"
       v-model="editorContent"
@@ -31,6 +31,7 @@ if (!window.tinymce) {
 
 import Editor from "@tinymce/tinymce-vue";
 import vmodelable from "../mixins/vmodelable";
+import { vuex } from "../mixins/vuexable";
 
 export default {
   mixins: [vmodelable],
@@ -50,7 +51,7 @@ export default {
     },
     fullScreenFactor: {
       type: Number,
-      default: 0.6
+      default: 0.8
     },
     minHeight: {
       type: [String, Number],
@@ -69,6 +70,8 @@ export default {
   },
 
   computed: {
+    ...vuex.mapState(["windowSize"]),
+
     editorContent: {
       get() {
         return this.vmodelable_vmodel;
@@ -84,7 +87,9 @@ export default {
     },
 
     fullScreenHeight() {
-      return window.innerHeight * this.fullScreenFactor;
+      return (
+        this.windowSize.y * this.fullScreenFactor - 200 * this.fullScreenFactor
+      );
     },
 
     config() {
@@ -94,7 +99,7 @@ export default {
         statusbar: false,
         menubar: false,
         min_height: this.fullScreen
-          ? this.fullScreenHeight - 100
+          ? this.fullScreenHeight - 200 * this.fullScreenFactor
           : this.minHeight,
         // max_height: this.fullScreen ? this.fullScreenHeight : 650,
         autoresize: true,
@@ -175,7 +180,7 @@ export default {
       &-toolbar,
       &-toolbar__overflow,
       &-toolbar__primary {
-        background: none !important;
+        background: white !important;
       }
     }
   }

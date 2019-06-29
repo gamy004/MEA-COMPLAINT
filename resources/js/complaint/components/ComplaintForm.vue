@@ -100,15 +100,15 @@
             <!-- file list here -->
             <file-list
               class="editor__filelist editor__filelist--front px-2"
-              v-if="uploadable_uploader"
+              v-if="uploadable_uploader && complaintAttachments.length"
               :files="complaintAttachments"
               :uploader="uploadable_uploader"
               @remove="onFileRemoved"
             />
 
             <file-list
+              v-if="uploadable_uploader && $_uploadable_uploaderFiles.length"
               class="editor__filelist editor__filelist--back px-2"
-              v-if="uploadable_uploader"
               :files="$_uploadable_uploaderFiles"
               :uploader="uploadable_uploader"
             />
@@ -436,6 +436,8 @@ export default {
     closeComplaintForm() {
       if (this.form.id && this.form.isChanged) {
         this.warning = true;
+
+        return;
       } else {
         this.dialog = false;
         this.form = null;
@@ -444,7 +446,8 @@ export default {
 
     onDiscard() {
       this.warning = false;
-      this.closeComplaintForm();
+      this.dialog = false;
+      this.form = null;
     },
 
     onFocusInputRecipient(event) {

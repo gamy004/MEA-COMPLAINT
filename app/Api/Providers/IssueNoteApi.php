@@ -83,11 +83,6 @@ class IssueNoteApi extends BaseApi implements ApiInterface
         }
     }
 
-    public function destroy(Model $model)
-    {
-
-    }
-
     private function parseGeneralFields($record, $raw)
     {
         $record = array_merge(
