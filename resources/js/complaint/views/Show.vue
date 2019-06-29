@@ -122,6 +122,7 @@ import ComplaintDetailCard from "../components/ComplaintDetailCard";
 import ComplaintNoteCard from "../components/ComplaintNoteCard";
 import complaintItemMixin from "../../mixins/complaint-item-mixin";
 import issueNoteItemMixin from "../../mixins/issue-note-item-mixin";
+import issueStatusMixin from "../../mixins/issue-status-mixin";
 
 export default {
   mixins: [
@@ -129,7 +130,8 @@ export default {
     complaintMixin,
     complaintItemMixin,
     issueNoteMixin,
-    issueNoteItemMixin
+    issueNoteItemMixin,
+    issueStatusMixin
   ],
   components: {
     CustomToolbar,
@@ -292,27 +294,16 @@ export default {
         { icon: "settings", text: "Settings" }
       ];
     },
-    statuses() {
-      return this.$_vuexable_getSortedValues(vuex.modules.ISSUE_STATUS);
-    },
+    // statuses() {
+    //   return this.$_vuexable_getSortedValues(vuex.modules.ISSUE_STATUS);
+    // },
     statusesItems() {
-      return this.statuses.map(({ id, status }) => {
-        return {
-          text: status,
-          disabled: () => this.activeComplaint.issue_status_id === id,
-          onClick: async () => {
-            await this[vuex.actions.UPDATE]({
-              id: this.activeComplaintId,
-              issue_status_id: id,
-              includes: [],
-              routeParam: {
-                issue: this.activeComplaintId
-              }
-            });
-            this.$_alertable_alert("update_status_success");
-          }
-        };
-      });
+      return this.$_issue_status_mixin_makeStatusMenuItems(
+        this.activeComplaint,
+        (issue, status) => {
+          this.$_alertable_alert("update_status_success");
+        }
+      );
     }
   },
   methods: {

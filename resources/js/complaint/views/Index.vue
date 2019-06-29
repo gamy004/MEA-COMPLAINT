@@ -40,15 +40,15 @@
 import ComplaintList from "../components/ComplaintList";
 import CustomToolbar from "../../components/CustomToolbar";
 import ComplaintForm from "../components/ComplaintForm";
-// import { vuex } from "../../mixins/vuexable";
 import complaintMixin from "../../mixins/complaint-mixin";
 import { onEmit } from "../../helpers";
+import issueStatusMixin from "../../mixins/issue-status-mixin";
 // import complaintModule from "../../stores/modules/complaints";
 // import groupModule from "../../stores/modules/groups";
 // import statusModule from "../../stores/modules/statuses";
 // import issueCategoryModule from "../../stores/modules/issue-categories";
 export default {
-  mixins: [complaintMixin],
+  mixins: [complaintMixin, issueStatusMixin],
 
   components: {
     ComplaintList,
@@ -201,6 +201,10 @@ export default {
     isTabActive(key) {
       return this.tab === key;
     }
+  },
+
+  created() {
+    this.$_issue_status_mixin_fetchStatuses();
   }
 };
 </script>

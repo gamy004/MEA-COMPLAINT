@@ -10,6 +10,7 @@
               :key="`complaint-${itemIndex}`"
               :item="item"
               @edit="onEditItem(item, itemIndex)"
+              @update:status="onUpdateStatusItem"
               @delete="onDeleteItem(item, itemIndex)"
             />
           </template>
@@ -57,6 +58,10 @@ export default {
       warningDelete: false,
       alertable_messages: {
         error: "Cannot delete complaint, please try again.",
+        update_status_success: {
+          text: "Complaint Status was updated successfully.",
+          type: "success"
+        },
         remove: {
           text: "Complaint moved to Trash.",
           actions: [
@@ -134,6 +139,10 @@ export default {
       );
 
       this.$_vuexable_setEdit(id, vuex.modules.ISSUE);
+    },
+
+    async onUpdateStatusItem() {
+      this.$_alertable_alert("update_status_success");
     },
 
     async onDeleteItem(item, itemIndex) {

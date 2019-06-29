@@ -71,7 +71,7 @@
       </v-list-tile-content>
 
       <v-list-tile-action
-        v-if="hover"
+        v-if="hover || selectingStatus"
         class="complaint-list__action-right complaint-list__action-right--hover"
         :class="isMobileClasses"
       >
@@ -83,6 +83,49 @@
           </template>
           <span>Archive</span>
         </v-tooltip>
+
+        <v-menu
+          :min-width="200"
+          offset-y
+          origin="top right"
+          nudge-left="150"
+          @update:returnValue="selectingStatus = false"
+        >
+          <template #activator="{ on: menu }">
+            <v-tooltip bottom>
+              <template #activator="{ on: tooltip }">
+                <v-btn
+                  v-on="{ ...tooltip, ...menu }"
+                  icon
+                  class="mr-2"
+                  @click.prevent.stop="onClickChangeStatus(menu)"
+                >
+                  <v-icon color="grey darken-1">mdi-update</v-icon>
+                </v-btn>
+              </template>
+              <span>Change Status</span>
+            </v-tooltip>
+          </template>
+          <v-list>
+            <v-list-tile
+              v-for="(item, index) in statusesItems"
+              :key="index"
+              :disabled="item.disabled()"
+              @click.prevent.stop="item.onClick ? item.onClick(item, index) : () => {}"
+            >
+              <v-list-tile-title>{{ item.text }}</v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
+
+        <!-- <v-tooltip bottom>
+          <template #activator="{ on }">
+            <v-btn v-on="{ ...tooltip, ...menu }" icon @click.prevent.stop="item.archive()" class="mr-2">
+              <v-icon color="grey darken-1">mdi-update</v-icon>
+            </v-btn>
+          </template>
+          <span>Change Status</span>
+        </v-tooltip>-->
 
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -115,6 +158,7 @@
 
 <script>
 import { vuex, vuexable } from "../../mixins/vuexable";
+import issueStatusMixin from "../../mixins/issue-status-mixin";
 import { views } from "../../constants";
 
 export default {
@@ -125,7 +169,13 @@ export default {
     }
   },
 
-  mixins: [vuexable],
+  mixins: [issueStatusMixin, vuexable],
+
+  data() {
+    return {
+      selectingStatus: false
+    };
+  },
 
   computed: {
     ...vuex.mapGetters(["isMobile", "isMobileClasses"]),
@@ -148,6 +198,16 @@ export default {
       set(value) {
         this.item.update("selected", value);
       }
+    },
+
+    statusesItems() {
+      return this.$_issue_status_mixin_makeStatusMenuItems(
+        this.item,
+        (issue, status) => {
+          this.selectingStatus = false;
+          this.$emit("update:status", this.item);
+        }
+      );
     }
   },
 
@@ -173,6 +233,10 @@ export default {
           issue: this.item.id
         }
       });
+    },
+
+    onClickChangeStatus(menu) {
+      this.selectingStatus = true;
     }
   }
 };
