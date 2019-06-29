@@ -100,4 +100,16 @@ class IssueController extends BaseApiController
     {
         return $this->api->restore($issue);
     }
+
+    /**
+     * Generate report the specified resource from storage.
+     *
+     * @param  \App\Issue  $issue
+     * @return \Illuminate\Http\Response
+     */
+    public function export(Request $request)
+    {
+        return $this->api->export($request->all());
+    }
+    
 }

@@ -120,6 +120,18 @@ const userStore = {
                 throw error;
             }
         },
+
+        async [vuex.actions.ISSUE.EXPORT](context, params) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'ISSUE',
+                    action: 'EXPORT',
+                    params
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
         // },
 
         // async [vuex.actions.STORE]({

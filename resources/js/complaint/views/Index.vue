@@ -38,6 +38,7 @@
 
 <script>
 import ComplaintList from "../components/ComplaintList";
+import ComplaintReportGenerator from "../components/ComplaintReportGenerator";
 import CustomToolbar from "../../components/CustomToolbar";
 import ComplaintForm from "../components/ComplaintForm";
 import complaintMixin from "../../mixins/complaint-mixin";
@@ -52,6 +53,7 @@ export default {
 
   components: {
     ComplaintList,
+    ComplaintReportGenerator,
     CustomToolbar,
     ComplaintForm
   },
@@ -108,7 +110,6 @@ export default {
           ]
         },
         { icon: "replay", text: "Refresh" },
-        { icon: "more_vert" },
         { spacer: true },
         {
           menu: true,
@@ -152,6 +153,25 @@ export default {
           onClick: () => {
             this.$_paginatable_toNextPage();
           }
+        },
+        {
+          menu: true,
+          minwidth: "250",
+          icon: "print",
+          text: "Generate Report",
+          // component: () => ComplaintReportGenerator,
+          // componentProps: () => {
+          //   return {
+          //     issueId: this.activeComplaintId
+          //   };
+          // },
+          menuItems: [
+            { text: "Generate", subheading: true },
+            { text: "This week" },
+            { text: "This month" },
+            { divider: true },
+            { component: () => ComplaintReportGenerator }
+          ]
         },
         { icon: "settings", text: "Settings" }
       ],

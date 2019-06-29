@@ -18,7 +18,8 @@ export const ISSUE = {
     EDIT: 'complaintEdit',
     UPDATE: 'complaintUpdate',
     DELETE: 'complaintDelete',
-    RESTORE: 'complaintRestore'
+    RESTORE: 'complaintRestore',
+    EXPORT: 'complaintExport'
 };
 
 export const GROUP = {

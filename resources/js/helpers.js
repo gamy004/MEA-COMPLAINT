@@ -24,6 +24,12 @@ export function toggle(data, key = '') {
     return data;
 }
 
+export function formatDateFile(date) {
+    date = moment(date);
+
+    return date.format('L');
+}
+
 export function formatShortDateTime(date, {
     transform = true
 } = {}) {
@@ -128,4 +134,20 @@ export function unregisterModules(store, modules = []) {
             store.unregisterModule(mod);
         }
     })
+}
+
+export function filterIn(key, value) {
+    return {
+        key,
+        value,
+        operator: "in"
+    };
+}
+
+export function filterContains(key, value) {
+    return {
+        key,
+        value,
+        operator: "ct"
+    };
 }

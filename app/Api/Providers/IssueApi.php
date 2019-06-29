@@ -15,6 +15,7 @@ use App\Models\UserRole;
 use App\Models\IssueStatus;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use App\Exports\IssueExport;
 use App\Models\IssueCategory;
 use App\Contracts\ApiInterface;
 use Illuminate\Support\Facades\DB;
@@ -187,5 +188,12 @@ class IssueApi extends BaseApi implements ApiInterface
         }
 
         return false;
+    }
+
+    public function export(array $raw)
+    {
+        $export = new IssueExport($this, $raw);
+
+        return $export->download('complaints.xlsx');
     }
 }

@@ -14,7 +14,13 @@
         @change="onEmit('onChange', $event, item, i)"
       ></v-checkbox>
 
-      <v-menu v-else-if="item.menu" :key="i" :open-on-hover="item.hover" min-width="200" offset-y>
+      <v-menu
+        v-else-if="item.menu"
+        :key="i"
+        :open-on-hover="item.hover"
+        :min-width="item.minwidth || 200"
+        offset-y
+      >
         <template v-slot:activator="{ on }">
           <v-icon v-if="hasIcon(item)" v-text="item.icon" :class="getClasses(item)" v-on="on"></v-icon>
 
@@ -42,16 +48,27 @@
             v-for="(menuItem, menuIndex) in item.menuItems"
             :key="`menuItem-${i}--${menuIndex}`"
             :disabled="getDisabledAttribute(menuItem)"
+            :class="getMenuItemClassAttribute(menuItem)"
             @click="onEmit('onClick', $event, menuItem, i, menuIndex)"
           >
-            <v-list-tile-title class="pl-4">{{ menuItem.text }}</v-list-tile-title>
+            <v-subheader v-if="menuItem.subheading" class="body-2 pl-4" v-text="item.text" disabled></v-subheader>
+
+            <v-divider v-else-if="menuItem.divider" />
+
+            <v-compoment
+              v-else-if="menuItem.component"
+              :is="menuItem.component()"
+              v-bind="menuItem.componentProps ? menuItem.componentProps() : {}"
+            ></v-compoment>
+
+            <v-list-tile-title v-else class="pl-4">{{ menuItem.text }}</v-list-tile-title>
           </v-list-tile>
         </v-list>
       </v-menu>
 
-      <v-spacer v-else-if="item.spacer" :key="i"/>
+      <v-spacer v-else-if="item.spacer" :key="i" />
 
-      <v-divider v-else-if="item.divider" vertical class="custom-toolbar__divider" :key="i"/>
+      <v-divider v-else-if="item.divider" vertical class="custom-toolbar__divider" :key="i" />
 
       <v-tooltip
         v-else-if="item.icon && item.text"
@@ -116,12 +133,18 @@ export default {
 
     getDisabledAttribute(item) {
       return item.disabled ? item.disabled() : false;
+    },
+
+    getMenuItemClassAttribute(item) {
+      return {
+        "is-divider": item.divider
+      };
     }
   }
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .custom-toolbar {
   background: white !important;
   padding-bottom: 8px;
@@ -131,6 +154,17 @@ export default {
     min-height: 45%;
     max-height: 45%;
     align-self: center;
+  }
+}
+
+.v-list {
+  .is-divider {
+    .v-list {
+      &__tile {
+        padding: 0;
+        height: 1px;
+      }
+    }
   }
 }
 </style>

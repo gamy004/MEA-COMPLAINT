@@ -162,6 +162,24 @@ class Complaint extends BaseVuexModel {
         return response;
     }
 
+    static async [actions.ISSUE.EXPORT](data) {
+        let response;
+
+        try {
+            response = await axios.get(route('api:export.issues'), {
+                params: {
+                    ...data
+                },
+                paramsSerializer: window.$paramSerializer,
+                responseType: 'blob',
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
     get title() {
         let {
             subject = null

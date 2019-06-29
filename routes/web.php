@@ -39,6 +39,11 @@ Route::group([
                 Route::post('/{file}/restore', 'FileController@restore')->name('restore');
                 Route::post('/upload', 'FileController@upload')->name('upload');
             });
+
+            Route::group(['as' => 'export.', 'prefix' => 'export'], function () {
+                Route::get('/issues', 'IssueController@export')->name('issues');
+            });
+            
             /**
              * Custom route IssueController
              */
