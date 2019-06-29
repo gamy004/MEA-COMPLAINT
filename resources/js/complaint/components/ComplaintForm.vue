@@ -7,7 +7,7 @@
 
           <v-spacer></v-spacer>
 
-          <v-tooltip v-if="!isMobile" bottom>
+          <v-tooltip v-if="!isMobile && fullScreenable" bottom>
             <template v-slot:activator="{ on }">
               <v-icon
                 small
@@ -219,6 +219,18 @@ import alertable from "../../mixins/alertable";
 import managable from "../../mixins/managable";
 
 export default {
+  props: {
+    fullScreenable: {
+      type: Boolean,
+      default: true
+    },
+
+    isFullScreen: {
+      type: Boolean,
+      default: false
+    }
+  },
+
   mixins: [alertable, managable, uploadable],
 
   components: {
@@ -241,7 +253,7 @@ export default {
       uploadable_uploaderRef: "complaintForm__uploadable_uploader",
       customToolbarItems: [],
       showFormatting: false,
-      fullScreen: false,
+      fullScreen: this.isFullScreen,
       warning: false,
       warningSubmit: false,
       alertable_messages: {
@@ -285,7 +297,11 @@ export default {
     isMobile: {
       immediate: true,
       handler(v) {
-        this.fullScreen = v;
+        if (this.fullScreenable) {
+          console.log(v);
+
+          this.fullScreen = v;
+        }
       }
     },
 
@@ -602,7 +618,7 @@ export default {
   &__wrapper {
     width: 625px;
     height: auto !important;
-    position: absolute;
+    position: fixed;
     right: 15px;
     bottom: 0;
     z-index: 5;

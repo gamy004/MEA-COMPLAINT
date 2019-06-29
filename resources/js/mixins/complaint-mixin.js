@@ -44,12 +44,24 @@ const complaintMixin = {
             return this.$_vuexable_getState("active", vuex.modules.ISSUE);
         },
 
+        editingComplaintId() {
+            return this.$_vuexable_getState("edit", vuex.modules.ISSUE);
+        },
+
         activeComplaint() {
             return this.$_vuexable_getActive(vuex.modules.ISSUE);
         },
 
+        editingComplaint() {
+            return this.$_vuexable_getEdit(vuex.modules.ISSUE);
+        },
+
         hasActiveComplaint() {
             return !_.isNull(this.activeComplaintId);
+        },
+
+        hasEdittedComplaint() {
+            return !_.isNull(this.editingComplaintId);
         },
 
         complaintRouteParam() {

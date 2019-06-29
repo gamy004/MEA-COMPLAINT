@@ -28,7 +28,7 @@
     </v-flex>
 
     <complaint-form
-      v-if="complaintDialog"
+      v-if="hasEdittedComplaint && complaintDialog"
       :managable-module="vuex.modules.ISSUE"
       :managable-route-param="complaintRouteParam"
       :managable-edit="hasActiveComplaint"

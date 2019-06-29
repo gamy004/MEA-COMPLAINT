@@ -105,6 +105,10 @@ const issueNoteMixin = {
             }, vuex.modules.ISSUE_NOTE);
         },
 
+        $_issue_note_mixin_setEdit(v) {
+            this.$_vuexable_setEdit(v, vuex.modules.ISSUE_NOTE);
+        },
+
         $_issue_note_mixin_isEditingNote({
             id
         }) {

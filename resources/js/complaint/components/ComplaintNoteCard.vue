@@ -10,11 +10,11 @@
         ></v-progress-linear>
 
         <v-card-title primary-title>
-          <v-layout>
+          <v-layout align-center>
             <div>
               <span
                 v-if="displayInformation"
-                class="caption"
+                class="body-2"
               >Remark by: {{ $_issue_note_item_mixin_noteCreator ? $_issue_note_item_mixin_noteCreator.name : "Admin" }}</span>
 
               <v-btn
@@ -28,10 +28,10 @@
 
               <span
                 v-if="!displayInformation"
-                class="caption"
+                class="body-2"
               >To: {{ $_issue_note_item_mixin_complaintIssuer ? $_issue_note_item_mixin_complaintIssuer.name : "Admin" }}</span>
 
-              <v-btn
+              <!-- <v-btn
                 icon
                 v-if="displayInformation && $_issue_note_item_mixin_noteEditable"
                 class="complaint-detail-card__edit-icon"
@@ -39,12 +39,12 @@
                 @click.prevent.stop="onEdit"
               >
                 <v-icon small>edit</v-icon>
-              </v-btn>
+              </v-btn> -->
             </div>
 
             <v-spacer/>
 
-            <v-layout align-center justify-end no-wrap>
+            <v-layout v-if="displayInformation" align-center justify-end no-wrap>
               <v-icon
                 v-if="$_issue_note_item_mixin_hasAttachments"
                 small
@@ -52,10 +52,14 @@
               >attachment</v-icon>
 
               <span
-                v-if="displayInformation && $_issue_note_item_mixin_noteItem"
-                class="caption"
+                v-if="$_issue_note_item_mixin_noteItem"
+                class="body-2"
               >{{ $_issue_note_item_mixin_noteItem.longUpdatedAt }}</span>
-              <!-- <span>Listen to your favorite artists and albums whenever and wherever, online and offline.</span> -->
+
+              <more-vert-menu
+                v-if="$_issue_note_item_mixin_noteEditable"
+                :items="menuItems"
+                class="complaint-note-card__action-menu" />
             </v-layout>
           </v-layout>
         </v-card-title>
@@ -73,7 +77,7 @@
           v-if="displayInformation && $_issue_note_item_mixin_hasAttachments"
           class="pt-0"
         >
-          <v-subheader class="caption px-0">Attachments</v-subheader>
+          <v-subheader class="body-2 px-0">Attachments</v-subheader>
 
           <v-layout row wrap>
             <template
@@ -211,6 +215,7 @@ import CustomToolbar from "../../components/CustomToolbar";
 import FileList from "../../components/FileList";
 import FileSheetItem from "../../components/FileSheetItem";
 import MessageAlert from "../../components/MessageAlert";
+import MoreVertMenu from "../../components/MoreVertMenu";
 
 export default {
   mixins: [alertable, issueNoteItemMixin, managable, uploadable],
@@ -220,7 +225,8 @@ export default {
     CustomToolbar,
     FileList,
     FileSheetItem,
-    MessageAlert
+    MessageAlert,
+    MoreVertMenu
   },
 
   data() {
@@ -235,14 +241,6 @@ export default {
       showFormatting: false,
       alertable_messages: {
         error: "Cannot create note, please try again.",
-        add_success: {
-          text: "Note was created successfully.",
-          type: "success"
-        },
-        edit_success: {
-          text: "Note was updated successfully.",
-          type: "success"
-        },
         delete_file_success: {
           text: "Attachment was deleted successfully",
           type: "success",
@@ -260,7 +258,10 @@ export default {
           text: "Uploaded file was deleted successfully",
           type: "success"
         }
-      }
+      },
+      menuItems: [
+        { action: "Edit", handler: (item) => this.onEdit(item) }
+      ]
     };
   },
 
@@ -323,13 +324,13 @@ export default {
   methods: {
     onChange() {},
 
-    onEdit() {
+    async onEdit() {
       this.form = vuex.models.FORM.make({
         ...this.$_issue_note_item_mixin_noteItem.data,
         uploaded_files: []
       });
 
-      this.$_issue_note_item_mixin_onEditIssueNote(
+      await this.$_issue_note_item_mixin_onEditIssueNote(
         this.$_issue_note_item_mixin_noteItem
       );
     },
@@ -368,7 +369,7 @@ export default {
         throw error;
       }
 
-      this.$_alertable_alert(`${this.$_managable_action}_success`);
+      // this.$_alertable_alert(`${this.$_managable_action}_success`);
 
       return this.resetComplaintNoteForm();
     },
@@ -469,6 +470,10 @@ export default {
 
   .v-toolbar__content {
     padding: 0 6px;
+  }
+
+  &__action-menu {
+    margin-right: -1.5rem;
   }
 }
 </style>

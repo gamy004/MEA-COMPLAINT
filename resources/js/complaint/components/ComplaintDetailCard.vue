@@ -8,16 +8,16 @@
             <v-chip v-if="$_complaint_item_mixin_complaintCategory" small class="ml-1">
               <span>{{ $_complaint_item_mixin_complaintCategory.category }}</span>
             </v-chip>
-            <v-btn
+            <!-- <v-btn
               icon
               v-if="$_complaint_item_mixin_complaintEditable"
               class="complaint-detail-card__edit-icon"
               @click.prevent.stop="$_complaint_item_mixin_onEditComplaint($_complaint_item_mixin_complaint)"
             >
               <v-icon>edit</v-icon>
-            </v-btn>
+            </v-btn> -->
           </v-layout>
-          <span class="caption">to {{ $_complaint_item_mixin_complaint.joinedRecipientName }}</span>
+          <span class="body-2">to {{ $_complaint_item_mixin_complaint.joinedRecipientName }}</span>
           <!-- <span>Listen to your favorite artists and albums whenever and wherever, online and offline.</span> -->
         </div>
 
@@ -30,7 +30,7 @@
             class="mr-1 complaint-detail__attachment-icon"
           >attachment</v-icon>
 
-          <span class="caption">{{ $_complaint_item_mixin_complaint.longUpdatedAt }}</span>
+          <span class="body-2">{{ $_complaint_item_mixin_complaint.longUpdatedAt }}</span>
         </v-layout>
       </v-layout>
     </v-card-title>
@@ -42,7 +42,7 @@
     <v-divider v-if="$_complaint_item_mixin_hasAttachments" class="mx-3"></v-divider>
 
     <v-card-text v-if="$_complaint_item_mixin_hasAttachments" class="pt-0">
-      <v-subheader class="caption px-0">Attachments</v-subheader>
+      <v-subheader class="body-2 px-0">Attachments</v-subheader>
 
       <v-layout row wrap>
         <template

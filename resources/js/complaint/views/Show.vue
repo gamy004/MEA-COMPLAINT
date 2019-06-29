@@ -43,6 +43,7 @@
               :managable-module="vuex.modules.ISSUE_NOTE"
               :managable-route-param="{ issue_note: note.id }"
               :managable-edit="$_issue_note_mixin_isEditingNote(note)"
+              @form:submitted="onNoteUpdated"
               class="pl-5 pr-4"
             />
           </template>
@@ -55,6 +56,7 @@
             :managable-route-param="{}"
             :managable-edit="false"
             :created-by="auth.group_id"
+            @form:submitted="onNoteCreated"
             @remove="$_issue_note_mixin_setDialog(false)"
             class="pl-5 pr-4"
           />
@@ -83,10 +85,12 @@
       </v-tabs-items>-->
     </v-flex>
     <complaint-form
-      v-if="complaintDialog"
+      v-if="hasEdittedComplaint && complaintDialog"
       :managable-module="vuex.modules.ISSUE"
-      :managable-route-param="complaintRouteParam"
-      :managable-edit="hasActiveComplaint"
+      :managable-route-param="{ issue: editingComplaintId }"
+      :managable-edit="hasEdittedComplaint"
+      :full-screenable="false"
+      :is-full-screen="true"
     />
     <message-alert
       key="alertComplaintShow"
@@ -108,8 +112,9 @@ import complaintMixin from "../../mixins/complaint-mixin";
 import ComplaintStatus from "../components/ComplaintStatus";
 import ComplaintDetailCard from "../components/ComplaintDetailCard";
 import ComplaintNoteCard from "../components/ComplaintNoteCard";
+import complaintItemMixin from '../../mixins/complaint-item-mixin';
 export default {
-  mixins: [alertable, complaintMixin, issueNoteMixin],
+  mixins: [alertable, complaintMixin, complaintItemMixin, issueNoteMixin],
   components: {
     CustomToolbar,
     MessageAlert,
@@ -122,6 +127,14 @@ export default {
       alertable_messages: {
         update_status_success: {
           text: "Complaint Status was updated successfully.",
+          type: "success"
+        },
+        add_note_success: {
+          text: "Note was created successfully.",
+          type: "success"
+        },
+        edit_note_success: {
+          text: "Note was updated successfully.",
           type: "success"
         }
       }
@@ -162,6 +175,17 @@ export default {
             // archive complaint
             // go back
             this.$router.go(-1);
+          }
+        },
+        {
+          icon: "edit",
+          text: "Edit",
+          onClick: async () => {
+            // delete complaint
+            // go back
+            this.$_complaint_item_mixin_onEditComplaint(
+              this.$_complaint_item_mixin_complaint
+            );
           }
         },
         {
@@ -230,7 +254,17 @@ export default {
   methods: {
     ...vuex.mapWaitingActions(vuex.modules.ISSUE, {
       [vuex.actions.UPDATE]: "updating complaint status"
-    })
+    }),
+
+    onNoteCreated() {
+      this.$_alertable_alert("add_note_success");
+      this.$_issue_note_mixin_setDialog(false);
+    },
+
+    onNoteUpdated() {
+      this.$_alertable_alert("edit_note_success");
+      this.$_issue_note_mixin_setEdit(null);
+    }
   }
 };
 </script>

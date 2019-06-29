@@ -94,7 +94,7 @@ const issueNoteItemMixin = {
             try {
                 this.$_vuexable_setEdit(id, vuex.modules.ISSUE_NOTE);
 
-                await this.$_issue_note_item_mixin_editIssueNote(item);
+                return await this.$_issue_note_item_mixin_editIssueNote(item);
             } catch (error) {
                 throw error;
             }

@@ -50,7 +50,7 @@ export default {
     },
     fullScreenFactor: {
       type: Number,
-      default: 0.7
+      default: 0.6
     },
     minHeight: {
       type: [String, Number],
@@ -191,4 +191,3 @@ export default {
   }
 }
 </style>
-

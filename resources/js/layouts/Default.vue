@@ -60,6 +60,13 @@
         <v-content>
             <v-container fluid fill-height pa-0 class="grey lighten-4" v-resize="onResize">
                 <slot/>
+
+                <complaint-form
+                    v-if="!hasEdittedComplaint && complaintDialog"
+                    :managable-module="vuex.modules.ISSUE"
+                    :managable-route-param="{}"
+                    :managable-edit="false"
+                />
             </v-container>
         </v-content>
     </v-app>
@@ -67,13 +74,15 @@
 
 <script>
     import layoutable from "../mixins/layoutable";
+    import complaintMixin from '../mixins/complaint-mixin';
     import AddComplaintBtn from "../complaint/components/AddComplaintBtn";
-
+    import ComplaintForm from "../complaint/components/ComplaintForm";
     export default {
-        mixins: [layoutable],
+        mixins: [layoutable, complaintMixin],
 
         components: {
-            AddComplaintBtn
+            AddComplaintBtn,
+            ComplaintForm
         },
 
         data() {

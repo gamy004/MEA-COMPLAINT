@@ -13,9 +13,13 @@ const complaintItemMixin = {
     },
 
     computed: {
+        $_complaint_item_mixin_complaintId() {
+            return this.issueId || _.toInteger(this.$route.params.issue);
+        },
+
         $_complaint_item_mixin_complaint() {
             return this.$_vuexable_getByKey(
-                this.issueId,
+                this.$_complaint_item_mixin_complaintId,
                 vuex.modules.ISSUE
             )
         },
