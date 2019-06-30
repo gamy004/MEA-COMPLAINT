@@ -7,6 +7,13 @@ const issueCategoryMixin = {
     mixins: [vuexable],
 
     computed: {
+        ...vuex.mapWaitingGetters({
+            $_issue_category_mixin_fetching: "issueCategoryMixin fetch action",
+            $_issue_category_mixin_editing: "issueCategoryMixin edit action",
+            $_issue_category_mixin_deleting: "issueCategoryMixin delete action",
+            $_issue_category_mixin_restoring: "issueCategoryMixin restore action"
+        }),
+
         $_issue_category_mixin_dialog: {
             get() {
                 return this.$_vuexable_getState(
@@ -20,6 +27,15 @@ const issueCategoryMixin = {
                     key: "dialog",
                     value
                 }, vuex.modules.ISSUE_CATEGORY);
+            }
+        },
+
+        $_issue_category_mixin_pagination: {
+            get() {
+                return this.$_vuexable_getState("pagination", vuex.modules.ISSUE_CATEGORY);
+            },
+            set(pagination) {
+                this.$_vuexable_setPagination(pagination, vuex.modules.ISSUE_CATEGORY);
             }
         },
 
@@ -50,15 +66,22 @@ const issueCategoryMixin = {
                 this.$_vuexable_setActive(value, vuex.modules.ISSUE_CATEGORY);
             }
         },
+
+        $_issue_category_mixin_issue_paginated_items() {
+            return this.$_vuexable_getPaginatedValues(
+                this.$_issue_category_mixin_pagination.page,
+                vuex.modules.ISSUE_CATEGORY
+            );
+        }
     },
 
     methods: {
         ...vuex.mapWaitingActions(vuex.modules.ISSUE_CATEGORY, {
-            // $_issue_category_mixin_Create: {
-            //     action: vuex.actions.ISSUE_CATEGORY.STORE,
-            //     loader: "issueCategoryMixin store action"
-            // },
-            $_issue_category_mixin_Edit: {
+            $_issue_category_mixin_fetchCategory: {
+                action: vuex.actions.ISSUE_CATEGORY.FETCH,
+                loader: "issueCategoryMixin fetch action"
+            },
+            $_issue_category_mixin_editCategory: {
                 action: vuex.actions.ISSUE_CATEGORY.EDIT,
                 loader: "issueCategoryMixin edit action"
             },
@@ -66,15 +89,35 @@ const issueCategoryMixin = {
             //     action: vuex.actions.ISSUE_CATEGORY.UPDATE,
             //     loader: "issueCategoryMixin update action"
             // },
-            $_issue_category_mixin_Delete: {
+            $_issue_category_mixin_deleteCategory: {
                 action: vuex.actions.ISSUE_CATEGORY.DELETE,
                 loader: "issueCategoryMixin delete action"
             },
-            $_issue_category_mixin_Restore: {
+            $_issue_category_mixin_restoreCategory: {
                 action: vuex.actions.ISSUE_CATEGORY.RESTORE,
                 loader: "issueCategoryMixin restore action"
             }
-        })
+        }),
+
+        async $_issue_category_mixin_onPaginationUpdate(newPagination) {
+            const original = this.$_issue_category_mixin_pagination;
+
+            if (
+                this.$_vuexable_shouldUpdatePagination(
+                    newPagination,
+                    vuex.modules.ISSUE_CATEGORY
+                )
+            ) {
+                this.$_issue_category_mixin_pagination = {
+                    ...original,
+                    ...newPagination
+                };
+
+                return await this.$_issue_category_mixin_fetchCategory({
+                    pagination: this.$_issue_category_mixin_pagination
+                });
+            }
+        },
     }
 };
 
