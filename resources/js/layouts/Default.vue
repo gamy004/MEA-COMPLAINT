@@ -1,6 +1,6 @@
 <template>
   <v-app id="meaDefault">
-    <add-complaint-btn v-if="isMobile"/>
+    <add-complaint-btn v-if="isMobile" />
 
     <v-navigation-drawer
       v-model="drawer"
@@ -11,21 +11,21 @@
       :mobile-break-point="mobileBreakPoint"
     >
       <v-list dense class="grey lighten-4">
-        <add-complaint-btn v-if="!isMobile"/>
+        <add-complaint-btn v-if="!isMobile" />
 
         <template v-for="(item, i) in items">
           <v-layout v-if="item.heading" :key="i" row align-center>
             <v-flex xs6>
               <v-subheader v-if="item.heading">{{ item.heading }}</v-subheader>
             </v-flex>
-            <v-flex xs6 class="text-xs-right">
-              <v-btn small flat>edit</v-btn>
+            <v-flex v-if="item.route" xs6 class="text-xs-right">
+              <v-btn small flat @click="gotoPage(item.route)">edit</v-btn>
             </v-flex>
           </v-layout>
 
           <v-divider v-else-if="item.divider" :key="i" dark class="my-3"></v-divider>
 
-          <v-list-tile v-else :key="i" @click>
+          <v-list-tile v-else :key="i" @click="gotoPage(item.route)">
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
@@ -59,7 +59,7 @@
 
     <v-content>
       <v-container fluid fill-height pa-0 class="grey lighten-4" v-resize="onResize">
-        <slot/>
+        <slot />
 
         <complaint-form
           v-if="!hasEdittedComplaint && complaintDialog"
@@ -77,6 +77,8 @@ import layoutable from "../mixins/layoutable";
 import complaintMixin from "../mixins/complaint-mixin";
 import AddComplaintBtn from "../complaint/components/AddComplaintBtn";
 import ComplaintForm from "../complaint/components/ComplaintForm";
+import { views } from "../constants";
+
 export default {
   mixins: [layoutable, complaintMixin],
 
@@ -88,25 +90,50 @@ export default {
   data() {
     return {
       items: [
-        { icon: "inbox", text: "Inbox" },
-        { icon: "start", text: "Starred" },
-        { icon: "lightbulb_outline", text: "Notes" },
+        { icon: "inbox", text: "Inbox", route: { name: views.ISSUE.INDEX } },
+        { icon: "start", text: "Starred", route: { name: views.ISSUE.INDEX } },
+        {
+          icon: "lightbulb_outline",
+          text: "Notes",
+          route: { name: views.ISSUE.INDEX }
+        },
         { divider: true },
-        { heading: "Labels" },
-        { icon: "add", text: "Create new label" },
+        { icon: "send", text: "Sent", route: { name: views.ISSUE.INDEX } },
+        { icon: "drafts", text: "Drafts", route: { name: views.ISSUE.INDEX } },
+        {
+          icon: "archive",
+          text: "Archive",
+          route: { name: views.ISSUE.INDEX }
+        },
+        { icon: "delete", text: "Trash", route: { name: views.ISSUE.INDEX } },
         { divider: true },
-        { icon: "send", text: "Sent" },
-        { icon: "drafts", text: "Drafts" },
-        { icon: "archive", text: "Archive" },
-        { icon: "delete", text: "Trash" },
+        { heading: "Categories", route: { name: views.ISSUE_CATEGORY.INDEX } },
+        {
+          icon: "add",
+          text: "Create new category",
+          route: { name: views.ISSUE.INDEX }
+        },
         { divider: true },
-        { icon: "settings", text: "Settings" }
+        {
+          icon: "settings",
+          text: "Settings",
+          route: { name: views.ISSUE.INDEX }
+        }
         //   { icon: "chat_bubble", text: "Trash" },
         //   { icon: "help", text: "Help" },
         //   { icon: "phonelink", text: "App downloads" },
         //   { icon: "keyboard", text: "Keyboard shortcuts" }
       ]
     };
+  },
+
+  methods: {
+    gotoPage({ name, params = {} } = {}) {
+      this.$router.push({
+        name,
+        params
+      });
+    }
   }
 };
 </script>

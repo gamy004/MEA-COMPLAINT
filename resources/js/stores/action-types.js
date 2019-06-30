@@ -38,7 +38,12 @@ export const ISSUE_STATUS = {
 };
 
 export const ISSUE_CATEGORY = {
-    FETCH: 'issueCategoryFetch'
+    FETCH: 'issueCategoryFetch',
+    EDIT: 'issueCategoryEdit',
+    STORE: 'issueCategoryStore',
+    UPDATE: 'issueCategoryUpdate',
+    DELETE: 'issueCategoryDelete',
+    RESTORE: 'issueCategoryRestore'
 };
 
 export const ISSUE_NOTE = {

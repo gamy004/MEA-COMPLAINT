@@ -14,6 +14,13 @@
         @change="onEmit('onChange', $event, item, i)"
       ></v-checkbox>
 
+      <v-compoment
+        v-else-if="item.component"
+        :key="i"
+        :is="item.component()"
+        v-bind="item.componentProps ? item.componentProps() : {}"
+      ></v-compoment>
+
       <v-menu
         v-else-if="item.menu"
         :key="i"
@@ -22,7 +29,13 @@
         offset-y
       >
         <template v-slot:activator="{ on }">
-          <v-icon v-if="hasIcon(item)" v-text="item.icon" :class="getClasses(item)" v-on="on"></v-icon>
+          <v-icon
+            color="grey darken-4"
+            v-if="hasIcon(item)"
+            v-text="item.icon"
+            :class="getClasses(item)"
+            v-on="on"
+          ></v-icon>
 
           <v-btn
             v-else-if="item.html || item.component"
@@ -89,11 +102,11 @@
         <span>{{ item.text }}</span>
       </v-tooltip>
 
-      <v-btn v-else-if="item.icon" :key="i" icon small>
+      <v-btn v-else-if="item.icon" :key="i" icon small :class="getClasses(item)">
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
 
-      <span v-else :key="i" v-text="item.text"></span>
+      <span v-else :key="i" v-text="item.text" :class="getClasses(item)"></span>
     </template>
 
     <template v-slot:extension>

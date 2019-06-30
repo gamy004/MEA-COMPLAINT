@@ -77,6 +77,8 @@ const managable = {
                     this.managableModule
                 );
             } catch (error) {
+                this.$emit('form:error', form);
+
                 throw error;
             }
 

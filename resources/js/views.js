@@ -7,3 +7,7 @@ export const complaint = {
     index: () => import( /* webpackChunkName: "mea-complaint-index" */ './complaint/views/Index'),
     show: () => import( /* webpackChunkName: "mea-complaint-show" */ './complaint/views/Show'),
 };
+
+export const issueCategory = {
+    index: () => import( /* webpackChunkName: "mea-category-index" */ './issueCategory/views/Index')
+}

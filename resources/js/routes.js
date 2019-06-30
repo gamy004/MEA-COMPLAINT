@@ -23,6 +23,11 @@ const routes = [{
                 path: 'complaints/:issue',
                 name: constants.views.ISSUE.SHOW,
                 component: views.complaint.show
+            },
+            {
+                path: 'categories',
+                name: constants.views.ISSUE_CATEGORY.INDEX,
+                component: views.issueCategory.index
             }
         ]
     },

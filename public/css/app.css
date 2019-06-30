@@ -37,6 +37,10 @@ body,
           transform: translate3d(-50%, -50%, 0);
 }
 
+.v-btn.rounded-sm {
+  border-radius: 4px !important;
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,

@@ -306,9 +306,11 @@ export default {
     &--hover {
       background: #f5f5f5;
       position: absolute;
+      top: 0;
       right: 0;
       padding-left: 16px;
       padding-right: 8px;
+      padding-top: 8px;
     }
   }
 
