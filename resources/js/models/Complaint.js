@@ -168,7 +168,8 @@ class Complaint extends BaseVuexModel {
         try {
             response = await axios.get(route('api:export.issues'), {
                 params: {
-                    ...data
+                    ...data,
+                    includes: ["notes", "notes.creator", "recipients", "issuer", "status", "category"]
                 },
                 paramsSerializer: window.$paramSerializer,
                 responseType: 'blob',

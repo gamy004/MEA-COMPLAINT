@@ -33,6 +33,20 @@
       :managable-route-param="complaintRouteParam"
       :managable-edit="hasActiveComplaint"
     />
+
+    <v-dialog
+      v-if="$_issue_report_mixin_report"
+      v-model="$_issue_report_mixin_reportGenerate"
+      persistent
+      width="300"
+    >
+      <v-card color="deep-orange" dark>
+        <v-card-text>
+          Generating report, please stand by
+          <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-layout>
 </template>
 
@@ -44,12 +58,13 @@ import ComplaintForm from "../components/ComplaintForm";
 import complaintMixin from "../../mixins/complaint-mixin";
 import { onEmit } from "../../helpers";
 import issueStatusMixin from "../../mixins/issue-status-mixin";
+import issueReportMixin from "../../mixins/issue-report-mixin";
 // import complaintModule from "../../stores/modules/complaints";
 // import groupModule from "../../stores/modules/groups";
 // import statusModule from "../../stores/modules/statuses";
 // import issueCategoryModule from "../../stores/modules/issue-categories";
 export default {
-  mixins: [complaintMixin, issueStatusMixin],
+  mixins: [complaintMixin, issueStatusMixin, issueReportMixin],
 
   components: {
     ComplaintList,
@@ -167,8 +182,18 @@ export default {
           // },
           menuItems: [
             { text: "Generate", subheading: true },
-            { text: "This week" },
-            { text: "This month" },
+            {
+              text: "This week",
+              onClick: () => {
+                this.$_issue_report_mixin_generateThisWeekReport();
+              }
+            },
+            {
+              text: "This month",
+              onClick: () => {
+                this.$_issue_report_mixin_generateThisMonthReport();
+              }
+            },
             { divider: true },
             { component: () => ComplaintReportGenerator }
           ]
