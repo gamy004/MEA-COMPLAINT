@@ -32,7 +32,7 @@ const tableable = {
             type: String,
             default: 'Search'
         },
-        showActions: {
+        hideItemActions: {
             type: Boolean,
             default: () => false
         },
@@ -108,7 +108,7 @@ const tableable = {
 
         $_tableable_mixin_pagination_pages() {
             return this.computedTotalItems > 0 ?
-                this.computedTotalItems / this.paginationSync.rowsPerPage :
+                _.round(this.computedTotalItems / this.paginationSync.rowsPerPage) :
                 0;
         },
 

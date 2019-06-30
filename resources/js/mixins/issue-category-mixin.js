@@ -118,6 +118,24 @@ const issueCategoryMixin = {
                 });
             }
         },
+
+        async $_issue_category_mixin_onEditCategory({
+            id
+        }) {
+            let response;
+
+            try {
+                response = await this.$_issue_category_mixin_editCategory({
+                    id
+                });
+            } catch (error) {
+                throw error;
+            }
+
+            this.$_issue_category_mixin_edit = id;
+
+            return response;
+        }
     }
 };
 

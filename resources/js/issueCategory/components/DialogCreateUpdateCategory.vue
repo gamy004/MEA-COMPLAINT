@@ -16,7 +16,7 @@
       </v-card-text>
       <v-card-actions class="pb-3">
         <v-spacer></v-spacer>
-        <v-btn flat @click="dialog = false">Cancel</v-btn>
+        <v-btn flat @click="closeForm">Cancel</v-btn>
         <v-btn
           color="deep-orange"
           depressed
@@ -24,7 +24,7 @@
           dark
           :loading="form.isSubmitting"
           @click.prevent.stop="onSubmit"
-        >Create</v-btn>
+        >{{ $_managable_actionButton }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -34,9 +34,10 @@
 import dialogable from "../../mixins/dialogable";
 import managable from "../../mixins/managable";
 import { vuex } from "../../mixins/vuexable";
+import issueCategoryMixin from "../../mixins/issue-category-mixin";
 
 export default {
-  mixins: [dialogable, managable],
+  mixins: [dialogable, managable, issueCategoryMixin],
 
   data() {
     return {
@@ -51,20 +52,34 @@ export default {
       if (v) {
         this.form.reset();
       }
+    },
+
+    $_issue_category_mixin_edit: {
+      deep: true,
+      handler({ id = null, category = "" } = {}) {
+        this.form.record({ id, category });
+      }
     }
   },
 
   methods: {
+    closeForm() {
+      this.dialog = false;
+      this.$_issue_category_mixin_edit = null;
+    },
+
     async onSubmit() {
       const { form } = this;
 
       let v;
 
       try {
-        v = await this.$_managable_submitForm(form, ["id", "category"]);
+        v = await this.$_managable_submitForm(form, ["category"]);
       } catch (error) {
         throw error;
       }
+
+      this.closeForm();
     }
   }
 };

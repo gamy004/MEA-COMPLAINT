@@ -17,8 +17,11 @@
             :loading="$_issue_category_mixin_fetching"
             :selectable="false"
             :multiple-select="false"
+            :actions="actions"
             hide-actions
             @update:pagination="onPaginationChange"
+            @action:edit="onItemEdit"
+            @action:delete="onItemDelete"
           />
           <!-- <v-data-table
             :headers="headers"
@@ -47,7 +50,17 @@
       :dialogable-visible.sync="$_issue_category_mixin_dialog"
       :managable-module="vuex.modules.ISSUE_CATEGORY"
       :managable-route-param="routeParam"
-      :managable-edit="false"
+      :managable-edit="$_issue_category_mixin_isEditing"
+      @form:create="$_alertable_alert('create_success')"
+      @form:update="$_alertable_alert('update_success')"
+    />
+
+    <message-alert
+      key="alertCategoryIndex"
+      :alertable-visible.sync="alertable_alert"
+      :alertable-type="alertable_type"
+      :alertable-messages="alertable_messages"
+      :alertable-props="alertable_props"
     />
   </v-layout>
 </template>
@@ -55,19 +68,22 @@
 <script>
 import CustomToolbar from "../../components/CustomToolbar";
 import CustomTable from "../../components/CustomTable";
+import MessageAlert from "../../components/MessageAlert";
 import issueCategoryMixin from "../../mixins/issue-category-mixin";
 import { vuex } from "../../mixins/vuexable";
 import ButtonCreateCategory from "../components/ButtonCreateCategory";
 import DialogCreateUpdateCategory from "../components/DialogCreateUpdateCategory";
 import { views } from "../../constants";
+import alertable from "../../mixins/alertable";
 
 export default {
-  mixins: [issueCategoryMixin],
+  mixins: [alertable, issueCategoryMixin],
 
   components: {
-    CustomToolbar,
     DialogCreateUpdateCategory,
-    CustomTable
+    CustomToolbar,
+    CustomTable,
+    MessageAlert
   },
 
   data() {
@@ -82,7 +98,28 @@ export default {
           sortable: true,
           value: "category"
         }
-      ]
+      ],
+      alertable_messages: {
+        create_success: {
+          text: "Category was created successfully",
+          type: "success"
+        },
+        update_success: {
+          text: "Category was updated successfully",
+          type: "success"
+        },
+        delete_success: {
+          text: "Category was deleted successfully",
+          actions: [
+            {
+              text: "Undo",
+              handler: async ({ item }) => {
+                this.$_issue_category_mixin_restoreCategory(item);
+              }
+            }
+          ]
+        }
+      }
     };
   },
 
@@ -93,6 +130,12 @@ export default {
         { spacer: true },
         { component: () => ButtonCreateCategory }
       ];
+    },
+
+    actions() {
+      return this.$_vuexable_auth && this.$_vuexable_auth.isAdmin
+        ? ["edit", "delete"]
+        : [];
     },
 
     routeParam() {
@@ -115,6 +158,26 @@ export default {
           descending: newPagination.descending
         }
       });
+    },
+
+    async onItemEdit(item) {
+      try {
+        await this.$_issue_category_mixin_onEditCategory(item);
+      } catch (error) {
+        throw error;
+      }
+
+      this.$_issue_category_mixin_dialog = true;
+    },
+
+    async onItemDelete(item) {
+      try {
+        await this.$_issue_category_mixin_deleteCategory(item);
+      } catch (error) {
+        throw error;
+      }
+
+      this.$_alertable_alert("delete_success", { item });
     }
   },
 

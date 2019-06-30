@@ -38,7 +38,7 @@
             <span v-if="isAlign(header, 'right')">{{ header.text }}</span>
           </th>
 
-          <th v-if="showActions"></th>
+          <th v-if="!hideItemActions"></th>
         </tr>
       </template>
 
@@ -58,11 +58,11 @@
             </td>
           </slot>
 
-          <td v-if="showActions" class="td__action">
+          <td v-if="!hideItemActions" class="td__action">
             <v-menu bottom origin="center center" transition="scale-transition">
               <template v-slot:activator="{ on }">
-                <v-btn icon dark v-on="on">
-                  <v-icon>more_vert</v-icon>
+                <v-btn icon v-on="on">
+                  <v-icon color="grey darken-2">more_vert</v-icon>
                 </v-btn>
               </template>
 
@@ -107,3 +107,12 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.td {
+  &__action {
+    text-align: right;
+  }
+}
+</style>
+
