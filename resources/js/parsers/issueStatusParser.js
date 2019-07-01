@@ -5,7 +5,7 @@ import {
 function parseFetch(context, {
     issue_statuses = [],
     total = 0,
-    strategy = 'merge'
+    strategy = 'replace'
 } = {}) {
     const {
         rootCommit,

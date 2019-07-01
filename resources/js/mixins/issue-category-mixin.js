@@ -39,6 +39,10 @@ const issueCategoryMixin = {
             }
         },
 
+        $_issue_category_mixin_totalItems() {
+            return this.$_vuexable_getState("totalItems", vuex.modules.ISSUE_CATEGORY);
+        },
+
         $_issue_category_mixin_edit: {
             get() {
                 return this.$_vuexable_getEdit(
@@ -99,25 +103,21 @@ const issueCategoryMixin = {
             }
         }),
 
-        async $_issue_category_mixin_onPaginationUpdate(newPagination) {
-            const original = this.$_issue_category_mixin_pagination;
+        // async $_issue_category_mixin_onPaginationUpdate(newPagination) {
+        //     const original = this.$_issue_category_mixin_pagination;
 
-            if (
-                this.$_vuexable_shouldUpdatePagination(
-                    newPagination,
-                    vuex.modules.ISSUE_CATEGORY
-                )
-            ) {
-                this.$_issue_category_mixin_pagination = {
-                    ...original,
-                    ...newPagination
-                };
-
-                return await this.$_issue_category_mixin_fetchCategory({
-                    pagination: this.$_issue_category_mixin_pagination
-                });
-            }
-        },
+        //     if (
+        //         this.$_vuexable_shouldUpdatePagination(
+        //             newPagination,
+        //             vuex.modules.ISSUE_CATEGORY
+        //         )
+        //     ) {
+        //         this.$_issue_category_mixin_pagination = {
+        //             ...original,
+        //             ...newPagination
+        //         };
+        //     }
+        // },
 
         async $_issue_category_mixin_onEditCategory({
             id

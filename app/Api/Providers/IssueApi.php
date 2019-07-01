@@ -136,13 +136,14 @@ class IssueApi extends BaseApi implements ApiInterface
             $this->syncAttachments($issue, $raw, $uploaded_file_ids);
 
             DB::commit();
+
+            return $this->find($issue->id);
+            
         } catch (Exception $exception) {
             DB::rollback();
             Log::error($exception);
             throw new Exception("Error Updating issue Request", 1);
         }
-
-        return $this->find($issue->id);
     }
 
     private function parseGeneralFields($record, $raw)

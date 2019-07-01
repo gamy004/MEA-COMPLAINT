@@ -11,8 +11,8 @@
             v-model="selected"
             :headers="headers"
             :items="$_issue_category_mixin_issue_paginated_items"
-            item-key="text"
-            :total-items="pagination.totalItems"
+            item-key="id"
+            :total-items="$_issue_category_mixin_totalItems"
             :pagination="$_issue_category_mixin_pagination"
             :loading="$_issue_category_mixin_fetching"
             :selectable="false"
@@ -114,10 +114,15 @@ export default {
             {
               text: "Undo",
               handler: async ({ item }) => {
-                this.$_issue_category_mixin_restoreCategory(item);
+                await this.$_issue_category_mixin_restoreCategory(item);
+
+                this.$_alertable_alert("restore_success");
               }
             }
           ]
+        },
+        restore_success: {
+          text: "Action undone"
         }
       }
     };
@@ -148,16 +153,33 @@ export default {
   },
 
   methods: {
-    async onPaginationChange(newPagination) {
-      await this.$_issue_category_mixin_onPaginationUpdate(newPagination);
+    async onPaginationChange(newPagination, { force = false } = {}) {
+      const original = this.$_issue_category_mixin_pagination;
 
-      this.$router.push({
-        name: views.ISSUE_CATEGORY.INDEX,
-        query: {
-          page: newPagination.page,
-          descending: newPagination.descending
-        }
-      });
+      if (
+        this.$_vuexable_shouldUpdatePagination(
+          newPagination,
+          vuex.modules.ISSUE_CATEGORY
+        ) ||
+        force
+      ) {
+        this.$_issue_category_mixin_pagination = {
+          ...original,
+          ...newPagination
+        };
+
+        await this.$_issue_category_mixin_fetchCategory({
+          pagination: this.$_issue_category_mixin_pagination
+        });
+
+        this.$router.push({
+          name: views.ISSUE_CATEGORY.INDEX,
+          query: {
+            page: newPagination.page,
+            descending: newPagination.descending
+          }
+        });
+      }
     },
 
     async onItemEdit(item) {
@@ -181,12 +203,15 @@ export default {
     }
   },
 
-  created() {
-    this.$_issue_category_mixin_pagination = {
-      sortBy: "category",
-      page: _.toInteger(this.$route.query.page) || 1,
-      descending: this.$route.query.descending === "true" || false
-    };
+  async created() {
+    this.onPaginationChange(
+      {
+        sortBy: "category",
+        page: _.toInteger(this.$route.query.page) || 1,
+        descending: this.$route.query.descending === "true" || false
+      },
+      { force: true }
+    );
   }
 };
 </script>

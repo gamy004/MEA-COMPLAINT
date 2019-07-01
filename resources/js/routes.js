@@ -28,6 +28,11 @@ const routes = [{
                 path: 'categories',
                 name: constants.views.ISSUE_CATEGORY.INDEX,
                 component: views.issueCategory.index
+            },
+            {
+                path: 'statuses',
+                name: constants.views.ISSUE_STATUS.INDEX,
+                component: views.issueStatus.index
             }
         ]
     },

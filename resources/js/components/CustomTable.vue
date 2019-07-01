@@ -12,6 +12,7 @@
       select-all
       :hide-headers="hideHeaders"
       :hide-actions="hideActions"
+      :expand="expand"
     >
       <v-progress-linear slot="progress" height="3" color="primary" indeterminate></v-progress-linear>
 
@@ -42,7 +43,7 @@
         </tr>
       </template>
 
-      <template slot="items" slot-scope="props">
+      <template v-slot:items="props">
         <tr class="v-table__tr" :active="props.selected" @click="onClickRow($event, props)">
           <td v-show="selectable">
             <v-checkbox ref="selectCheckBox" v-model="props.selected" primary hide-details></v-checkbox>
@@ -59,10 +60,10 @@
           </slot>
 
           <td v-if="!hideItemActions" class="td__action">
-            <v-menu bottom origin="center center" transition="scale-transition">
+            <v-menu bottom origin="center center" min-width="150" transition="scale-transition">
               <template v-slot:activator="{ on }">
                 <v-btn icon v-on="on">
-                  <v-icon color="grey darken-2">more_vert</v-icon>
+                  <v-icon color="grey">more_vert</v-icon>
                 </v-btn>
               </template>
 
@@ -78,6 +79,10 @@
             </v-menu>
           </td>
         </tr>
+      </template>
+
+      <template v-slot:expand="props">
+        <slot name="expand" :item="props.item"></slot>
       </template>
     </v-data-table>
 

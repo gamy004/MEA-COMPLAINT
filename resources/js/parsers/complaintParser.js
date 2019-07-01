@@ -26,11 +26,13 @@ function parseFetch(context, {
     });
 
     parsers.ISSUE_CATEGORY[vuex.actions.ISSUE_CATEGORY.FETCH](context, {
-        issue_categories
+        issue_categories,
+        strategy: 'merge'
     });
 
     parsers.ISSUE_STATUS[vuex.actions.ISSUE_STATUS.FETCH](context, {
-        issue_statuses
+        issue_statuses,
+        strategy: 'merge'
     });
 
     parsers.FILE[vuex.actions.FILE.FETCH](context, {
@@ -84,11 +86,13 @@ function parseEdit(context, {
     });
 
     parsers.ISSUE_CATEGORY[vuex.actions.ISSUE_CATEGORY.FETCH](context, {
-        issue_categories
+        issue_categories,
+        strategy: 'merge'
     });
 
     parsers.ISSUE_STATUS[vuex.actions.ISSUE_STATUS.FETCH](context, {
-        issue_statuses
+        issue_statuses,
+        strategy: 'merge'
     });
 
     parsers.ISSUE_NOTE[vuex.actions.ISSUE_NOTE.FETCH](context, {

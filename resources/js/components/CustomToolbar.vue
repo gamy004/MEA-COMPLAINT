@@ -15,7 +15,7 @@
       ></v-checkbox>
 
       <v-compoment
-        v-else-if="item.component"
+        v-else-if="!item.menu && item.component"
         :key="i"
         :is="item.component()"
         v-bind="item.componentProps ? item.componentProps() : {}"

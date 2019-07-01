@@ -6,3 +6,7 @@ export const ISSUE = {
 export const ISSUE_CATEGORY = {
     INDEX: 'issueCategoryIndex'
 }
+
+export const ISSUE_STATUS = {
+    INDEX: 'issueStatusIndex'
+}

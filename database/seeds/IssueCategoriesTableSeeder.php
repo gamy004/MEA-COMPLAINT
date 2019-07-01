@@ -17,6 +17,6 @@ class IssueCategoriesTableSeeder extends Seeder
         
         IssueCategory::truncate();
         
-        factory(IssueCategory::class, 10)->create();
+        factory(IssueCategory::class, 30)->create();
     }
 }

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\IssueCategory;
 use Illuminate\Http\Request;
+use App\Models\IssueCategory;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 
 class IssueCategoryController extends BaseApiController
 {
@@ -18,24 +20,14 @@ class IssueCategoryController extends BaseApiController
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        //
+        return $this->api->store($request->all());
     }
 
     /**
@@ -46,7 +38,7 @@ class IssueCategoryController extends BaseApiController
      */
     public function show(IssueCategory $issue_category)
     {
-        //
+        return $this->api->find($issue_category->id);
     }
 
     /**
@@ -57,7 +49,7 @@ class IssueCategoryController extends BaseApiController
      */
     public function edit(IssueCategory $issue_category)
     {
-        //
+        return $this->api->find($issue_category->id);
     }
 
     /**
@@ -67,9 +59,9 @@ class IssueCategoryController extends BaseApiController
      * @param  \App\Models\IssueCategory  $issue_category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, IssueCategory $issue_category)
+    public function update(UpdateCategoryRequest $request, IssueCategory $issue_category)
     {
-        //
+        return $this->api->update($issue_category, $request->all());
     }
 
     /**
@@ -80,6 +72,17 @@ class IssueCategoryController extends BaseApiController
      */
     public function destroy(IssueCategory $issue_category)
     {
-        //
+        return $this->api->destroy($issue_category);
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     *
+     * @param  Integer  $issue_category ID
+     * @return \Illuminate\Http\Response
+     */
+    public function restore($issue_category)
+    {
+        return $this->api->restore($issue_category);
     }
 }

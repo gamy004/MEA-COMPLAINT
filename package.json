@@ -50,6 +50,7 @@
     "dependencies": {
         "babel-polyfill": "^6.26.0",
         "moment": "^2.24.0",
+        "vue-color": "^2.7.0",
         "vue-wait": "^1.4.6"
     }
 }

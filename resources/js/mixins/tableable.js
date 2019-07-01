@@ -70,6 +70,10 @@ const tableable = {
         paginatable: {
             type: Boolean,
             default: () => false
+        },
+        expand: {
+            type: Boolean,
+            default: () => false
         }
     },
 
@@ -108,7 +112,7 @@ const tableable = {
 
         $_tableable_mixin_pagination_pages() {
             return this.computedTotalItems > 0 ?
-                _.round(this.computedTotalItems / this.paginationSync.rowsPerPage) :
+                Math.ceil(this.computedTotalItems / this.paginationSync.rowsPerPage) :
                 0;
         },
 
@@ -273,6 +277,10 @@ const tableable = {
         },
 
         onClickRow(event, props) {
+            if (this.expand) {
+                this.$set(props, 'expanded', !props.expanded);
+            }
+
             this.$emit('click:item', event, props.item);
         }
     },

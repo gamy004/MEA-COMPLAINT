@@ -257,13 +257,13 @@ export default {
       warning: false,
       warningSubmit: false,
       alertable_messages: {
-        error: "Cannot create complaint, please check error message.",
+        error: "Cannot create complaint, please check error message",
         add_success: {
-          text: "Complaint was created successfully.",
+          text: "Complaint was created successfully",
           type: "success"
         },
         edit_success: {
-          text: "Complaint was updated successfully.",
+          text: "Complaint was updated successfully",
           type: "success"
         },
         delete_file_success: {

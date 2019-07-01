@@ -59,11 +59,11 @@ export default {
       alertable_messages: {
         error: "Cannot delete complaint, please try again.",
         update_status_success: {
-          text: "Complaint Status was updated successfully.",
+          text: "Complaint Status was updated successfully",
           type: "success"
         },
         remove: {
-          text: "Complaint moved to Trash.",
+          text: "Complaint moved to Trash",
           actions: [
             {
               text: "Undo",
@@ -73,7 +73,7 @@ export default {
             }
           ]
         },
-        undo: "Action undone."
+        undo: "Action undone"
       }
     };
   },

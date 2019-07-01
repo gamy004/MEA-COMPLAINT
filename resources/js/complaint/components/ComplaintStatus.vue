@@ -4,7 +4,7 @@
     <v-flex xs12>
       <transition name="slide-x-transition">
         <v-progress-circular
-          v-if="$_issue_status_mixin_isFetchingStatuses"
+          v-if="$_issue_status_mixin_fetching"
           indeterminate
           color="info"
           size="10"

@@ -18,68 +18,69 @@ class IssueStatusController extends BaseApiController
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreStatusRequest $request)
     {
-        //
+        return $this->api->store($request->all());
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\IssueStatus  $issueStatus
+     * @param  \App\Models\IssueStatus  $issue_status
      * @return \Illuminate\Http\Response
      */
-    public function show(IssueStatus $issueStatus)
+    public function show(IssueStatus $issue_status)
     {
-        //
+        return $this->api->find($issue_status->id);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\IssueStatus  $issueStatus
+     * @param  \App\Models\IssueStatus  $issue_status
      * @return \Illuminate\Http\Response
      */
-    public function edit(IssueStatus $issueStatus)
+    public function edit(IssueStatus $issue_status)
     {
-        //
+        return $this->api->find($issue_status->id);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\IssueStatus  $issueStatus
+     * @param  \App\Models\IssueStatus  $issue_status
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, IssueStatus $issueStatus)
+    public function update(UpdateStatusRequest $request, IssueStatus $issue_status)
     {
-        //
+        return $this->api->update($issue_status, $request->all());
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\IssueStatus  $issueStatus
+     * @param  \App\Models\IssueStatus  $issue_status
      * @return \Illuminate\Http\Response
      */
-    public function destroy(IssueStatus $issueStatus)
+    public function destroy(IssueStatus $issue_status)
     {
-        //
+        return $this->api->destroy($issue_status);
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     *
+     * @param  Integer  $issue_status ID
+     * @return \Illuminate\Http\Response
+     */
+    public function restore($issue_status)
+    {
+        return $this->api->restore($issue_status);
     }
 }

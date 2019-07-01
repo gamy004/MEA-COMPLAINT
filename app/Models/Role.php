@@ -11,6 +11,9 @@ class Role extends Model
     use Roleable,
         SoftDeletes;
 
+    const ADMIN = 'admin';
+    const USER = 'user';
+
     public function users()
     {
         return $this->belongsToMany(User::class, 'user_role')->using(UserRole::class);

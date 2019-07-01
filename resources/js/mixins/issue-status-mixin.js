@@ -8,32 +8,79 @@ const issueStatusMixin = {
 
     computed: {
         ...vuex.mapWaitingGetters({
-            $_issue_status_mixin_isUpdating: "issueStatusMixin updating issue",
-            $_issue_status_mixin_isFetchingStatuses: "issueStatusMixin fetching statuses"
+            $_issue_status_mixin_updatingIssue: "issueStatusMixin updating issue",
+            $_issue_status_mixin_fetching: "issueCategoryMixin fetch action",
+            $_issue_status_mixin_editing: "issueCategoryMixin edit action",
+            $_issue_status_mixin_deleting: "issueCategoryMixin delete action",
+            $_issue_status_mixin_restoring: "issueCategoryMixin restore action"
         }),
-
-        $_issue_status_mixin_activeIssue() {
-            return this.$_vuexable_getActive(vuex.modules.ISSUE);
-        },
-
-        $_issue_status_mixin_activeIssueId() {
-            const {
-                id = null
-            } = this.$_issue_status_mixin_activeIssue;
-
-            return id;
-        },
-
-        $_issue_status_mixin_activeIssueStatusId() {
-            const {
-                issue_status_id = null
-            } = this.$_issue_status_mixin_activeIssue;
-
-            return issue_status_id;
-        },
 
         $_issue_status_mixin_statuses() {
             return this.$_vuexable_getSortedValues(vuex.modules.ISSUE_STATUS);
+        },
+
+        $_issue_status_mixin_dialog: {
+            get() {
+                return this.$_vuexable_getState(
+                    "dialog",
+                    vuex.modules.ISSUE_STATUS
+                );
+            },
+
+            set(value) {
+                this.$_vuexable_setState({
+                    key: "dialog",
+                    value
+                }, vuex.modules.ISSUE_STATUS);
+            }
+        },
+
+        $_issue_status_mixin_pagination: {
+            get() {
+                return this.$_vuexable_getState("pagination", vuex.modules.ISSUE_STATUS);
+            },
+            set(pagination) {
+                this.$_vuexable_setPagination(pagination, vuex.modules.ISSUE_STATUS);
+            }
+        },
+
+        $_issue_status_mixin_totalItems() {
+            return this.$_vuexable_getState("totalItems", vuex.modules.ISSUE_STATUS);
+        },
+
+        $_issue_status_mixin_edit: {
+            get() {
+                return this.$_vuexable_getEdit(
+                    vuex.modules.ISSUE_STATUS
+                );
+            },
+
+            set(value) {
+                this.$_vuexable_setEdit(value, vuex.modules.ISSUE_STATUS);
+            }
+        },
+
+        $_issue_status_mixin_isEditing() {
+            return this.$_issue_status_mixin_edit !== undefined;
+        },
+
+        $_issue_status_mixin_active: {
+            get() {
+                return this.$_vuexable_getActive(
+                    vuex.modules.ISSUE_STATUS
+                );
+            },
+
+            set(value) {
+                this.$_vuexable_setActive(value, vuex.modules.ISSUE_STATUS);
+            }
+        },
+
+        $_issue_status_mixin_paginated_items() {
+            return this.$_vuexable_getPaginatedValues(
+                this.$_issue_status_mixin_pagination.page,
+                vuex.modules.ISSUE_STATUS
+            );
         }
     },
 
@@ -48,7 +95,19 @@ const issueStatusMixin = {
         ...vuex.mapWaitingActions(vuex.modules.ISSUE_STATUS, {
             $_issue_status_mixin_fetchStatus: {
                 action: vuex.actions.ISSUE_STATUS.FETCH,
-                loader: "issueStatusMixin fetching statuses"
+                loader: "issueStatusMixin fetch action"
+            },
+            $_issue_status_mixin_editStatus: {
+                action: vuex.actions.ISSUE_STATUS.EDIT,
+                loader: "issueStatusMixin edit action"
+            },
+            $_issue_status_mixin_deleteStatus: {
+                action: vuex.actions.ISSUE_STATUS.DELETE,
+                loader: "issueStatusMixin delete action"
+            },
+            $_issue_status_mixin_restoreStatus: {
+                action: vuex.actions.ISSUE_STATUS.RESTORE,
+                loader: "issueStatusMixin restore action"
             }
         }),
 
@@ -61,6 +120,24 @@ const issueStatusMixin = {
             } catch (error) {
                 throw error;
             }
+        },
+
+        async $_issue_status_mixin_onEditStatus({
+            id
+        }) {
+            let response;
+
+            try {
+                response = await this.$_issue_status_mixin_editStatus({
+                    id
+                });
+            } catch (error) {
+                throw error;
+            }
+
+            this.$_issue_status_mixin_edit = id;
+
+            return response;
         },
 
         $_issue_status_mixin_makeStatusMenuItems(issue, cb = () => {}) {

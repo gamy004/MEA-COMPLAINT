@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\IOCs\DBCol;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -47,6 +48,10 @@ class User extends Authenticatable
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'user_role')->using(UserRole::class);
+    }
+
+    public function isAdmin() {
+        return $this->roles()->where(DBCol::ROLE, Role::ADMIN)->exists();
     }
 
     public function group()

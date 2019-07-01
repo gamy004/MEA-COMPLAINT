@@ -107,17 +107,16 @@ export default {
         },
         { icon: "delete", text: "Trash", route: { name: views.ISSUE.INDEX } },
         { divider: true },
-        { heading: "Categories", route: { name: views.ISSUE_CATEGORY.INDEX } },
+        { heading: "Admin Management" },
         {
-          icon: "add",
-          text: "Create new category",
-          route: { name: views.ISSUE.INDEX }
+          icon: "category",
+          text: "Categories",
+          route: { name: views.ISSUE_CATEGORY.INDEX }
         },
-        { divider: true },
         {
-          icon: "settings",
-          text: "Settings",
-          route: { name: views.ISSUE.INDEX }
+          icon: "bookmarks",
+          text: "Statuses",
+          route: { name: views.ISSUE_STATUS.INDEX }
         }
         //   { icon: "chat_bubble", text: "Trash" },
         //   { icon: "help", text: "Help" },

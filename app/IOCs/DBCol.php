@@ -59,5 +59,6 @@ class DBCol
 
     const GROUP_ID = 'group_id';
     const ROLE_ID = 'role_id';
+    const ROLE = 'role';
     const TYPE_ID = 'type_id';
 }

@@ -34,7 +34,12 @@ export const FILE = {
 };
 
 export const ISSUE_STATUS = {
-    FETCH: 'issueStatusFetch'
+    FETCH: 'issueStatusFetch',
+    EDIT: 'issueStatusEdit',
+    STORE: 'issueStatusStore',
+    UPDATE: 'issueStatusUpdate',
+    DELETE: 'issueStatusDelete',
+    RESTORE: 'issueStatusRestore'
 };
 
 export const ISSUE_CATEGORY = {

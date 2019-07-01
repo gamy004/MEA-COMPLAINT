@@ -28,6 +28,84 @@ const StatusStore = {
             }
         },
 
+        async [vuex.actions.ISSUE_STATUS.EDIT](context, {
+            id: issue_status
+        }) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'ISSUE_STATUS',
+                    action: 'EDIT',
+                    params: {
+                        routeParam: {
+                            issue_status
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        async [vuex.actions.STORE](context, params = {}) {
+            try {
+                return context.dispatch(vuex.actions.REQUEST, {
+                    model: 'ISSUE_STATUS',
+                    action: 'STORE',
+                    params
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        async [vuex.actions.UPDATE](context, params = {}) {
+            try {
+                return context.dispatch(vuex.actions.REQUEST, {
+                    model: 'ISSUE_STATUS',
+                    action: 'UPDATE',
+                    params
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        async [vuex.actions.ISSUE_STATUS.DELETE](context, {
+            id: issue_status
+        }) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'ISSUE_STATUS',
+                    action: 'DELETE',
+                    params: {
+                        routeParam: {
+                            issue_status
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        async [vuex.actions.ISSUE_STATUS.RESTORE](context, {
+            id: issue_status
+        }) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'ISSUE_STATUS',
+                    action: 'RESTORE',
+                    params: {
+                        routeParam: {
+                            issue_status
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
         // async [vuex.actions.STORE]({
         //     commit,
         //     dispatch

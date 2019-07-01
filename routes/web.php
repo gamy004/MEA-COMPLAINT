@@ -58,6 +58,20 @@ Route::group([
                 Route::post('/restore', 'IssueNoteController@restore')->name('restore');
             });
 
+            /**
+             * Custom route IssueCategoryController
+             */
+            Route::group(['as' => 'issue-categories.', 'prefix' => 'issue-categories/{issue_category}'], function () {
+                Route::post('/restore', 'IssueCategoryController@restore')->name('restore');
+            });
+
+            /**
+             * Custom route IssueStatusController
+             */
+            Route::group(['as' => 'issue-statuses.', 'prefix' => 'issue-statuses/{issue_status}'], function () {
+                Route::post('/restore', 'IssueStatusController@restore')->name('restore');
+            });
+
             Route::resources([
                 'issues' => 'IssueController',
                 'groups' => 'GroupController',

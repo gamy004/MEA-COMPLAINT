@@ -11,6 +11,9 @@
             color="deep-orange"
             outline
             single-line
+            :error="form.errors.has('category')"
+            :error-messages="form.errors.getError('category')"
+            @input="form.errors.clear('category')"
           ></v-text-field>
         </v-form>
       </v-card-text>

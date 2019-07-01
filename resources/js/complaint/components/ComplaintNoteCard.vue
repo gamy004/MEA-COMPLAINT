@@ -42,7 +42,7 @@
               </v-btn>-->
             </div>
 
-            <v-spacer/>
+            <v-spacer />
 
             <v-layout v-if="displayInformation" align-center justify-end no-wrap>
               <v-icon
@@ -66,7 +66,7 @@
         </v-card-title>
 
         <v-card-text v-if="displayInformation && $_issue_note_item_mixin_noteItem" class="pt-0">
-          <v-sheet v-html="$_issue_note_item_mixin_noteItem.description"/>
+          <v-sheet v-html="$_issue_note_item_mixin_noteItem.description" />
         </v-card-text>
 
         <v-divider
@@ -241,10 +241,10 @@ export default {
       }),
       showFormatting: false,
       alertable_messages: {
-        error: "Cannot create note, please try again.",
+        error: "Cannot create note, please try again",
 
         delete_file_success: {
-          text: "Attachment was deleted successfully.",
+          text: "Attachment was deleted successfully",
           type: "success",
           color: "white",
           actions: [
@@ -261,7 +261,7 @@ export default {
           type: "success"
         },
         action_done: {
-          text: "Action undone."
+          text: "Action undone"
         }
       },
       menuItems: [

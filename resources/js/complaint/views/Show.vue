@@ -145,24 +145,24 @@ export default {
       gobackTimer: null,
       alertable_messages: {
         update_status_success: {
-          text: "Complaint Status was updated successfully.",
+          text: "Complaint Status was updated successfully",
           type: "success"
         },
         add_note_success: {
-          text: "Note was created successfully.",
+          text: "Note was created successfully",
           type: "success"
         },
         edit_note_success: {
-          text: "Note was updated successfully.",
+          text: "Note was updated successfully",
           type: "success"
         },
         edit_complaint_success: {
-          text: "Complaint was updated successfully.",
+          text: "Complaint was updated successfully",
           type: "success"
         },
-        remove_complaint_fail: "Cannot delete complaint, please try again.",
+        remove_complaint_fail: "Cannot delete complaint, please try again",
         remove_complaint_success: {
-          text: "Complaint moved to Trash.",
+          text: "Complaint moved to Trash",
           actions: [
             {
               text: "Undo",
@@ -175,7 +175,7 @@ export default {
           ]
         },
         delete_note_success: {
-          text: "Remark was deleted successfully.",
+          text: "Remark was deleted successfully",
           actions: [
             {
               text: "Undo",
@@ -186,8 +186,8 @@ export default {
             }
           ]
         },
-        delete_note_fail: "Cannot delete note, please try again.",
-        action_done: "Action undone."
+        delete_note_fail: "Cannot delete note, please try again",
+        action_done: "Action undone"
       }
     };
   },

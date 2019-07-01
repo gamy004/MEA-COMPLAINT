@@ -11,3 +11,7 @@ export const complaint = {
 export const issueCategory = {
     index: () => import( /* webpackChunkName: "mea-category-index" */ './issueCategory/views/Index')
 }
+
+export const issueStatus = {
+    index: () => import( /* webpackChunkName: "mea-status-index" */ './issueStatus/views/Index')
+}

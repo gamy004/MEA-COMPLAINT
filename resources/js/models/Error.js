@@ -6,7 +6,9 @@ class Error extends BaseModel {
     } = {}) {
         super();
 
-        this.errors = errors;
+        this.data = {
+            errors
+        };
     }
 
     static make({
@@ -18,8 +20,6 @@ class Error extends BaseModel {
     }
 
     record(newErrors) {
-        console.log(newErrors);
-
         this.clear();
 
         this.data = newErrors;

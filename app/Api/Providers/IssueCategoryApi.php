@@ -22,45 +22,49 @@ class IssueCategoryApi extends BaseApi implements ApiInterface
 
     public function store(array $raw)
     {
-        // try {
-        //     DB::beginTransaction();
+        try {
+            DB::beginTransaction();
 
-        //     $record = [];
-        //     $record = $this->parseGeneralFields($record, $raw);
-        //     $user = IssueCategory::firstOrCreate($record);
+            $record = [];
+            
+            $record = $this->parseGeneralFields($record, $raw);
+            
+            $issue_category = IssueCategory::create($record);
 
-        //     DB::commit();
-        // } catch (Exception $exception) {
-        //     DB::rollback();
-        //     Log::error($exception);
-        //     throw new Exception("Error Creating User Request", 1);
-        // }
+            DB::commit();
 
-        // return $this->find($user->id);
+            return $this->find($issue_category->{DBCol::ID});
+
+        } catch (Exception $exception) {
+            DB::rollback();
+            Log::error($exception);
+            throw new Exception("Error Creating IssueCategory Request", 1);
+        }
     }
 
-    public function update(Model $model, array $raw)
+    public function update(Model $issue_category, array $raw)
     {
-        // try {
-        //     DB::beginTransaction();
+        try {
+            DB::beginTransaction();
 
-        //     $record = [];
-        //     $record = $this->parseGeneralFields($record, $raw);
-        //     $model->update($record);
+            $record = [];
 
-        //     DB::commit();
-        // } catch (Exception $exception) {
-        //     DB::rollback();
-        //     Log::error($exception);
-        //     throw new Exception("Error Updating model Request", 1);
-        // }
+            $record = $this->parseGeneralFields($record, $raw);
 
-        // return $this->find($model->id);
-    }
+            if (count($record)) {
+                $issue_category->update($record);
+            }
 
-    public function destroy(Model $model)
-    {
+            DB::commit();
 
+            return $this->find($issue_category->id);
+            
+        } catch (Exception $exception) {
+            DB::rollback();
+            Log::error($exception);
+            dd($exception);
+            throw new Exception("Error Updating IssueCategory Request", 1);
+        }
     }
 
     private function parseGeneralFields($record, $raw)
