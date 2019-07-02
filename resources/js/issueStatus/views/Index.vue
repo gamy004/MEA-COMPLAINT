@@ -24,8 +24,9 @@
             @action:delete="onItemDelete"
           >
             <template slot="items" slot-scope="{ item }">
-              <td key="statusName">
-                <v-avatar color="indigo accent-3" size="10" class="status-indicator mr-1"></v-avatar>
+              <td :key="`statusName-${item.id}`">
+                <v-avatar :color="item.color" size="10" class="status-indicator mr-1"></v-avatar>
+
                 <span>{{ item.status }}</span>
               </td>
             </template>
@@ -68,6 +69,7 @@
       :alertable-type="alertable_type"
       :alertable-messages="alertable_messages"
       :alertable-props="alertable_props"
+      :alertable-timeout="5000"
     />
   </v-layout>
 </template>
@@ -75,6 +77,7 @@
 <script>
 import CustomToolbar from "../../components/CustomToolbar";
 import CustomTable from "../../components/CustomTable";
+import ComplaintStatus from "../../complaint/components/ComplaintStatus";
 import MessageAlert from "../../components/MessageAlert";
 import issueStatusMixin from "../../mixins/issue-status-mixin";
 import ButtonCreateStatus from "../components/ButtonCreateStatus";
@@ -90,7 +93,8 @@ export default {
     DialogCreateUpdateStatus,
     CustomToolbar,
     CustomTable,
-    MessageAlert
+    MessageAlert,
+    ComplaintStatus
   },
 
   data() {
@@ -134,6 +138,21 @@ export default {
       }
     };
   },
+
+  // watch: {
+  //   $_issue_status_mixin_pagination: {
+  //     // immediate: true,
+  //     async handler(v, ov) {
+  //       if (!_.isEqual(v, ov)) {
+  //         console.log("Status Index pagination changed: ", v);
+
+  //         await this.$_issue_status_mixin_fetchStatus({
+  //           pagination: v
+  //         });
+  //       }
+  //     }
+  //   }
+  // },
 
   computed: {
     toolbars() {

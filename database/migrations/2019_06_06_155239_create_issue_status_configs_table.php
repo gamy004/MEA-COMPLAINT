@@ -16,9 +16,9 @@ class CreateIssueStatusConfigsTable extends Migration
         Schema::create('issue_status_configs', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('issue_status_id')->unsigned();
-            $table->string('condition');
-            $table->string('value');
-            $table->string('color', 7);
+            $table->integer('duration');
+            $table->string('unit');
+            $table->string('color', 9)->default("#C3C3C3FF");
             $table->timestamps();
             $table->softDeletes();
         });

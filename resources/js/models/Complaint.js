@@ -232,6 +232,29 @@ class Complaint extends BaseVuexModel {
         return allNames.join(', ');
     }
 
+    get statusColor() {
+        let color = '#C3C3C3FF';
+
+        const {
+            vuex,
+            rootGetters
+        } = this.$context, {
+            issue_status_id = null
+        } = this;
+
+        if (issue_status_id) {
+            const status = rootGetters[
+                `${vuex.modules.ISSUE_STATUS}/${vuex.getters.BY_KEY}`
+            ](issue_status_id);
+
+            if (status) {
+                color = status.color;
+            }
+        }
+
+        return color;
+    }
+
     get currentStatus() {
         let currentStatus = '';
 

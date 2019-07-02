@@ -34,13 +34,90 @@ function parseFetch(context, {
             ] : total
         }
     );
+};
 
-    // return {
-    //     ...props,
-    //     issues: issues.map(issue => new Complaint(issue))
-    // }
+function parseStore(context, {
+    issue_statuses: issue_status
+} = {}) {
+
+    const {
+        vuex,
+        rootGetters
+    } = context;
+
+    const oldStatus = rootGetters[
+        `${vuex.modules.ISSUE_STATUS}/${vuex.getters.BY_KEY}`
+    ](issue_status.id) || null;
+
+    if (oldStatus) {
+        parseEdit(context, {
+            issue_statuses: issue_status
+        });
+    } else {
+        const issue_statuses = [issue_status];
+
+        parseFetch(context, {
+            issue_statuses,
+            total: rootGetters[
+                `${vuex.modules.ISSUE_STATUS}/${vuex.getters.GET_STATE}`
+            ]('totalItems') + issue_statuses.length,
+            strategy: 'merge'
+        });
+    }
+};
+
+function parseEdit(context, {
+    issue_statuses: issue_status
+} = {}) {
+
+    const {
+        rootCommit,
+        rootGetters,
+        vuex,
+        models
+    } = context;
+
+    const oldStatus = rootGetters[
+        `${vuex.modules.ISSUE_STATUS}/${vuex.getters.BY_KEY}`
+    ](issue_status.id) || {};
+
+    const updatedCategory = _.merge({
+        ..._.cloneDeep(oldStatus.data)
+    }, issue_status);
+
+    rootCommit(
+        vuex.mutations.UPDATE,
+        vuex.modules.ISSUE_STATUS, {
+            key: issue_status.id,
+            value: new models.ISSUE({
+                ...updatedCategory,
+                context
+            })
+        }
+    );
+};
+
+function parseDelete(context, {
+    id
+} = {}) {
+
+    const {
+        rootCommit,
+        vuex
+    } = context;
+
+    rootCommit(
+        vuex.mutations.DELETE,
+        vuex.modules.ISSUE_STATUS, {
+            id
+        }
+    );
 };
 
 export default {
-    [actions.ISSUE_STATUS.FETCH]: parseFetch
+    [actions.ISSUE_STATUS.FETCH]: parseFetch,
+    [actions.ISSUE_STATUS.STORE]: parseStore,
+    [actions.ISSUE_STATUS.UPDATE]: parseEdit,
+    [actions.ISSUE_STATUS.DELETE]: parseDelete,
+    [actions.ISSUE_STATUS.RESTORE]: parseStore
 }

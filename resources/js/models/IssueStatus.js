@@ -15,7 +15,10 @@ class Status extends BaseVuexModel {
         let response;
 
         try {
-            response = await api.get('api:issue-statuses.index', props);
+            response = await api.get('api:issue-statuses.index', {
+                includes: ["configs"],
+                ...props
+            });
         } catch (error) {
             throw error;
         }
@@ -28,7 +31,8 @@ class Status extends BaseVuexModel {
 
         try {
             response = await api.get('api:issue-statuses.edit', {
-                ...data,
+                includes: ["configs"],
+                ...data
             });
         } catch (error) {
             throw error;
@@ -41,7 +45,10 @@ class Status extends BaseVuexModel {
         let response;
 
         try {
-            response = await api.post('api:issue-statuses.store', props);
+            response = await api.post('api:issue-statuses.store', {
+                includes: ["configs"],
+                ...props
+            });
         } catch (error) {
             throw error;
         }
@@ -53,7 +60,10 @@ class Status extends BaseVuexModel {
         let response;
 
         try {
-            response = await api.put('api:issue-statuses.update', props);
+            response = await api.put('api:issue-statuses.update', {
+                includes: ["configs"],
+                ...props
+            });
         } catch (error) {
             throw error;
         }
@@ -80,6 +90,7 @@ class Status extends BaseVuexModel {
 
         try {
             response = await api.post('api:issue-statuses.restore', {
+                includes: ["configs"],
                 ...data
             });
         } catch (error) {

@@ -9,6 +9,8 @@
             <v-menu
               origin="top right"
               transition="slide-x-transition"
+              offset-x
+              offset-y
               :close-on-content-click="false"
             >
               <template #activator="{ on: menu }">
@@ -16,7 +18,7 @@
                   <template #activator="{ on: tooltip }">
                     <v-avatar
                       v-on="{ ...tooltip, ...menu }"
-                      :color="form.colors"
+                      :color="form.color"
                       size="36"
                       class="clickable elevation-2 ml-1 mt-2 mr-3"
                     ></v-avatar>
@@ -24,7 +26,7 @@
                   <span>Pick Status Color</span>
                 </v-tooltip>
               </template>
-              <chrome-picker :value="form.colors" @input="updateColorValue" />
+              <chrome-picker :value="form.color" @input="updateColorValue" />
             </v-menu>
 
             <v-text-field
@@ -40,21 +42,21 @@
             ></v-text-field>
 
             <!-- <v-flex xs4>
-              <chrome-picker :value="form.colors" @input="updateColorValue" />
+              <chrome-picker :value="form.color" @input="updateColorValue" />
             </v-flex>-->
           </v-layout>
 
           <v-layout column px-1>
             <v-switch
               v-model="form.track_status"
-              color="blue-grey darken-2"
+              color="indigo accent-2"
               label="Track this status"
-              class="ml-1"
+              class="ml-1 mr-1"
             ></v-switch>
 
             <v-list v-if="form.track_status">
               <v-list-tile
-                v-for="(time, timeIndex) in form.times"
+                v-for="(time, timeIndex) in form.configs"
                 :key="`status-timing-${timeIndex}`"
                 class="v-list__tile-time"
                 avatar
@@ -63,6 +65,8 @@
                   <v-menu
                     origin="top right"
                     transition="slide-x-transition"
+                    offset-x
+                    offset-y
                     :close-on-content-click="false"
                   >
                     <template #activator="{ on: menu }">
@@ -70,7 +74,7 @@
                         <template #activator="{ on: tooltip }">
                           <v-avatar
                             v-on="{ ...tooltip, ...menu }"
-                            :color="form.times[timeIndex].colors"
+                            :color="form.configs[timeIndex].color"
                             size="34"
                             class="clickable elevation-2"
                           ></v-avatar>
@@ -79,7 +83,7 @@
                       </v-tooltip>
                     </template>
                     <chrome-picker
-                      :value="form.times[timeIndex].colors"
+                      :value="form.configs[timeIndex].color"
                       @input="updateTimeColorValue($event, timeIndex)"
                     />
                   </v-menu>
@@ -88,24 +92,30 @@
                 <v-list-tile-content>
                   <!-- <v-list-tile-title>How long?</v-list-tile-title> -->
                   <v-layout>
-                    <v-flex xs8>
+                    <v-flex xs8 mr-1>
                       <v-text-field
-                        v-model="form.times[timeIndex].duration"
-                        label="How long?"
+                        v-model="form.configs[timeIndex].duration"
+                        type="number"
+                        :min="1"
+                        label="Duration"
                         placeholder="3"
+                        color="deep-orange"
+                        :error="form.errors.has(`configs.${timeIndex}.duration`)"
+                        :error-messages="form.errors.getError(`configs.${timeIndex}.duration`)"
+                        @input="form.errors.clear(`configs.${timeIndex}.duration`)"
                       ></v-text-field>
                     </v-flex>
 
                     <v-flex xs4>
                       <v-select
-                        v-model="form.times[timeIndex].unit"
-                        :items="['minute', 'hour', 'day', 'week', 'month', 'year']"
-                        label="Solo field"
+                        v-model="form.configs[timeIndex].unit"
+                        :items="timeItems"
+                        color="deep-orange"
                       ></v-select>
                     </v-flex>
                   </v-layout>
                   <!-- <v-text-field
-                    v-model="form.times[timeIndex].duration"
+                    v-model="form.configs[timeIndex].duration"
                     label="How long?"
                     height="24"
                     hide-details
@@ -169,10 +179,20 @@ export default {
     return {
       form: vuex.models.FORM.make({
         status: "",
-        colors: "#304FFE",
+        color: "#C3C3C3FF",
+        default: false,
         track_status: false,
-        times: []
-      })
+        configs: []
+      }),
+
+      timeItems: [
+        { text: "minute", value: "minutes" },
+        { text: "hour", value: "hours" },
+        { text: "day", value: "days" },
+        { text: "week", value: "weeks" },
+        { text: "month", value: "months" },
+        { text: "year", value: "years" } // values are moment.js key!!
+      ]
     };
   },
 
@@ -185,8 +205,23 @@ export default {
 
     $_issue_status_mixin_edit: {
       deep: true,
-      handler({ id = null, status = "" } = {}) {
-        this.form.record({ id, status });
+      handler(edittedStatus) {
+        if (edittedStatus) {
+          const {
+            id = null,
+            status = "",
+            color = "#C3C3C3FF",
+            configs = []
+          } = _.cloneDeep(edittedStatus);
+
+          this.form.record({
+            id,
+            status,
+            color,
+            track_status: configs.length > 0,
+            configs
+          });
+        }
       }
     }
   },
@@ -197,30 +232,30 @@ export default {
       this.$_issue_status_mixin_edit = null;
     },
 
-    updateColorValue({ hex8 = "#FFFFFFFF" } = {}) {
-      this.form.colors = hex8;
+    updateColorValue({ hex8 = "#C3C3C3FF" } = {}) {
+      this.form.color = hex8;
     },
 
-    updateTimeColorValue({ hex8 = "#FFFFFFFF" } = {}, timeIndex) {
-      const { times = [] } = this.form;
+    updateTimeColorValue({ hex8 = "#C3C3C3FF" } = {}, timeIndex) {
+      const { configs = [] } = this.form;
 
-      if (times.length >= timeIndex) {
-        this.$set(times[timeIndex], "colors", hex8);
+      if (configs.length >= timeIndex) {
+        this.$set(configs[timeIndex], "color", hex8);
       }
 
-      this.form.times = [...times];
+      this.form.configs = [...configs];
     },
 
     addTime() {
-      const { times = [] } = this.form;
+      const { configs = [] } = this.form;
 
-      times.push({
-        colors: "#FFFFFFFF",
+      configs.push({
+        color: "#C3C3C3FF",
         duration: null,
-        unit: "day"
+        unit: "minutes"
       });
 
-      this.form.times = [...times];
+      this.form.configs = [...configs];
     },
 
     async onSubmit() {
@@ -229,7 +264,12 @@ export default {
       let v;
 
       try {
-        v = await this.$_managable_submitForm(form, ["status"]);
+        v = await this.$_managable_submitForm(form, [
+          "status",
+          "color",
+          "default",
+          "configs"
+        ]);
       } catch (error) {
         throw error;
       }
@@ -246,6 +286,7 @@ export default {
     .v-list__tile {
       padding-left: 0;
       padding-right: 0;
+      height: 72px;
     }
   }
 }

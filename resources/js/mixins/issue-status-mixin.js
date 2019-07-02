@@ -2,6 +2,7 @@ import {
     vuex,
     vuexable
 } from "./vuexable";
+import ComplaintStatus from "../complaint/components/ComplaintStatus";
 
 const issueStatusMixin = {
     mixins: [vuexable],
@@ -111,10 +112,13 @@ const issueStatusMixin = {
             }
         }),
 
+        $_issue_status_mixin_findStatus(statusId) {
+            return this.$_vuexable_getByKey(statusId, vuex.modules.ISSUE_STATUS);
+        },
+
         async $_issue_status_mixin_fetchStatuses() {
             try {
                 return await this.$_issue_status_mixin_fetchStatus({
-                    select: ["issue_statuses:id,status,default"],
                     sort: ["-issue_statuses.default", "issue_statuses.status"]
                 });
             } catch (error) {
@@ -151,10 +155,21 @@ const issueStatusMixin = {
                 ["desc", "asc"]
             ).map(({
                 id,
-                status
+                status,
+                color
             }) => {
                 return {
+                    id,
+                    status,
+                    color,
                     text: status,
+                    // component: () => ComplaintStatus,
+                    // componentProps: () => {
+                    //     return {
+                    //         issueId: issue.id,
+                    //         statusId: id
+                    //     };
+                    // },
                     disabled: () => issue.issue_status_id === id,
                     onClick: async () => {
                         try {

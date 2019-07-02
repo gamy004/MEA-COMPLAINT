@@ -30,6 +30,11 @@ class Data
     const ATTACHMENTS = 'attachments';
 
     /**
+     * IssueStatus
+     */
+    const CONFIGS = 'configs';
+
+    /**
      * File System
      */
     const APP_DIR = 'app/';

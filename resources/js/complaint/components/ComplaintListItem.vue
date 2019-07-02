@@ -42,7 +42,8 @@
         <v-chip
           class="complaint-list__status"
           small
-          color="indigo accent-3"
+          :color="item.statusColor"
+          :style="statusStyles"
           dark
         >{{ item.currentStatus }}</v-chip>
 
@@ -113,7 +114,11 @@
               :disabled="item.disabled()"
               @click.prevent.stop="item.onClick ? item.onClick(item, index) : () => {}"
             >
-              <v-list-tile-title>{{ item.text }}</v-list-tile-title>
+              <v-list-tile-title>
+                <v-avatar :color="item.color" size="12" class="status-indicator mr-1"></v-avatar>
+
+                <span>{{ item.status }}</span>
+              </v-list-tile-title>
             </v-list-tile>
           </v-list>
         </v-menu>
@@ -160,6 +165,7 @@
 import { vuex, vuexable } from "../../mixins/vuexable";
 import issueStatusMixin from "../../mixins/issue-status-mixin";
 import { views } from "../../constants";
+import { getCorrectTextColor } from "../../helpers";
 
 export default {
   props: {
@@ -208,6 +214,12 @@ export default {
           this.$emit("update:status", this.item);
         }
       );
+    },
+
+    statusStyles() {
+      return {
+        color: getCorrectTextColor(this.item.statusColor)
+      };
     }
   },
 

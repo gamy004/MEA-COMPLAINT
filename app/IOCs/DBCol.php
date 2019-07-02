@@ -40,6 +40,9 @@ class DBCol
      * ISSUE STATUS
      */
     const STATUS = 'status';
+    const COLOR = 'color';
+    const DURATION = 'duration';
+    const UNIT = 'unit';
     const DEFAULT = 'default';
     /**
      * ISSUE NOTE

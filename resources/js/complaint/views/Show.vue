@@ -269,7 +269,9 @@ export default {
           component: () => ComplaintStatus,
           componentProps: () => {
             return {
-              issueId: this.activeComplaintId
+              statusId: this.$_complaint_item_mixin_complaint
+                ? this.$_complaint_item_mixin_complaint.issue_status_id
+                : null
             };
           },
           menuItems: this.statusesItems
@@ -336,6 +338,10 @@ export default {
       this.$_complaint_mixin_setEdit(null);
       this.$_complaint_mixin_setDialog(false);
     }
+  },
+
+  created() {
+    this.$_issue_status_mixin_fetchStatuses();
   }
 };
 </script>

@@ -67,12 +67,11 @@ export function getCorrectTextColor(hex) {
     I know this could be more compact, but I think this is easier to read/explain.
     
     */
+    let threshold = 160; /* about half of 256. Lower threshold equals more dark text on dark background  */
 
-    threshold = 130; /* about half of 256. Lower threshold equals more dark text on dark background  */
-
-    hRed = hexToR(hex);
-    hGreen = hexToG(hex);
-    hBlue = hexToB(hex);
+    let hRed = hexToR(hex);
+    let hGreen = hexToG(hex);
+    let hBlue = hexToB(hex);
 
 
     function hexToR(h) {
@@ -91,12 +90,44 @@ export function getCorrectTextColor(hex) {
         return (h.charAt(0) == "#") ? h.substring(1, 7) : h
     }
 
-    cBrightness = ((hRed * 299) + (hGreen * 587) + (hBlue * 114)) / 1000;
+    let cBrightness = ((hRed * 299) + (hGreen * 587) + (hBlue * 114)) / 1000;
+
     if (cBrightness > threshold) {
-        return "#000000";
+        return "#000000FF";
     } else {
-        return "#ffffff";
+        return "#FFFFFFFF";
     }
+}
+
+export function contrastText(rgb) {
+    // check if we are receiving an element or element background-color
+    if (typeof rgb !== 'string') {
+        return;
+    }
+
+    // @TODO check for HEX value
+    // All browsers should return an rgb value so this isn't critical
+
+    // Strip everything except the integers eg. "rgb(" and ")" and " "
+    console.log(rgb);
+
+    rgb = rgb.split(/\(([^)]+)\)/)[1].replace(/ /g, '');
+
+    // map RGB values to variables
+    var r = parseInt(rgb.split(',')[0], 10),
+        g = parseInt(rgb.split(',')[1], 10),
+        b = parseInt(rgb.split(',')[2], 10),
+        a;
+
+    // if RGBA, map alpha to variable (not currently in use)
+    if (rgb.split(',')[3] !== null) {
+        a = parseInt(rgb.split(',')[3], 10);
+    }
+
+    // calculate contrast of color (standard grayscale algorithmic formula)
+    var contrast = (Math.round(r * 299) + Math.round(g * 587) + Math.round(b * 114)) / 1000;
+
+    return (contrast >= 128) ? '#222222' : '#000000';
 }
 
 export function onEmit(eventName, $event, item, ...indexes) {

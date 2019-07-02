@@ -189,7 +189,7 @@ const tableable = {
         },
         paginationSync: {
             handler(v) {
-                this.emitUpdatePagination(v);
+                this.emitUpdatePagination(_.omit(v, ['totalItems']));
             },
             deep: true
         },
