@@ -142,6 +142,7 @@ class IssueApi extends BaseApi implements ApiInterface
         } catch (Exception $exception) {
             DB::rollback();
             Log::error($exception);
+            dd($exception);
             throw new Exception("Error Updating issue Request", 1);
         }
     }

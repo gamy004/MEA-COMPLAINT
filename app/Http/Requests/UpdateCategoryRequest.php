@@ -32,7 +32,10 @@ class UpdateCategoryRequest extends FormRequest
             [
                 DBCol::CATEGORY => [
                     'required',
-                    Rule::unique('issue_categories', 'category')->ignore($this->issue_category->id),
+                    Rule::unique('issue_categories', 'category')
+                    ->where(function ($query) {
+                        $query->where('deleted_at', null);
+                    })->ignore($this->issue_category->id),
                     'max:255'
                 ]
             ]

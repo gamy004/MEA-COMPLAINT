@@ -9,6 +9,10 @@ class Status extends BaseVuexModel {
             status: '',
             ...data
         });
+
+        this.groupedConfigs = [];
+
+        this.$updateGroupConfig();
     }
 
     static async [actions.ISSUE_STATUS.FETCH](props) {
@@ -98,6 +102,19 @@ class Status extends BaseVuexModel {
         }
 
         return response;
+    }
+
+    $updateGroupConfig() {
+        let {
+            configs = []
+        } = this;
+
+        if (configs.length) {
+            this.groupedConfigs = _(configs).sortBy("duration").groupBy("unit").value();
+        }
+        console.log(this.groupedConfigs);
+
+        return this;
     }
 }
 

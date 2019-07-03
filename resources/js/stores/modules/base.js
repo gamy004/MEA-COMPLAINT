@@ -213,13 +213,21 @@ export default {
             id
         }) {
             if (state.collection.hasOwnProperty(id)) {
-                const targetPage = state.paginateIndex[id],
-                    sortedIndex = state.sortedIndex.indexOf(id),
-                    sortedPaginatedIndex = state.sortedPaginateIndex[targetPage].indexOf(id);
+                const targetPage = state.paginateIndex[id];
 
-                state.sortedIndex.splice(sortedIndex, 1);
+                const sortedIndex = state.sortedIndex.indexOf(id);
 
-                state.sortedPaginateIndex[targetPage].splice(sortedPaginatedIndex, 1);
+                if (sortedIndex !== -1) {
+                    state.sortedIndex.splice(sortedIndex, 1);
+                }
+
+                const sortedPaginatedIndex = state.sortedPaginateIndex[targetPage].indexOf(id);
+
+                if (sortedPaginatedIndex !== -1) {
+                    state.sortedPaginateIndex[targetPage].splice(sortedPaginatedIndex, 1);
+                }
+
+                Vue.delete(state.paginateIndex, id);
 
                 Vue.delete(state.collection, id);
 

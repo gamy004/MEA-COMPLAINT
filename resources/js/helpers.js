@@ -40,20 +40,20 @@ export function formatShortDateTime(date, {
     date = moment(date);
 
     if (transform && today.isSame(date, 'd')) {
-        return date.format('h:mm A');
+        return date.format('LT น.'); // for eng
     }
 
     // if (transform && yesterday.isSame(date, 'd')) {
     //     return _.upperCase('yesterday');
     // }
 
-    return date.format('MMM D');
+    return today.isSame(date, 'year') ? date.format('D MMM') : date.format('D MMM YYYY');
 }
 
 export function formatLongDateTime(date) {
     date = moment(date);
 
-    return date.format('MMM D, Y, h:mm A');
+    return date.format('MMM D, Y, LT น.');
 }
 
 export function getCorrectTextColor(hex) {

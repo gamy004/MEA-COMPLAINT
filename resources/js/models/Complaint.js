@@ -249,6 +249,47 @@ class Complaint extends BaseVuexModel {
 
             if (status) {
                 color = status.color;
+
+                let {
+                    groupedConfigs = {}
+                } = status;;
+
+                if (Object.keys(groupedConfigs).length > 0) {
+                    const units = [
+                        "minutes",
+                        "hours",
+                        "days",
+                        "weeks",
+                        "months",
+                        "years"
+                    ];
+
+                    units.forEach(unit => {
+                        if (groupedConfigs[unit]) {
+                            for (let index = 0; index < groupedConfigs[unit].length; index++) {
+                                const config = groupedConfigs[unit][index];
+                                const currentMoment = moment();
+                                const configMoment = moment(this.created_at).add(config.duration, config.unit);
+
+                                // console.log(
+                                //     this.created_at,
+                                //     configMoment.toString(),
+                                //     currentMoment.toString(),
+                                //     configMoment.isBefore(currentMoment),
+                                //     config.duration,
+                                //     config.unit
+                                // );
+
+                                if (configMoment.isBefore(currentMoment)) {
+                                    color = config.color;
+                                    continue;
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                    })
+                }
             }
         }
 

@@ -32,7 +32,10 @@ class StoreStatusRequest extends FormRequest
             [
                 DBCol::STATUS => [
                     'required',
-                    Rule::unique('issue_statuses', 'status'),
+                    Rule::unique('issue_statuses', 'status')
+                        ->where(function ($query) {
+                            $query->where('deleted_at', null);
+                        }),
                     'max:255'
                 ],
                 DBCol::COLOR => 'string|size:9',

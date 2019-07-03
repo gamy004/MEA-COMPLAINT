@@ -32,7 +32,10 @@ class UpdateStatusRequest extends FormRequest
             [
                 DBCol::STATUS => [
                     'required',
-                    Rule::unique('issue_statuses', 'status')->ignore($this->issue_status->id),
+                    Rule::unique('issue_statuses', 'status')
+                    ->where(function ($query) {
+                        $query->where('deleted_at', null);
+                    })->ignore($this->issue_status->id),
                     'max:255'
                 ],
                 DBCol::COLOR => 'string|size:9',
