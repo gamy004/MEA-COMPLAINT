@@ -1,27 +1,42 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <custom-toolbar
-        v-if="activeComplaint"
-        id="showComplaintToolbar"
-        class="bb-1 pb-0"
-        :items="items"
-      ></custom-toolbar>
-      <v-layout align-center justify-center class="loading__wrapper">
-        <v-flex xs12>
-          <transition name="slide-y-reverse-transition" appear>
-            <v-progress-circular
-              v-if="$_complaint_mixin_isFetchingShowComplaint || isUpdatingStatus"
-              :size="70"
-              :width="7"
-              color="deep-orange"
-              indeterminate
-            ></v-progress-circular>
-          </transition>
-        </v-flex>
+      <v-layout v-if="activeComplaint">
+        <custom-toolbar class="bb-1 pb-0" :items="itemsLeft"></custom-toolbar>
+        <!-- <v-menu min-width="200" offset-y>
+          <template v-slot:activator="{ on }">
+            <v-btn flat v-on="on">
+              <complaint-status :issue-id="activeComplaint.id" />
+            </v-btn>
+          </template>
+
+          <v-list dense>
+            <v-list-tile
+              v-for="(menuItem, menuIndex) in statusesItems"
+              :key="`menuItem--${menuIndex}`"
+              :disabled="menuItem.disabled()"
+              @click="menuItem.onClick"
+            >
+              <v-list-tile-title class="pl-4">{{ menuItem.text }}</v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu>-->
+        <v-spacer></v-spacer>
+        <custom-toolbar class="bb-1 pb-0 align-right" :items="itemsRight"></custom-toolbar>
       </v-layout>
-      <v-layout v-if="activeComplaint" class="content__wrapper" column>
-        <v-flex xs12>
+
+      <v-layout class="content__wrapper" column>
+        <transition name="fade-transition" appear>
+          <v-progress-linear
+            v-if="$_complaint_mixin_isFetchingShowComplaint || isUpdatingStatus"
+            :size="70"
+            :width="7"
+            color="deep-orange"
+            indeterminate
+          ></v-progress-linear>
+        </transition>
+
+        <v-flex v-if="activeComplaint" xs12>
           <!-- <transition-group name="slide-y-reverse-transition" appear> -->
           <complaint-detail-card
             v-if="!$_complaint_mixin_isFetchingShowComplaint"
@@ -210,7 +225,7 @@ export default {
     ...vuex.mapWaitingGetters({
       isUpdatingStatus: "updating complaint status"
     }),
-    items() {
+    itemsLeft() {
       return [
         {
           icon: "arrow_back",
@@ -275,8 +290,12 @@ export default {
             };
           },
           menuItems: this.statusesItems
-        },
-        { spacer: true },
+        }
+      ];
+    },
+
+    itemsRight() {
+      return [
         {
           icon: "keyboard_arrow_left",
           text: "Newer",

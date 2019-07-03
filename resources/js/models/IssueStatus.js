@@ -112,7 +112,6 @@ class Status extends BaseVuexModel {
         if (configs.length) {
             this.groupedConfigs = _(configs).sortBy("duration").groupBy("unit").value();
         }
-        console.log(this.groupedConfigs);
 
         return this;
     }

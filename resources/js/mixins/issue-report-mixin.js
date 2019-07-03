@@ -120,6 +120,14 @@ const IssueReportMixin = {
     methods: {
         ...vuex.mapWaitingActions(vuex.modules.ISSUE, [vuex.actions.ISSUE.EXPORT]),
 
+        $_issue_report_mixin_switchType() {
+            if (this.$_issue_report_mixin_isTypeDate) {
+                this.$_issue_report_mixin_reportType = 'month';
+            } else {
+                this.$_issue_report_mixin_reportType = 'date';
+            }
+        },
+
         async $_issue_report_mixin_generateThisWeekReport() {
             let startOfWeek = moment().startOf('isoWeek');
             let endOfWeek = moment().endOf('isoWeek');

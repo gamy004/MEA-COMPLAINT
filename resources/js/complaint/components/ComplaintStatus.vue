@@ -10,10 +10,10 @@
           size="10"
         ></v-progress-circular>
 
-        <v-avatar v-else :color="status.color" size="12" class="status-indicator mr-1"></v-avatar>
+        <v-avatar v-else :color="statusColor" size="12" class="status-indicator mr-1"></v-avatar>
       </transition>
 
-      <span>{{ status.status }}</span>
+      <span>{{ statusText }}</span>
     </v-flex>
   </v-layout>
 </template>
@@ -24,20 +24,27 @@ import complaintItemMixin from "../../mixins/complaint-item-mixin";
 import issueStatusMixin from "../../mixins/issue-status-mixin";
 
 export default {
-  name: "ComplaintStatus",
-
   mixins: [complaintItemMixin, issueStatusMixin],
 
-  props: {
-    statusId: {
-      type: [String, Number],
-      default: null
-    }
-  },
-
   computed: {
-    status() {
-      return this.$_issue_status_mixin_findStatus(this.statusId);
+    statusColor() {
+      let color = "#C3C3C3FF";
+
+      if (this.$_complaint_item_mixin_complaint) {
+        color = this.$_complaint_item_mixin_complaint.statusColor;
+      }
+
+      return color;
+    },
+
+    statusText() {
+      let status = "";
+
+      if (this.$_complaint_item_mixin_complaint) {
+        status = this.$_complaint_item_mixin_complaint.currentStatus;
+      }
+
+      return status;
     }
   }
 };

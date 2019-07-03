@@ -41,6 +41,18 @@ body,
   border-radius: 4px !important;
 }
 
+.align-right .v-toolbar__content {
+  justify-content: flex-end;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.bdb-1 {
+  border-bottom: 1px solid #c3c3c3ff;
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,

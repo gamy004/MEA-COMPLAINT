@@ -2,7 +2,6 @@ import {
     vuex,
     vuexable
 } from "./vuexable";
-import ComplaintStatus from "../complaint/components/ComplaintStatus";
 
 const issueStatusMixin = {
     mixins: [vuexable],
@@ -163,13 +162,6 @@ const issueStatusMixin = {
                     status,
                     color,
                     text: status,
-                    // component: () => ComplaintStatus,
-                    // componentProps: () => {
-                    //     return {
-                    //         issueId: issue.id,
-                    //         statusId: id
-                    //     };
-                    // },
                     disabled: () => issue.issue_status_id === id,
                     onClick: async () => {
                         try {

@@ -77,7 +77,6 @@
 <script>
 import CustomToolbar from "../../components/CustomToolbar";
 import CustomTable from "../../components/CustomTable";
-import ComplaintStatus from "../../complaint/components/ComplaintStatus";
 import MessageAlert from "../../components/MessageAlert";
 import issueStatusMixin from "../../mixins/issue-status-mixin";
 import ButtonCreateStatus from "../components/ButtonCreateStatus";
@@ -93,8 +92,7 @@ export default {
     DialogCreateUpdateStatus,
     CustomToolbar,
     CustomTable,
-    MessageAlert,
-    ComplaintStatus
+    MessageAlert
   },
 
   data() {
