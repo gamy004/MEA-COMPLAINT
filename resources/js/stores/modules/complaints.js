@@ -30,6 +30,18 @@ const userStore = {
             }
         },
 
+        async [vuex.actions.ISSUE.SEARCH](context, params = {}) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'ISSUE',
+                    action: 'SEARCH',
+                    params
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
         async [vuex.actions.ISSUE.SHOW](context, issue) {
             try {
                 return await context.dispatch(vuex.actions.REQUEST, {
