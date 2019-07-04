@@ -60,12 +60,12 @@ export function getCorrectTextColor(hex) {
     /*
     Reference: https://codepen.io/davidhalford/pen/ywEva
     From this W3C document: http://www.webmasterworld.com/r.cgi?f=88&d=9769&url=http://www.w3.org/TR/AERT#color-contrast
-    
-    Color brightness is determined by the following formula: 
+
+    Color brightness is determined by the following formula:
     ((Red value X 299) + (Green value X 587) + (Blue value X 114)) / 1000
 
     I know this could be more compact, but I think this is easier to read/explain.
-    
+
     */
     let threshold = 160; /* about half of 256. Lower threshold equals more dark text on dark background  */
 
@@ -180,5 +180,14 @@ export function filterContains(key, value) {
         key,
         value,
         operator: "ct"
+    };
+}
+
+export function filterNotContains(key, value) {
+    return {
+        key,
+        value,
+        operator: "ct",
+        not: true
     };
 }

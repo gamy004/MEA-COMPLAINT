@@ -36,6 +36,7 @@
             hide-no-data
             multiple
             single-line
+            color="deep-orange"
             @focus="fetchRecipient"
           >
             <template v-slot:selection="{ item, index }">
@@ -67,6 +68,7 @@
             hide-no-data
             multiple
             single-line
+            color="deep-orange"
             @focus="fetchRecipient"
           >
             <template v-slot:selection="{ item, index }">
@@ -83,7 +85,13 @@
             <span class="mr-3 body-2">Subject</span>
           </v-list-tile-action>
 
-          <v-text-field v-model="form.subject" class="bdb-1" single-line full-width hide-details></v-text-field>
+          <v-text-field
+            v-model="form.subject"
+            class="bdb-1"
+            single-line
+            full-width
+            hide-details
+            color="deep-orange"></v-text-field>
         </v-list-tile>
 
         <v-list-tile>
@@ -97,6 +105,7 @@
             single-line
             full-width
             hide-details
+            color="deep-orange"
           ></v-text-field>
         </v-list-tile>
 
@@ -111,6 +120,7 @@
             single-line
             full-width
             hide-details
+            color="deep-orange"
           ></v-text-field>
         </v-list-tile>
 
@@ -136,6 +146,7 @@
                 v-model="form.dates"
                 class="mt-3"
                 append-icon="event"
+                color="deep-orange"
                 readonly
                 v-on="on"
               >
@@ -159,13 +170,12 @@
               no-title
               scrollable
               header-color="has-gradient"
-              color="deep-orange"
             >
               <v-spacer></v-spacer>
-              <v-btn flat color="primary" @click="dateMenu = false">Cancel</v-btn>
+              <v-btn flat color="deep-orange" @click="dateMenu = false">Cancel</v-btn>
               <v-btn
                 flat
-                color="primary"
+                color="deep-orange"
                 @click="$refs.dateMenu.save($_issue_report_mixin_reportVModel)"
               >OK</v-btn>
             </v-date-picker>
@@ -183,10 +193,10 @@
         </v-list-tile>-->
       </v-list>
 
-      <v-card-actions>
+      <v-card-actions class="py-3">
         <v-spacer></v-spacer>
 
-        <!-- <v-btn flat @click="dialog = false">Cancel</v-btn> -->
+        <v-btn flat @click="dialog = false">Cancel</v-btn>
         <v-btn color="deep-orange" flat @click="dialog = false">Search</v-btn>
       </v-card-actions>
     </v-card>
@@ -290,5 +300,3 @@ export default {
   }
 }
 </style>
-
-

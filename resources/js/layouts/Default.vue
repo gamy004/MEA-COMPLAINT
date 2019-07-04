@@ -54,7 +54,7 @@
         prepend-inner-icon="search"
       >
         <template #append>
-          <complaint-search-filter />
+          <complaint-search-filter :dialogable-visible.sync="searchFilter" />
         </template>
       </v-text-field>
 
