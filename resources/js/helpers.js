@@ -175,6 +175,15 @@ export function filterIn(key, value) {
     };
 }
 
+export function filterNotIn(key, value) {
+    return {
+        key,
+        value,
+        operator: "in",
+        not: true
+    };
+}
+
 export function filterContains(key, value) {
     return {
         key,
