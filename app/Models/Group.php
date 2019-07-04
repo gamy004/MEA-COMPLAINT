@@ -27,7 +27,7 @@ class Group extends Model
     public function relatedIssues()
     {
         return $this->belongsToMany(
-            Issue::class, 'issue_recipient', 'recipient_id', 'issue_id'
+            Issue::class, 'issue_recipient', DBCol::RECIPIENT_ID, 'issue_id'
         )->using(IssueRecipient::class);
     }
 }

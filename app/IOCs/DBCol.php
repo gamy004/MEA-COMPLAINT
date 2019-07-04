@@ -32,6 +32,7 @@ class DBCol
     const SUBJECT = 'subject';
     const ISSUED_BY = 'issued_by';
     const REFERENCED_TO = 'referenced_to';
+    const RECIPIENT_ID = 'recipient_id';
     /**
      * ISSUE_CATEGORY
      */

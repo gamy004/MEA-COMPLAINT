@@ -26,7 +26,9 @@ class Data
     /**
      * Issue
      */
+    const ISSUER = 'issuer';
     const RECIPIENTS = 'recipients';
+    const LATEST_STATUS = 'latest_status';
     const ATTACHMENTS = 'attachments';
 
     /**

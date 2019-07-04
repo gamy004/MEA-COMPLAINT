@@ -44,7 +44,6 @@ class Complaint extends BaseVuexModel {
 
     static async [actions.ISSUE.SEARCH](props = {}) {
         let response;
-        console.log(props);
 
         try {
             response = await api.get('api:issues.search', {

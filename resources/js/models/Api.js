@@ -242,6 +242,8 @@ class Api extends BaseModel {
         try {
             v = await axios[method](url, options);
         } catch (error) {
+            console.log(error);
+
             const {
                 response
             } = error;

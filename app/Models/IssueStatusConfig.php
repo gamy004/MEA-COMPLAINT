@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class IssueStatusConfig extends Model
 {
     use SoftDeletes;
+
+    const FK = 'issue_status_config_id';
     
     protected $fillable = [
         DBCol::DURATION,

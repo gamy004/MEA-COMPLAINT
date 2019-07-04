@@ -19,7 +19,8 @@ export const ISSUE = {
     UPDATE: 'complaintUpdate',
     DELETE: 'complaintDelete',
     RESTORE: 'complaintRestore',
-    EXPORT: 'complaintExport'
+    EXPORT: 'complaintExport',
+    SEARCH: 'complaintSearch'
 };
 
 export const GROUP = {

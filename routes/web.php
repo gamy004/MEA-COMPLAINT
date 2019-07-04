@@ -47,6 +47,8 @@ Route::group([
             /**
              * Custom route IssueController
              */
+            Route::get('issues/search', 'IssueController@search')->name('issues.search');
+
             Route::group(['as' => 'issues.', 'prefix' => 'issues/{issue}'], function () {
                 Route::post('/restore', 'IssueController@restore')->name('restore');
             });

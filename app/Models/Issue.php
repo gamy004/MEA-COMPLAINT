@@ -39,7 +39,7 @@ class Issue extends Model
     public function recipients()
     {
         return $this->belongsToMany(
-            Group::class, 'issue_recipient', self::FK, 'recipient_id'
+            Group::class, 'issue_recipient', self::FK, DBCol::RECIPIENT_ID
         )->using(IssueRecipient::class);
     }
 

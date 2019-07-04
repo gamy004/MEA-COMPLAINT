@@ -111,5 +111,10 @@ class IssueController extends BaseApiController
     {
         return $this->api->export($request->all());
     }
+
+    public function search(Request $request)
+    {
+        return $this->api->search($request->all());
+    }
     
 }
