@@ -15,12 +15,15 @@ const userStore = {
     },
 
     actions: {
-        async [vuex.actions.ISSUE.FETCH](context) {
+        async [vuex.actions.ISSUE.FETCH](context, params = {}) {
             try {
                 return await context.dispatch(vuex.actions.REQUEST, {
                     model: 'ISSUE',
                     action: 'FETCH',
-                    params: context.state.base.pagination
+                    params: {
+                        pagination: context.state.base.pagination,
+                        ...params
+                    }
                 });
             } catch (error) {
                 throw error;

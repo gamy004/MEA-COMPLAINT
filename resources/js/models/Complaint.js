@@ -20,19 +20,20 @@ class Complaint extends BaseVuexModel {
         this.$store = modules.ISSUE;
     }
 
-    static async [actions.ISSUE.FETCH](pagination) {
+    static async [actions.ISSUE.FETCH](props = {}) {
         let response;
+        console.log(props);
 
         try {
             response = await api.get('api:issues.index', {
-                pagination,
                 includes: [
                     'recipients:sideload',
                     'status:sideload',
                     'attachments:sideload',
                     'category:sideload',
                     // 'notes:ids'
-                ]
+                ],
+                ...props
             });
         } catch (error) {
             throw error;

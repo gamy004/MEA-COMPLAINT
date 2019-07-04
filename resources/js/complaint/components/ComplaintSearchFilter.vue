@@ -181,6 +181,7 @@
                             <v-btn
                                 flat
                                 color="deep-orange"
+                                :loading="isFetchingComplaint"
                                 @click="$refs.dateMenu.save($_issue_report_mixin_reportVModel)"
                             >OK</v-btn>
                         </v-date-picker>
@@ -215,7 +216,8 @@
         mapTextValue,
         filterContains,
         filterIn,
-        filterNotIn
+        filterNotIn,
+        filterNotContains
     } from "../../helpers";
     import IssueReportMixin from "../../mixins/issue-report-mixin";
 
@@ -246,7 +248,8 @@
         computed: {
             ...vuex.mapWaitingGetters({
                 isFetchingFormRecipient: "fetching form recipients",
-                isFetchingFormCategory: "fetching form categories"
+                isFetchingFormCategory: "fetching form categories",
+                isFetchingComplaint: [vuex.actions.ISSUE.FETCH]
             }),
 
             storeRecipients() {
@@ -287,6 +290,10 @@
             }
         },
         methods: {
+            ...vuex.mapWaitingActions(vuex.modules.ISSUE, [
+                vuex.actions.ISSUE.FETCH
+            ]),
+
             ...vuex.mapWaitingActions(vuex.modules.GROUP, {
                 [vuex.actions.GROUP.FETCH]: "fetching form recipients"
             }),
@@ -320,46 +327,54 @@
                 } catch (error) {}
             },
 
-            onSearch() {
-                const filter_groups = [];
+            async onSearch() {
+                const filters = [];
 
                 if (this.form.from.length) {
-                    filter_groups.push({
-                        filters: filterIn("issuer", this.form.from)
-                    });
+                    filters.push(filterIn("issuer", this.form.from));
                 }
 
                 if (this.form.to.length) {
-                    filter_groups.push({
-                        filters: filterIn("recipients", this.form.to)
-                    });
+                    filters.push(filterIn("recipients", this.form.to));
                 }
 
                 if (this.form.subject.length) {
-                    filter_groups.push({
-                        filters: { key: "subject", value: this.form.subject }
-                    });
+                    filters.push({ key: "subject", value: this.form.subject });
                 }
 
                 if (this.form.include_words.length) {
-                    filter_groups.push({
-                        filters: filterIn(
-                            "description",
-                            this.form.include_words.split(/[\s,=:./-]/)
-                        )
+                    const include_words = this.form.include_words.split(
+                        /[\s,=:./-]/
+                    );
+
+                    include_words.forEach(word => {
+                        filters.push(filterContains("description", word));
                     });
                 }
 
                 if (this.form.exclude_words.length) {
-                    filter_groups.push({
-                        filters: filterNotIn(
-                            "description",
-                            this.form.exclude_words.split(/[\s,=:./-]/)
-                        )
+                    const exclude_words = this.form.exclude_words.split(
+                        /[\s,=:./-]/
+                    );
+
+                    exclude_words.forEach(word => {
+                        filters.push(filterNotContains("description", word));
                     });
                 }
 
-                console.log(filter_groups);
+                if (this.form.dates.length) {
+                    dates.forEach(date => {
+                        filters.push(filterContains("created_at", date));
+                    });
+                }
+
+                console.log(filters);
+
+                try {
+                    await this[vuex.actions.ISSUE.FETCH]({
+                        filter_groups: [{ filters }]
+                    });
+                } catch (error) {}
             }
         }
     };
