@@ -324,15 +324,22 @@ export default {
       const filters = [];
 
       if (this.form.from.length) {
-        filters.push(filterIn("issuer", this.form.from));
+        filters.push(filterIn("issued_by", this.form.from));
       }
 
       if (this.form.to.length) {
-        filters.push(filterIn("recipients", this.form.to));
+        this.form.to.forEach(recipient => {
+          filters.push(filterContains("recipient_ids", recipient));
+        });
+        // filters.push(filterIn("recipients", this.form.to));
       }
 
       if (this.form.subject.length) {
-        filters.push({ key: "subject", value: this.form.subject });
+        const subject_words = this.form.subject.split(/[\s,=:./-]/);
+
+        subject_words.forEach(word => {
+          filters.push(filterContains("subject", word));
+        })
       }
 
       if (this.form.include_words.length) {
@@ -352,7 +359,7 @@ export default {
       }
 
       if (this.form.dates.length) {
-        dates.forEach(date => {
+        this.form.dates.forEach(date => {
           filters.push(filterContains("created_at", date));
         });
       }

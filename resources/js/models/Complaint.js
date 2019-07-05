@@ -47,7 +47,7 @@ class Complaint extends BaseVuexModel {
 
         try {
             response = await api.get('api:issues.search', {
-                select: ["issues:id"],
+                // select: ["issues:id"],
                 ...props
             });
         } catch (error) {

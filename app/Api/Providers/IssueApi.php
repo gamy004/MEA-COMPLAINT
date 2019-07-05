@@ -30,7 +30,7 @@ use Illuminate\Database\Eloquent\Model;
 class IssueApi extends BaseApi implements ApiInterface
 {
     use HasFile;
-    
+
     public function __construct(Issue $model)
     {
         parent::__construct($model);
@@ -95,7 +95,8 @@ class IssueApi extends BaseApi implements ApiInterface
                 sprintf("%s.%s as %s", $issueStatusTable, DBCol::STATUS, Data::LATEST_STATUS),
                 sprintf("%s.%s", $baseTable, IssueCategory::FK),
                 sprintf("%s.%s", $issueCategoryTable, DBCol::CATEGORY),
-                sprintf("%s.%s", $sub_recipients, Data::RECIPIENTS)
+                sprintf("%s.%s", $sub_recipients, Data::RECIPIENT_IDS),
+                sprintf("%s.%s", $sub_recipients, Data::RECIPIENTS),
 
                 // sprintf("%s.%s", $baseTable, DBCol::AVAILABLE),
                 // sprintf("%s.%s", $baseTable, DBCol::EXPIRE_AT),
@@ -132,6 +133,12 @@ class IssueApi extends BaseApi implements ApiInterface
                         $groupTable,
                         DBCol::NAME,
                         Data::RECIPIENTS
+                    )),
+                    DB::raw(sprintf(
+                        "GROUP_CONCAT( `%s`.`%s` SEPARATOR ', ') as %s",
+                        $groupTable,
+                        DBCol::ID,
+                        Data::RECIPIENT_IDS
                     ))
                 ]
             )->groupBy(
@@ -146,18 +153,19 @@ class IssueApi extends BaseApi implements ApiInterface
         $statusConfigTable = model_table(IssueStatusConfig::class);
 
         $units = [
-            'minute',
-            'hour',
-            'day',
-            'week',
-            'month',
-            'year'
+            'minutes',
+            'hours',
+            'days',
+            'weeks',
+            'months',
+            'years'
         ];
 
         $date_case_raw = 'CASE';
         $subquery_label = 'config_shown_at';
+        $query_name = 'query_config';
         $subquery_name = 'subquery_config';
-        
+
         foreach ($units as $unit) {
             $date_case_raw .= sprintf(
                 " WHEN `%s`.`%s`='%s' THEN DATE_ADD(`%s`.`%s`, INTERVAL `%s`.`%s` %s)",
@@ -168,7 +176,7 @@ class IssueApi extends BaseApi implements ApiInterface
                 DBCol::CREATED_AT,
                 $statusConfigTable,
                 DBCol::DURATION,
-                strtoupper($unit)
+                Str::singular(strtoupper($unit))
             );
         }
 
@@ -191,6 +199,7 @@ class IssueApi extends BaseApi implements ApiInterface
                 [
                     sprintf("%s.%s", $baseTable, DBCol::ID),
                     sprintf("%s.%s", $baseTable, IssueStatus::FK),
+                    sprintf("%s.%s", $baseTable, DBCol::CREATED_AT),
                     sprintf("%s.%s as %s", $statusConfigTable, DBCol::ID, IssueStatusConfig::FK),
                     sprintf("%s.%s", $statusConfigTable, DBCol::COLOR),
                     sprintf("%s.%s", $statusConfigTable, DBCol::UNIT),
@@ -198,12 +207,29 @@ class IssueApi extends BaseApi implements ApiInterface
                     DB::raw($date_case_raw)
                 ]
             )
-            ->orderBy($subquery_label, 'desc');
+            ->whereRaw(
+                sprintf(
+                    "`%s`.`%s` >= `%s`",
+                    $baseTable,
+                    DBCol::CREATED_AT,
+                    $subquery_label
+                )
+            )
+            ->orderBy(
+                sprintf("%s.%s", $baseTable, DBCol::ID)
+            )
+            ->orderBy(
+                sprintf("%s.%s", $baseTable, IssueStatus::FK)
+            )
+            ->orderBy(
+                $subquery_label,
+                'desc'
+            );
             // ->groupBy(
             //     sprintf("%s.%s", $baseTable, DBCol::ID),
             //     sprintf("%s.%s", $baseTable, IssueStatus::FK)
             // );
-        
+
         // $config_query = $config_query->joinSub($config_query, "reduced_config_query", function ($join) use ($baseTable) {
         //     $join->on(
         //         sprintf("%s.%s", $baseTable, DBCol::ID),
@@ -215,23 +241,34 @@ class IssueApi extends BaseApi implements ApiInterface
         //     sprintf("%s.%s", $baseTable, IssueStatus::FK)
         // );
 
-        $compare = $config_query->leftJoinSub($config_query, $subquery_name, function ($join) use ($baseTable, $subquery_name, $subquery_label) {
+        $bindings = method_exists($config_query, "getQuery")
+        ? $config_query->getQuery()
+        : $config_query;
+
+        $query = DB::table(
+            DB::raw("({$config_query->toSql()}) as $query_name")
+        )->mergeBindings($bindings);
+
+        $compare = $query->leftJoinSub($config_query, $subquery_name, function ($join) use ($query_name, $subquery_name, $subquery_label) {
             $join->on(
-                sprintf("%s.%s", $baseTable, DBCol::ID),
+                sprintf("%s.%s", $query_name, DBCol::ID),
                 '=',
                 sprintf("%s.%s", $subquery_name, DBCol::ID)
             )->on(
-                sprintf("%s", $subquery_label),
+                sprintf("%s.%s", $query_name, $subquery_label),
                 '<',
                 sprintf("%s.%s", $subquery_name, $subquery_label)
             );
-        })->whereRaw(sprintf("%s.%s is NULL", $subquery_name, $subquery_label))
-        ->groupBy(
-            sprintf("%s.%s", $baseTable, DBCol::ID),
-            sprintf("%s.%s", $baseTable, IssueStatus::FK)
-        );
+        })
+        ->whereRaw(sprintf("`%s`.`%s` is NULL", $subquery_name, DBCol::ID))
+        // ->whereRaw(sprintf("`%s`.`%s` >= `%s`.`%s`", $query_name, DBCol::CREATED_AT, $query_name, $subquery_label))
+        ->select(DB::raw(sprintf("%s.*", $query_name)));
+        // ->groupBy(
+        //     sprintf("%s.%s", $baseTable, DBCol::ID),
+        //     sprintf("%s.%s", $baseTable, IssueStatus::FK)
+        // );
 
-        dd($compare->get());
+        dd($compare->toSql());
 
         $status_query = $this->getOriginalModel()
         ->join(
@@ -273,7 +310,7 @@ class IssueApi extends BaseApi implements ApiInterface
         //         $subquery_label,
         //         $baseTable,
         //         DBCol::CREATED_AT
-                
+
         //     )
         // )
         // ->groupBy(
@@ -297,9 +334,9 @@ class IssueApi extends BaseApi implements ApiInterface
             $record = [
                 IssueStatus::FK => $default_status->{DBCol::ID}
             ];
-            
+
             $record = $this->parseGeneralFields($record, $raw);
-            
+
             $issue = Issue::create($record);
 
             $this->syncRecipients($issue, $raw);
@@ -335,7 +372,7 @@ class IssueApi extends BaseApi implements ApiInterface
             }
 
             $this->syncRecipients($issue, $raw);
-            
+
             $uploaded_file_ids = $this->setHasFileRelation('attachments')
                 ->setHasFileRootDirectory('issues/')
                 ->parseUploadedFiles($issue, $raw);
@@ -345,7 +382,7 @@ class IssueApi extends BaseApi implements ApiInterface
             DB::commit();
 
             return $this->find($issue->id);
-            
+
         } catch (Exception $exception) {
             DB::rollback();
             Log::error($exception);

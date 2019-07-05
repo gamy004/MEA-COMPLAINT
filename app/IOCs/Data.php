@@ -28,6 +28,7 @@ class Data
      */
     const ISSUER = 'issuer';
     const RECIPIENTS = 'recipients';
+    const RECIPIENT_IDS = 'recipient_ids';
     const LATEST_STATUS = 'latest_status';
     const ATTACHMENTS = 'attachments';
 

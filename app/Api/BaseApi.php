@@ -158,7 +158,7 @@ abstract class BaseApi
     {
         try {
             DB::beginTransaction();
-            
+
             $model->delete();
 
             DB::commit();
@@ -180,7 +180,7 @@ abstract class BaseApi
     {
         try {
             DB::beginTransaction();
-            
+
             $restore = $this->originalModel->withTrashed()
                 ->where(DBCol::ID, $id)
                 ->restore();
@@ -194,7 +194,7 @@ abstract class BaseApi
             DB::rollback();
 
             Log::error($exception);
-            
+
             throw new Exception("Error Handle Restoring Resource Request");
         }
     }
@@ -220,7 +220,7 @@ abstract class BaseApi
     protected function processData($fn, ...$args)
     {
         $builder = $this->getBaseBuilder();
-
+        // dd($this->getParserOption(BaseParser::PARAMS['FILTER_GROUPS']), $builder->toSql());
         $this->data = call_user_func_array(
             [$builder, $fn],
             $args
@@ -581,7 +581,7 @@ abstract class BaseApi
                     ];
                     $castToText = (($dbType === 'pgsql') ? 'TEXT' : 'CHAR');
                     $databaseField = DB::raw(sprintf('CAST(%s.%s AS ' . $castToText . ')', $table, $key));
-                    $clauseOperator = ($not ? 'NOT' : '') . (($dbType === 'pgsql') ? 'ILIKE' : 'LIKE');
+                    $clauseOperator = ($not ? 'NOT ' : '') . (($dbType === 'pgsql') ? 'ILIKE' : 'LIKE');
                     $value = $valueString[$operator];
                     break;
                 case 'eq':
