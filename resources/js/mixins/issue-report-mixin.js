@@ -158,12 +158,21 @@ const IssueReportMixin = {
             this.$_issue_report_mixin_reportGenerate = true;
 
             let content;
+            let filter_groups = [{
+                filters: ranges.map(range => filterContains("created_at", range)),
+                or: true
+            }];
+
+            // ranges.forEach(d => {
+            //     filter_groups.push({
+            //         filters: [filterContains("created_at", d)],
+            //         or: true
+            //     });
+            // });
 
             try {
                 content = await this[vuex.actions.ISSUE.EXPORT]({
-                    filter_groups: [{
-                        filters: ranges.map(x => filterContains("created_at", x))
-                    }],
+                    filter_groups,
                     sort: ["-created_at"]
                 });
             } catch (error) {

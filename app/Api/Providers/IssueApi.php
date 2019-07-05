@@ -38,9 +38,54 @@ class IssueApi extends BaseApi implements ApiInterface
 
     public function search()
     {
-        return $this->setCustomQuery(
+        $original_parser = $this->getParser();
+        $request_parser = $this->getParser();
+        $parser_result = $request_parser->result();
+        
+        $request_parser->setResult(
+            "select",
+            ["issues" => ["id"]]
+        );
+        
+        $this->setParser($request_parser);
+        
+        $search_result = $this->setCustomQuery(
             $this->querySearch()
         )->get();
+
+        $data = $search_result->get($this->getArchitectKey());
+        $total = $search_result->get(Data::TOTAL);
+
+        if (count($data)) {
+            $ids = $data->pluck("id")->toArray();
+            
+            $original_parser->setResult("select", []);
+
+            $original_parser->setResult("filter_groups", [
+                [
+                    "filters" => [
+                        [
+                            "key" => "id",
+                            "value" => $ids,
+                            "operator" => "in",
+                            "not" => false
+                        ]
+                    ],
+                    "or" => false
+                ]
+            ]);
+
+            $this->setParser($original_parser);
+            $this->setCustomQuery(null);
+
+            $search_result->put($this->getArchitectKey(), $this->get());
+
+            // dd($this->getParser()->result(), $data);
+
+            // dd($ids, $data);
+        }
+
+        return $search_result;
     }
 
     private function querySearch()
@@ -87,6 +132,8 @@ class IssueApi extends BaseApi implements ApiInterface
             ->select(
             [
                 sprintf("%s.%s", $baseTable, DBCol::ID),
+                sprintf("%s.%s", $baseTable, DBCol::CREATED_AT),
+                sprintf("%s.%s", $baseTable, DBCol::UPDATED_AT),
                 sprintf("%s.%s", $baseTable, DBCol::SUBJECT),
                 sprintf("%s.%s", $baseTable, DBCol::DESCRIPTION),
                 sprintf("%s.%s", $baseTable, DBCol::ISSUED_BY),
@@ -146,183 +193,184 @@ class IssueApi extends BaseApi implements ApiInterface
             );
     }
 
-    private function getQueryStatus() {
-        $baseModel = $this->getOriginalModel();
-        $baseTable = $this->getBaseBuilderTable();
-        $statusTable = model_table(IssueStatus::class);
-        $statusConfigTable = model_table(IssueStatusConfig::class);
+    // private function getQueryStatus() {
+    //     $baseModel = $this->getOriginalModel();
+    //     $baseTable = $this->getBaseBuilderTable();
+    //     $statusTable = model_table(IssueStatus::class);
+    //     $statusConfigTable = model_table(IssueStatusConfig::class);
 
-        $units = [
-            'minutes',
-            'hours',
-            'days',
-            'weeks',
-            'months',
-            'years'
-        ];
+    //     $units = [
+    //         'minutes',
+    //         'hours',
+    //         'days',
+    //         'weeks',
+    //         'months',
+    //         'years'
+    //     ];
 
-        $date_case_raw = 'CASE';
-        $subquery_label = 'config_shown_at';
-        $query_name = 'query_config';
-        $subquery_name = 'subquery_config';
+    //     $date_case_raw = 'CASE';
+    //     $subquery_label = 'config_shown_at';
+    //     $query_name = 'query_config';
+    //     $subquery_name = 'subquery_config';
 
-        foreach ($units as $unit) {
-            $date_case_raw .= sprintf(
-                " WHEN `%s`.`%s`='%s' THEN DATE_ADD(`%s`.`%s`, INTERVAL `%s`.`%s` %s)",
-                $statusConfigTable,
-                DBCol::UNIT,
-                $unit,
-                $baseTable,
-                DBCol::CREATED_AT,
-                $statusConfigTable,
-                DBCol::DURATION,
-                Str::singular(strtoupper($unit))
-            );
-        }
+    //     foreach ($units as $unit) {
+    //         $date_case_raw .= sprintf(
+    //             " WHEN `%s`.`%s`='%s' THEN DATE_ADD(`%s`.`%s`, INTERVAL `%s`.`%s` %s)",
+    //             $statusConfigTable,
+    //             DBCol::UNIT,
+    //             $unit,
+    //             $baseTable,
+    //             DBCol::CREATED_AT,
+    //             $statusConfigTable,
+    //             DBCol::DURATION,
+    //             Str::singular(strtoupper($unit))
+    //         );
+    //     }
 
-        $date_case_raw .= sprintf("END as `%s`", $subquery_label);
+    //     $date_case_raw .= sprintf("END as `%s`", $subquery_label);
 
-        $config_query = $this->getOriginalModel()
-            ->join(
-                $statusTable,
-                sprintf("%s.%s", $statusTable, DBCol::ID),
-                "=",
-                sprintf("%s.%s", $baseTable, IssueStatus::FK)
-            )
-            ->join(
-                $statusConfigTable,
-                sprintf("%s.%s", $statusConfigTable, IssueStatus::FK),
-                "=",
-                sprintf("%s.%s", $statusTable, DBCol::ID)
-            )
-            ->select(
-                [
-                    sprintf("%s.%s", $baseTable, DBCol::ID),
-                    sprintf("%s.%s", $baseTable, IssueStatus::FK),
-                    sprintf("%s.%s", $baseTable, DBCol::CREATED_AT),
-                    sprintf("%s.%s as %s", $statusConfigTable, DBCol::ID, IssueStatusConfig::FK),
-                    sprintf("%s.%s", $statusConfigTable, DBCol::COLOR),
-                    sprintf("%s.%s", $statusConfigTable, DBCol::UNIT),
-                    sprintf("%s.%s", $statusConfigTable, DBCol::DURATION),
-                    DB::raw($date_case_raw)
-                ]
-            )
-            ->whereRaw(
-                sprintf(
-                    "`%s`.`%s` >= `%s`",
-                    $baseTable,
-                    DBCol::CREATED_AT,
-                    $subquery_label
-                )
-            )
-            ->orderBy(
-                sprintf("%s.%s", $baseTable, DBCol::ID)
-            )
-            ->orderBy(
-                sprintf("%s.%s", $baseTable, IssueStatus::FK)
-            )
-            ->orderBy(
-                $subquery_label,
-                'desc'
-            );
-            // ->groupBy(
-            //     sprintf("%s.%s", $baseTable, DBCol::ID),
-            //     sprintf("%s.%s", $baseTable, IssueStatus::FK)
-            // );
+    //     $config_query = $this->getOriginalModel()
+    //         ->join(
+    //             $statusTable,
+    //             sprintf("%s.%s", $statusTable, DBCol::ID),
+    //             "=",
+    //             sprintf("%s.%s", $baseTable, IssueStatus::FK)
+    //         )
+    //         ->join(
+    //             $statusConfigTable,
+    //             sprintf("%s.%s", $statusConfigTable, IssueStatus::FK),
+    //             "=",
+    //             sprintf("%s.%s", $statusTable, DBCol::ID)
+    //         )
+    //         ->select(
+    //             [
+    //                 sprintf("%s.%s", $baseTable, DBCol::ID),
+    //                 sprintf("%s.%s", $baseTable, IssueStatus::FK),
+    //                 sprintf("%s.%s", $baseTable, DBCol::CREATED_AT),
+    //                 sprintf("%s.%s as %s", $statusConfigTable, DBCol::ID, IssueStatusConfig::FK),
+    //                 sprintf("%s.%s", $statusConfigTable, DBCol::COLOR),
+    //                 sprintf("%s.%s", $statusConfigTable, DBCol::UNIT),
+    //                 sprintf("%s.%s", $statusConfigTable, DBCol::DURATION),
+    //                 DB::raw($date_case_raw)
+    //             ]
+    //         )
+    //         ->whereRaw(
+    //             sprintf(
+    //                 "`%s`.`%s` >= `%s`",
+    //                 $baseTable,
+    //                 DBCol::CREATED_AT,
+    //                 $subquery_label
+    //             )
+    //         )
+    //         ->orderBy(
+    //             sprintf("%s.%s", $baseTable, DBCol::ID)
+    //         )
+    //         ->orderBy(
+    //             sprintf("%s.%s", $baseTable, IssueStatus::FK)
+    //         )
+    //         ->orderBy(
+    //             $subquery_label,
+    //             'desc'
+    //         );
+    //         // ->groupBy(
+    //         //     sprintf("%s.%s", $baseTable, DBCol::ID),
+    //         //     sprintf("%s.%s", $baseTable, IssueStatus::FK)
+    //         // );
 
-        // $config_query = $config_query->joinSub($config_query, "reduced_config_query", function ($join) use ($baseTable) {
-        //     $join->on(
-        //         sprintf("%s.%s", $baseTable, DBCol::ID),
-        //         '=',
-        //         sprintf("%s.%s", "reduced_config_query", DBCol::ID)
-        //     );
-        // })->groupBy(
-        //     sprintf("%s.%s", $baseTable, DBCol::ID),
-        //     sprintf("%s.%s", $baseTable, IssueStatus::FK)
-        // );
+    //     // $config_query = $config_query->joinSub($config_query, "reduced_config_query", function ($join) use ($baseTable) {
+    //     //     $join->on(
+    //     //         sprintf("%s.%s", $baseTable, DBCol::ID),
+    //     //         '=',
+    //     //         sprintf("%s.%s", "reduced_config_query", DBCol::ID)
+    //     //     );
+    //     // })->groupBy(
+    //     //     sprintf("%s.%s", $baseTable, DBCol::ID),
+    //     //     sprintf("%s.%s", $baseTable, IssueStatus::FK)
+    //     // );
 
-        $bindings = method_exists($config_query, "getQuery")
-        ? $config_query->getQuery()
-        : $config_query;
+    //     $bindings = method_exists($config_query, "getQuery")
+    //     ? $config_query->getQuery()
+    //     : $config_query;
 
-        $query = DB::table(
-            DB::raw("({$config_query->toSql()}) as $query_name")
-        )->mergeBindings($bindings);
+    //     $query = DB::table(
+    //         DB::raw("({$config_query->toSql()}) as $query_name")
+    //     )->mergeBindings($bindings);
 
-        $compare = $query->leftJoinSub($config_query, $subquery_name, function ($join) use ($query_name, $subquery_name, $subquery_label) {
-            $join->on(
-                sprintf("%s.%s", $query_name, DBCol::ID),
-                '=',
-                sprintf("%s.%s", $subquery_name, DBCol::ID)
-            )->on(
-                sprintf("%s.%s", $query_name, $subquery_label),
-                '<',
-                sprintf("%s.%s", $subquery_name, $subquery_label)
-            );
-        })
-        ->whereRaw(sprintf("`%s`.`%s` is NULL", $subquery_name, DBCol::ID))
-        // ->whereRaw(sprintf("`%s`.`%s` >= `%s`.`%s`", $query_name, DBCol::CREATED_AT, $query_name, $subquery_label))
-        ->select(DB::raw(sprintf("%s.*", $query_name)));
-        // ->groupBy(
-        //     sprintf("%s.%s", $baseTable, DBCol::ID),
-        //     sprintf("%s.%s", $baseTable, IssueStatus::FK)
-        // );
+    //     $compare = $query->leftJoinSub($config_query, $subquery_name, function ($join) use ($query_name, $subquery_name, $subquery_label) {
+    //         $join->on(
+    //             sprintf("%s.%s", $query_name, DBCol::ID),
+    //             '=',
+    //             sprintf("%s.%s", $subquery_name, DBCol::ID)
+    //         )->on(
+    //             sprintf("%s.%s", $query_name, $subquery_label),
+    //             '<',
+    //             sprintf("%s.%s", $subquery_name, $subquery_label)
+    //         );
+    //     })
+    //     ->whereRaw(sprintf("`%s`.`%s` is NULL", $subquery_name, DBCol::ID))
+    //     // ->whereRaw(sprintf("`%s`.`%s` >= `%s`.`%s`", $query_name, DBCol::CREATED_AT, $query_name, $subquery_label))
+    //     ->select(DB::raw(sprintf("%s.*", $query_name)));
+    //     // ->groupBy(
+    //     //     sprintf("%s.%s", $baseTable, DBCol::ID),
+    //     //     sprintf("%s.%s", $baseTable, IssueStatus::FK)
+    //     // );
 
-        dd($compare->toSql());
+    //     dd($compare->toSql());
 
-        $status_query = $this->getOriginalModel()
-        ->join(
-            $statusTable,
-            sprintf("%s.%s", $statusTable, DBCol::ID),
-            "=",
-            sprintf("%s.%s", $baseTable, IssueStatus::FK)
-        )
-        ->leftJoinSub($config_query, $subquery_name, function ($join) use ($baseTable, $subquery_name) {
-            $join->on(
-                sprintf("%s.%s", $baseTable, DBCol::ID),
-                '=',
-                sprintf("%s.%s", $subquery_name, DBCol::ID)
-            );
-        })
-        ->select([
-            sprintf("%s.%s", $baseTable, DBCol::ID),
-            sprintf("%s.%s", $baseTable, DBCol::CREATED_AT),
-            sprintf("%s.%s", $subquery_name, IssueStatus::FK),
-            sprintf("%s.%s", $subquery_name, IssueStatusConfig::FK),
-            sprintf("%s.%s", $subquery_name, DBCol::COLOR),
-            sprintf("%s.%s", $subquery_name, DBCol::UNIT),
-            sprintf("%s.%s", $subquery_name, DBCol::DURATION),
-            sprintf("%s.%s", $subquery_name, $subquery_label),
-            // DB::raw(
-            //     sprintf("TIMEDIFF(`%s`.`%s`, `%s`.`%s`) as timediff", $subquery_name, $subquery_label, $baseTable, DBCol::CREATED_AT)
-            // )
-            // DB::raw(
-            //     sprintf("MAX(%s.%s) as %s", $subquery_name, $subquery_label, $subquery_label)
-            // )
-        ])
-        ->whereNotNull(
-            sprintf("%s.%s", $subquery_name, $subquery_label)
-        );
-        // ->whereRaw(
-        //     sprintf(
-        //         "%s.%s >= %s.%s",
-        //         $subquery_name,
-        //         $subquery_label,
-        //         $baseTable,
-        //         DBCol::CREATED_AT
+    //     $status_query = $this->getOriginalModel()
+    //     ->join(
+    //         $statusTable,
+    //         sprintf("%s.%s", $statusTable, DBCol::ID),
+    //         "=",
+    //         sprintf("%s.%s", $baseTable, IssueStatus::FK)
+    //     )
+    //     ->leftJoinSub($config_query, $subquery_name, function ($join) use ($baseTable, $subquery_name) {
+    //         $join->on(
+    //             sprintf("%s.%s", $baseTable, DBCol::ID),
+    //             '=',
+    //             sprintf("%s.%s", $subquery_name, DBCol::ID)
+    //         );
+    //     })
+    //     ->select([
+    //         sprintf("%s.%s", $baseTable, DBCol::ID),
+    //         sprintf("%s.%s", $baseTable, DBCol::CREATED_AT),
+    //         sprintf("%s.%s", $baseTable, DBCol::UPDATED_AT),
+    //         sprintf("%s.%s", $subquery_name, IssueStatus::FK),
+    //         sprintf("%s.%s", $subquery_name, IssueStatusConfig::FK),
+    //         sprintf("%s.%s", $subquery_name, DBCol::COLOR),
+    //         sprintf("%s.%s", $subquery_name, DBCol::UNIT),
+    //         sprintf("%s.%s", $subquery_name, DBCol::DURATION),
+    //         sprintf("%s.%s", $subquery_name, $subquery_label),
+    //         // DB::raw(
+    //         //     sprintf("TIMEDIFF(`%s`.`%s`, `%s`.`%s`) as timediff", $subquery_name, $subquery_label, $baseTable, DBCol::CREATED_AT)
+    //         // )
+    //         // DB::raw(
+    //         //     sprintf("MAX(%s.%s) as %s", $subquery_name, $subquery_label, $subquery_label)
+    //         // )
+    //     ])
+    //     ->whereNotNull(
+    //         sprintf("%s.%s", $subquery_name, $subquery_label)
+    //     );
+    //     // ->whereRaw(
+    //     //     sprintf(
+    //     //         "%s.%s >= %s.%s",
+    //     //         $subquery_name,
+    //     //         $subquery_label,
+    //     //         $baseTable,
+    //     //         DBCol::CREATED_AT
 
-        //     )
-        // )
-        // ->groupBy(
-        //     sprintf("%s.%s", $baseTable, DBCol::ID),
-        //     sprintf("%s.%s", $subquery_name, IssueStatus::FK)
-        // )
-        // ->havingRaw(
-        //     sprintf("MAX(`%s`.`%s`)", $subquery_name, $subquery_label)
-        // );
+    //     //     )
+    //     // )
+    //     // ->groupBy(
+    //     //     sprintf("%s.%s", $baseTable, DBCol::ID),
+    //     //     sprintf("%s.%s", $subquery_name, IssueStatus::FK)
+    //     // )
+    //     // ->havingRaw(
+    //     //     sprintf("MAX(`%s`.`%s`)", $subquery_name, $subquery_label)
+    //     // );
 
-        dd($status_query->get());
-    }
+    //     dd($status_query->get());
+    // }
 
     public function store(array $raw)
     {

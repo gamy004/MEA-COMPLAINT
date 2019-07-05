@@ -20,7 +20,7 @@ const alertable = {
         },
         alertableTimeout: {
             type: Number,
-            default: () => 2000
+            default: () => 5000
         },
         alertableAutoClose: {
             type: Boolean,

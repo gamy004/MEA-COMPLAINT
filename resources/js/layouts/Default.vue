@@ -54,7 +54,11 @@
         prepend-inner-icon="search"
       >
         <template #append>
-          <complaint-search-filter :dialogable-visible.sync="searchFilter" />
+          <complaint-search-filter
+            :dialogable-visible.sync="searchFilter"
+            @alert:invalidSearchForm="$_alertable_alert('invalidSearchForm')"
+            @alert:searchError="$_alertable_alert('searchError')"
+          />
         </template>
       </v-text-field>
 
@@ -72,31 +76,51 @@
           :managable-edit="false"
         />
       </v-container>
+
+      <message-alert
+        key="alertDefault"
+        :alertable-visible.sync="alertable_alert"
+        :alertable-type="alertable_type"
+        :alertable-messages="alertable_messages"
+        :alertable-props="alertable_props"
+      ></message-alert>
     </v-content>
   </v-app>
 </template>
 
 <script>
+import alertable from "../mixins/alertable";
 import layoutable from "../mixins/layoutable";
 import complaintMixin from "../mixins/complaint-mixin";
 import AddComplaintBtn from "../complaint/components/AddComplaintBtn";
 import ComplaintForm from "../complaint/components/ComplaintForm";
 import ComplaintSearchFilter from "../complaint/components/ComplaintSearchFilter";
+import MessageAlert from "../components/MessageAlert";
 import { views } from "../constants";
 
 export default {
-  mixins: [layoutable, complaintMixin],
+  mixins: [alertable, layoutable, complaintMixin],
 
   components: {
     AddComplaintBtn,
     ComplaintForm,
-    ComplaintSearchFilter
+    ComplaintSearchFilter,
+    MessageAlert
   },
 
   data() {
     return {
       searchFilter: false,
       filtered: false,
+      alertable_messages: {
+        invalidSearchForm: {
+          text: "Invalid search query, returning all complaints"
+        },
+        searchError: {
+          text: "Searching failed, please try again",
+          type: "error"
+        }
+      },
       items: [
         {
           icon: "inbox",

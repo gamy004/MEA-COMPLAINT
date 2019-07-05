@@ -51,6 +51,16 @@ class Parser
         return $this->result;
     }
 
+    public function getResult($key)
+    {
+        return $this->hasOption($key) ? $this->result[$key] : null;
+    }
+
+    public function setResult($key, $value)
+    {
+        $this->result[$key] = $value;
+    }
+
     public function getOption($key)
     {
         return $this->hasOption($key) ? $this->options[$key] : null;
@@ -61,9 +71,26 @@ class Parser
         $this->options[$key] = $value;
     }
 
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    public function setOptions($options)
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
     public function hasOption($key)
     {
         return array_key_exists($key, $this->options);
+    }
+
+    public function hasResult($key)
+    {
+        return array_key_exists($key, $this->result);
     }
 
     public function parse(array $options = [])
@@ -77,9 +104,9 @@ class Parser
                 $parser = app($parser);
                 
                 $this->result = array_merge(
-                $this->result,
-                $parser->setOption($options)->parse()->result()
-            );
+                    $this->result,
+                    $parser->setOption($options)->parse()->result()
+                );
             },
             $parsers
         );

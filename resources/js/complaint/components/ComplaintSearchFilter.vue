@@ -178,7 +178,7 @@
               <v-btn
                 flat
                 color="deep-orange"
-                :loading="isFetchingComplaint"
+                :loading="isSearchingComplaint"
                 @click="$refs.dateMenu.save($_issue_report_mixin_reportVModel)"
               >OK</v-btn>
             </v-date-picker>
@@ -200,7 +200,7 @@
         <v-spacer></v-spacer>
 
         <v-btn flat @click="dialog = false">Cancel</v-btn>
-        <v-btn color="deep-orange" flat @click="onSearch">Search</v-btn>
+        <v-btn color="deep-orange" :loading="isSearchingComplaint" flat @click="onSearch">Search</v-btn>
       </v-card-actions>
     </v-card>
   </v-menu>
@@ -246,7 +246,7 @@ export default {
     ...vuex.mapWaitingGetters({
       isFetchingFormRecipient: "fetching form recipients",
       isFetchingFormCategory: "fetching form categories",
-      isFetchingComplaint: [vuex.actions.ISSUE.SEARCH]
+      isSearchingComplaint: [vuex.actions.ISSUE.SEARCH]
     }),
 
     storeRecipients() {
@@ -339,7 +339,7 @@ export default {
 
         subject_words.forEach(word => {
           filters.push(filterContains("subject", word));
-        })
+        });
       }
 
       if (this.form.include_words.length) {
@@ -364,13 +364,20 @@ export default {
         });
       }
 
-      console.log(filters);
+      if (!filters.length) {
+        this.$emit("alert:invalidSearchForm");
+      }
 
       try {
         await this[vuex.actions.ISSUE.SEARCH]({
           filter_groups: [{ filters }]
         });
-      } catch (error) {}
+      } catch (error) {
+        this.$emit("alert:searchError");
+        this.dialog = true;
+      }
+
+      this.dialog = false;
     }
   }
 };

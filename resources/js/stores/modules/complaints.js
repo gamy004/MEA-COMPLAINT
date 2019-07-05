@@ -2,6 +2,9 @@ import base from './base';
 import {
     vuex
 } from '../../mixins/vuexable';
+import {
+    filterIn
+} from '../../helpers';
 
 const userStore = {
     state() {
@@ -31,11 +34,16 @@ const userStore = {
         },
 
         async [vuex.actions.ISSUE.SEARCH](context, params = {}) {
+            let response;
+
             try {
-                return await context.dispatch(vuex.actions.REQUEST, {
+                response = await context.dispatch(vuex.actions.REQUEST, {
                     model: 'ISSUE',
                     action: 'SEARCH',
-                    params
+                    params: {
+                        pagination: context.state.base.pagination,
+                        ...params
+                    }
                 });
             } catch (error) {
                 throw error;

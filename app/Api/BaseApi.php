@@ -14,6 +14,7 @@ use InvalidArgumentException;
 use App\Api\Parsers\BaseParser;
 use App\Helpers\DateTimeHelper;
 use App\Api\Parsers\SelectParser;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Api\Parsers\PaginateParser;
 use Illuminate\Support\Facades\Log;
@@ -220,29 +221,40 @@ abstract class BaseApi
     protected function processData($fn, ...$args)
     {
         $builder = $this->getBaseBuilder();
-        // dd($this->getParserOption(BaseParser::PARAMS['FILTER_GROUPS']), $builder->toSql());
+        
         $this->data = call_user_func_array(
             [$builder, $fn],
             $args
         );
 
-        $this->applyAndUpdateArchitect()
-            ->applyMapping();
+        if (is_null($this->customQuery)) {
+            $this->applyAndUpdateArchitect();
+        } else {
+            $this->data = Collection::make([])->put(
+                $this->getArchitectKey(),
+                $this->data
+            );
+        }
+
+        $this->updatePaginationData();
     }
 
     protected function applyAndUpdateArchitect($key = null)
     {
-        $data = $this->architect->parseData(
+        $this->data = $this->architect->parseData(
             $this->data,
             $this->getParserOption(BaseParser::PARAMS['MODES']),
             $this->getArchitectKey()
         );
 
-        if (!empty($this->pagination_data)) {
-            $data = $data->merge($this->pagination_data);
-        }
+        return $this;
+    }
 
-        $this->data = $data;
+    protected function updatePaginationData()
+    {
+        if (!empty($this->pagination_data)) {
+            $this->data = $this->data->merge($this->pagination_data);
+        }
 
         return $this;
     }
@@ -255,7 +267,12 @@ abstract class BaseApi
 
         return $this;
     }
-
+    
+    /**
+     * @deprecated
+     *
+     * @return void
+     */
     protected function applyMapping()
     {
         if (!$this->hasParserOption(BaseParser::PARAMS['MAP'])) {
@@ -323,7 +340,6 @@ abstract class BaseApi
                 $this->getSelect($architectKey)
             );
         }
-
         if (!empty($fields)) {
             $this->model = $this->model->select($fields);
         }
@@ -465,7 +481,12 @@ abstract class BaseApi
 
     protected function applyIncludes(array $includes)
     {
+        if (!is_null($this->customQuery)) {
+            return;
+        }
+
         $parseInclude = [];
+
         foreach ($includes as $include) {
             $selectField = $this->getSelect($include);
 
@@ -515,7 +536,7 @@ abstract class BaseApi
     protected function applyFilterGroups(array $filter_groups, array $previouslyJoined = [])
     {
         $joins = [];
-
+        
         foreach ($filter_groups as $key => $group) {
             $this->applyFilterGroup($group, $joins);
         }
@@ -545,7 +566,7 @@ abstract class BaseApi
      * @param bool|false $or
      * @param array $joins
      */
-    protected function applyFilter($queryBuilder, array $filter, $or = false, array &$joins)
+    protected function applyFilter(&$queryBuilder, array $filter, $or = false, array &$joins)
     {
         // Destructure Shorthand Filtering Syntax if filter is Shorthand
         if (!array_key_exists(BaseParser::PARAMS['KEY'], $filter) && count($filter) >= 3) {
@@ -854,22 +875,27 @@ abstract class BaseApi
 
     public function setCustomQuery($custom_query)
     {
-        $baseTable = $this->getBaseBuilderTable();
+        if (!$custom_query) {
+            $this->setCustomTable(null);
+            $this->customQuery = null;
+        } else {
+            $baseTable = $this->getBaseBuilderTable();
 
-        $this->setCustomTable($baseTable);
+            $this->setCustomTable($baseTable);
 
-        $bindings = method_exists($custom_query, "getQuery")
-        ? $custom_query->getQuery()
-        : $custom_query;
+            $bindings = method_exists($custom_query, "getQuery")
+            ? $custom_query->getQuery()
+            : $custom_query;
 
-        $this->customQuery = DB::table(
-            DB::raw("({$custom_query->toSql()}) as $baseTable")
-        )
-            ->mergeBindings(
-                $bindings
-            ); // you need to get underlying Query Builder
-        // dump($this->customQuery->toSql());
-        // $this->customQuery = $custom_query;
+            $this->customQuery = DB::table(
+                DB::raw("({$custom_query->toSql()}) as $baseTable")
+            )
+                ->mergeBindings(
+                    $bindings
+                ); // you need to get underlying Query Builder
+            // $this->customQuery = $custom_query;
+        }
+        
         return $this;
     }
 
@@ -909,6 +935,18 @@ abstract class BaseApi
     protected function updateParserOptions()
     {
         $this->parser_options = $this->parser->result();
+
+        return $this;
+    }
+
+    protected function getParser()
+    {
+        return $this->parser;
+    }
+
+    protected function setParser(Parser $parser)
+    {
+        $this->parser = $parser;
 
         return $this;
     }

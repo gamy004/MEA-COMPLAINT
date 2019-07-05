@@ -25,9 +25,9 @@ class FilterGroupParser extends BaseParser implements ParserInterface {
             $this->result[self::PARAMS['FILTER_GROUPS']] = array_reduce(
                 $this->options[self::PARAMS['FILTER_GROUPS']],
                 function ($res, $filters) {
-                    $filters = $this->parseFilterGroup($filters);
-
                     $or = isset($filters[self::PARAMS['OR']]) ? $filters[self::PARAMS['OR']] : false;
+
+                    $filters = $this->parseFilterGroup($filters);
 
                     $res[] = compact(self::PARAMS['FILTERS'], self::PARAMS['OR']);
  

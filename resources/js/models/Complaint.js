@@ -30,8 +30,7 @@ class Complaint extends BaseVuexModel {
                     'recipients:sideload',
                     'status:sideload',
                     'attachments:sideload',
-                    'category:sideload',
-                    // 'notes:ids'
+                    'category:sideload'
                 ],
                 ...props
             });
@@ -47,7 +46,12 @@ class Complaint extends BaseVuexModel {
 
         try {
             response = await api.get('api:issues.search', {
-                // select: ["issues:id"],
+                includes: [
+                    'recipients:sideload',
+                    'status:sideload',
+                    'attachments:sideload',
+                    'category:sideload'
+                ],
                 ...props
             });
         } catch (error) {
