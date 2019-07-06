@@ -52,14 +52,16 @@ class IssueApi extends BaseApi implements ApiInterface
         $search_result = $this->setCustomQuery(
             $this->querySearch()
         )->get();
-
+        // dump($search_result);
         $data = $search_result->get($this->getArchitectKey());
+
         $total = $search_result->get(Data::TOTAL);
 
         if (count($data)) {
             $ids = $data->pluck("id")->toArray();
             
             $original_parser->setResult("select", []);
+            $original_parser->setResult("offset", 0);
 
             $original_parser->setResult("filter_groups", [
                 [
@@ -74,15 +76,12 @@ class IssueApi extends BaseApi implements ApiInterface
                     "or" => false
                 ]
             ]);
-
+            // dd($original_parser->result());
             $this->setParser($original_parser);
             $this->setCustomQuery(null);
-
-            $search_result->put($this->getArchitectKey(), $this->get());
-
-            // dd($this->getParser()->result(), $data);
-
-            // dd($ids, $data);
+            
+            $search_result = $this->get();
+            $search_result->put(Data::TOTAL, $total);
         }
 
         return $search_result;

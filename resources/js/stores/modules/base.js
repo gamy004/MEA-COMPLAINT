@@ -13,6 +13,9 @@ export default {
             sortedIndex: [],
             sortedPaginateIndex: {},
             paginateIndex: {},
+            filter_groups: [
+                // default to => { filters: [{ key: "", value: "", operator: "", not: false }], or: false }
+            ],
             pagination: {
                 search: {
                     keyword: '',
@@ -328,74 +331,72 @@ export default {
             method = 'keyBy',
             strategy = 'replace'
         }) {
-            if (value.length) {
-                const {
-                    pagination
-                } = state,
-                activeVaule = value[active],
-                    collection = _[method](value, key),
-                    sortedIndex = _.map(value, key);
+            const {
+                pagination
+            } = state,
+            activeVaule = value[active],
+                collection = _[method](value, key),
+                sortedIndex = _.map(value, key);
 
-                switch (strategy) {
-                    case 'merge':
-                        const {
-                            collection: oldCollection,
-                                sortedIndex: oldSortedIndex
-                        } = state,
+            switch (strategy) {
+                case 'merge':
+                    const {
+                        collection: oldCollection,
+                            sortedIndex: oldSortedIndex
+                    } = state,
 
-                        oldSortedPaginateIndex = state.sortedPaginateIndex[pagination.page] || [];
+                    oldSortedPaginateIndex = state.sortedPaginateIndex[pagination.page] || [];
 
-                        // Vue.set(state, 'collection', {
-                        //     ...oldCollection,
-                        //     ...collection
-                        // });
+                    // Vue.set(state, 'collection', {
+                    //     ...oldCollection,
+                    //     ...collection
+                    // });
 
-                        Vue.set(state, 'collection', _.merge(collection, oldCollection));
+                    Vue.set(state, 'collection', _.merge(collection, oldCollection));
 
-                        const mergedSortedIndex = _.union(sortedIndex, oldSortedIndex);
+                    const mergedSortedIndex = _.union(sortedIndex, oldSortedIndex);
 
-                        Vue.set(state, 'sortedIndex', mergedSortedIndex);
+                    Vue.set(state, 'sortedIndex', mergedSortedIndex);
 
-                        const mergedSortedPaginatedIndex = _.union(sortedIndex, oldSortedPaginateIndex);
+                    const mergedSortedPaginatedIndex = _.union(sortedIndex, oldSortedPaginateIndex);
 
-                        Vue.set(state.sortedPaginateIndex, pagination.page, mergedSortedPaginatedIndex);
+                    Vue.set(state.sortedPaginateIndex, pagination.page, mergedSortedPaginatedIndex);
 
-                        // Vue.set(state, 'collection', _.merge(oldCollection, collection));
+                    // Vue.set(state, 'collection', _.merge(oldCollection, collection));
 
-                        // const mergedSortedIndex = _.union(oldSortedIndex, sortedIndex);
+                    // const mergedSortedIndex = _.union(oldSortedIndex, sortedIndex);
 
-                        // Vue.set(state, 'sortedIndex', mergedSortedIndex);
+                    // Vue.set(state, 'sortedIndex', mergedSortedIndex);
 
-                        // const mergedSortedPaginatedIndex = _.union(oldSortedPaginateIndex, sortedIndex);
+                    // const mergedSortedPaginatedIndex = _.union(oldSortedPaginateIndex, sortedIndex);
 
-                        // Vue.set(state.sortedPaginateIndex, pagination.page, mergedSortedPaginatedIndex);
+                    // Vue.set(state.sortedPaginateIndex, pagination.page, mergedSortedPaginatedIndex);
 
-                        break;
+                    break;
 
-                    default:
-                        Vue.set(state, 'collection', collection);
+                default:
+                    Vue.set(state, 'collection', collection);
 
-                        Vue.set(state, 'sortedIndex', sortedIndex);
+                    Vue.set(state, 'sortedIndex', sortedIndex);
 
-                        Vue.set(state, 'sortedPaginateIndex', {});
+                    Vue.set(state, 'sortedPaginateIndex', {});
 
-                        Vue.set(state, 'paginateIndex', {});
+                    Vue.set(state, 'paginateIndex', {});
 
-                        Vue.set(state.sortedPaginateIndex, pagination.page, sortedIndex);
+                    Vue.set(state.sortedPaginateIndex, pagination.page, sortedIndex);
 
-                        break;
-                }
-
-                if (state.sortedPaginateIndex[pagination.page]) {
-                    state.sortedPaginateIndex[pagination.page].forEach(element => {
-                        Vue.set(state.paginateIndex, element, pagination.page);
-                    });
-                }
-                // Don't set active
-                // if (activeVaule.hasOwnProperty(key)) {
-                //     state.active = activeVaule[key];
-                // }
+                    break;
             }
+
+            if (state.sortedPaginateIndex[pagination.page]) {
+                state.sortedPaginateIndex[pagination.page].forEach(element => {
+                    Vue.set(state.paginateIndex, element, pagination.page);
+                });
+            }
+            // Don't set active
+            // if (activeVaule.hasOwnProperty(key)) {
+            //     state.active = activeVaule[key];
+            // }
         },
 
         [vuex.mutations.UPDATE](state, {

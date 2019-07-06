@@ -57,17 +57,36 @@ export const paginatable = {
             }
         },
 
+        $_paginatable_totalPage() {
+            return Math.ceil(this.$_paginatable_total / this.$_paginatable_rowsPerPage);
+        },
+
+        $_paginatable_prevPage() {
+            let prevPage = this.$_paginatable_currentPage - 1;
+
+            if (prevPage < 1) {
+                prevPage = 1;
+            }
+
+            return prevPage;
+        },
+
+        $_paginatable_nextPage() {
+            let nextPage = this.$_paginatable_currentPage + 1;
+
+            if (nextPage > this.$_paginatable_totalPage) {
+                nextPage = this.$_paginatable_totalPage;
+            }
+
+            return nextPage;
+        },
+
         $_paginatable_isFirstPage() {
             return this.$_paginatable_currentPage === 1;
         },
 
         $_paginatable_isLastPage() {
-            const {
-                rowsPerPage = 10,
-                    page = 1
-            } = this.$_paginatable_pagination;
-
-            return page * rowsPerPage > this.$_paginatable_total;
+            return this.$_paginatable_currentPage === this.$_paginatable_totalPage;
         },
 
         $_paginatable_rowsPerPage: {
@@ -170,15 +189,11 @@ export const paginatable = {
 
     methods: {
         $_paginatable_toPrevPage() {
-            return this.$_paginatable_toPage(
-                this.$_paginatable_currentPage - 1
-            );
+            return this.$_paginatable_toPage(this.$_paginatable_prevPage);
         },
 
         $_paginatable_toNextPage() {
-            return this.$_paginatable_toPage(
-                this.$_paginatable_currentPage + 1
-            );
+            return this.$_paginatable_toPage(this.$_paginatable_nextPage);
         },
 
         $_paginatable_toPage(value) {

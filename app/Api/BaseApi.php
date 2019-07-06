@@ -756,10 +756,13 @@ abstract class BaseApi
         if ($page <= 0) {
             $page = 1;
         }
-
+        
         $limit = $this->getParserOption(BaseParser::PARAMS['LIMIT']);
+        $offset = $this->getParserOption(BaseParser::PARAMS['OFFSET']);
 
-        $this->model->offset(($page - 1) * $limit);
+        $offset_value = !is_null($offset) ? $offset : ($page - 1) * $limit;
+
+        $this->model->offset($offset_value);
     }
 
     /**

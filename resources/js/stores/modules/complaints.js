@@ -42,6 +42,7 @@ const userStore = {
                     action: 'SEARCH',
                     params: {
                         pagination: context.state.base.pagination,
+                        filter_groups: context.state.base.filter_groups,
                         ...params
                     }
                 });

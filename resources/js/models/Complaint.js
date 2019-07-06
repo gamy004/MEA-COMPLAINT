@@ -22,8 +22,6 @@ class Complaint extends BaseVuexModel {
 
     static async [actions.ISSUE.FETCH](props = {}) {
         let response;
-        console.log(props);
-
         try {
             response = await api.get('api:issues.index', {
                 includes: [
@@ -234,6 +232,29 @@ class Complaint extends BaseVuexModel {
         }
 
         return topic;
+    }
+
+    get issuer() {
+        let {
+            issued_by = null
+        } = this;
+
+        let issuer = "Admin";
+
+        if (issued_by) {
+            const {
+                vuex,
+                rootGetters
+            } = this.$context;
+
+            const group = rootGetters[
+                `${vuex.modules.GROUP}/${vuex.getters.BY_KEY}`
+            ](issued_by);
+
+            issuer = group.name || "Anonymous";
+        }
+
+        return issuer;
     }
 
     get joinedRecipientName() {

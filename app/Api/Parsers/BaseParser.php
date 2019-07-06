@@ -13,7 +13,8 @@ class BaseParser
         'SORT_DIRECTION'    => 'ASC',
         'SORT_FIELD'        => 'id',
         'PAGE'              => null,
-        'LIMIT'             => null
+        'LIMIT'             => null,
+        'OFFSET'            => null
     ];
 
     const PARAMS = [
@@ -30,6 +31,7 @@ class BaseParser
         'DIRECTION'         => 'direction',
         'PAGE'              => 'page',
         'LIMIT'             => 'limit',
+        'OFFSET'            => 'offset',
         'FIELDS'            => 'fields',
         'SELECT'            => 'select',
         'SEARCH'            => 'search',

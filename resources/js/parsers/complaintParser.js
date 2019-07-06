@@ -190,6 +190,7 @@ function parseDelete(context, {
 
 export default {
     [actions.ISSUE.FETCH]: parseFetch,
+    [actions.ISSUE.SEARCH]: parseFetch,
     [actions.ISSUE.SHOW]: parseStore,
     [actions.ISSUE.EDIT]: parseEdit,
     [actions.ISSUE.UPDATE]: parseEdit,

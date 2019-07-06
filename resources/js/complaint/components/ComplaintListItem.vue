@@ -6,9 +6,9 @@
       :class="getItemCLasses(hover)"
       @click.prevent.stop="onClick"
     >
-      <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
+      <!-- <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
         <v-avatar color="indigo accent-3" size="10" class="status-indicator"></v-avatar>
-      </v-list-tile-action>
+      </v-list-tile-action>-->
 
       <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
         <!-- action selected -->
@@ -17,14 +17,13 @@
         </div>
       </v-list-tile-action>
 
-      <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
-        <!-- action starred -->
+      <!-- <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
         <v-btn icon @click.prevent.stop="item.markStarred()">
           <v-icon
             :color="item.starred ? 'deep-orange' : 'grey lignten-2'"
           >{{ item.starred ? 'star' : 'star_border' }}</v-icon>
         </v-btn>
-      </v-list-tile-action>
+      </v-list-tile-action>-->
 
       <v-list-tile-content class="complaint-list__content" :class="isMobileClasses">
         <v-tooltip top>

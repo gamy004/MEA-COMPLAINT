@@ -6,16 +6,17 @@
       v-model="drawer"
       fixed
       clipped
-      class="grey lighten-4"
+      class="grey lighten-4 pl-2"
       app
+      :width="256"
       :mobile-break-point="mobileBreakPoint"
     >
       <v-list dense class="grey lighten-4">
-        <add-complaint-btn v-if="!isMobile" />
+        <add-complaint-btn v-if="!isMobile" class="add-complaint__button--main" />
 
         <template v-for="(item, i) in items">
           <v-layout v-if="item.heading" :key="i" row align-center>
-            <v-flex xs6>
+            <v-flex :class="item.route ? 'xs6' : 'xs12'">
               <v-subheader v-if="item.heading">{{ item.heading }}</v-subheader>
             </v-flex>
             <v-flex v-if="item.route" xs6 class="text-xs-right">
@@ -45,22 +46,11 @@
         <span class="font-weight-light">Complaint</span>
       </span>
 
-      <v-text-field
-        flat
-        solo
-        color="deep-orange"
-        hide-details
-        label="Search complaint"
-        prepend-inner-icon="search"
-      >
-        <template #append>
-          <complaint-search-filter
-            :dialogable-visible.sync="searchFilter"
-            @alert:invalidSearchForm="$_alertable_alert('invalidSearchForm')"
-            @alert:searchError="$_alertable_alert('searchError')"
-          />
-        </template>
-      </v-text-field>
+      <complaint-search-filter
+        :dialogable-visible.sync="searchFilter"
+        @alert:invalidSearchForm="$_alertable_alert('invalidSearchForm')"
+        @alert:searchError="$_alertable_alert('searchError')"
+      />
 
       <v-spacer></v-spacer>
     </v-toolbar>
@@ -204,6 +194,14 @@ export default {
   #toolbarLayoutDefault {
     .title + * {
       margin-left: 4rem;
+    }
+  }
+
+  .add-complaint {
+    &__button {
+      &--main {
+        left: -5px;
+      }
     }
   }
 }

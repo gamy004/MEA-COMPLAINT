@@ -2,7 +2,11 @@
   <v-layout class="complaint-list" :class="isMobileClasses" row wrap>
     <v-flex xs12>
       <transition name="slide-y-transition" mode="out-in">
-        <v-progress-linear v-if="isFetchingComplaint" key="complaintLoading" :indeterminate="true"></v-progress-linear>
+        <v-progress-linear
+          v-if="isFetchingComplaint || $_issue_search_mixin_isSearchingComplaint"
+          key="complaintLoading"
+          :indeterminate="true"
+        ></v-progress-linear>
 
         <v-list v-else key="complaintList" :three-line="isMobile" :class="isMobileClasses">
           <template v-for="(item, itemIndex) in $_paginatable_currentPaginatedList">
@@ -35,6 +39,7 @@ import paginatable from "../../mixins/paginatable";
 import { vuex, vuexable } from "../../mixins/vuexable";
 import ComplaintListItem from "./ComplaintListItem";
 import MessageAlert from "../../components/MessageAlert";
+import { issueSearchMixin } from "../../mixins/issue-search-mixin";
 
 export default {
   props: {
@@ -45,7 +50,7 @@ export default {
     }
   },
 
-  mixins: [alertable, paginatable, vuexable],
+  mixins: [alertable, paginatable, vuexable, issueSearchMixin],
 
   components: {
     ComplaintListItem,
@@ -95,7 +100,13 @@ export default {
         if (this.active) {
           console.log("ComplaintList pagination changed: ", v);
 
-          await this[vuex.actions.ISSUE.FETCH]();
+          const { $_issue_search_mixin_searchFiltersVuex = [] } = this;
+
+          if ($_issue_search_mixin_searchFiltersVuex.length) {
+            await this.$_issue_search_mixin_searchComplaint();
+          } else {
+            await this.callFetch();
+          }
         }
       }
     }
@@ -120,6 +131,10 @@ export default {
       vuex.actions.ISSUE.DELETE,
       vuex.actions.ISSUE.RESTORE
     ]),
+
+    callFetch() {
+      return this[vuex.actions.ISSUE.FETCH]();
+    },
 
     async onEditItem(item, itemIndex) {
       const { id } = item;
@@ -159,6 +174,8 @@ export default {
   },
 
   created() {
+    this.callFetch = _.debounce(this.callFetch, 400);
+
     this.$_paginatable_pagination = {
       sortBy: "updated_at",
       descending: true
