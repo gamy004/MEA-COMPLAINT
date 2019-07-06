@@ -82,11 +82,11 @@ export const paginatable = {
         },
 
         $_paginatable_isFirstPage() {
-            return this.$_paginatable_currentPage === 1;
+            return _.toInteger(this.$_paginatable_currentPage) == 1;
         },
 
         $_paginatable_isLastPage() {
-            return this.$_paginatable_currentPage === this.$_paginatable_totalPage;
+            return _.toInteger(this.$_paginatable_currentPage) == this.$_paginatable_totalPage;
         },
 
         $_paginatable_rowsPerPage: {

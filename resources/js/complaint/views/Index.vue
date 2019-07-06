@@ -111,8 +111,6 @@ export default {
 
             this.$_paginatable_updatedSelected();
 
-            console.log(this.items, itemIndex, this.$_paginatable_someSelected);
-
             this.$set(
               this.items[itemIndex],
               "selected",
