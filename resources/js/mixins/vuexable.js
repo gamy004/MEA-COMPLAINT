@@ -42,6 +42,10 @@ export const vuexable = {
             return this.$_vuexable_getter(getters.GET_STATE, module, key);
         },
 
+        $_vuexable_getStateAttr(key, attr, module = '') {
+            return this.$_vuexable_getter(getters.GET_STATE, module, key, attr);
+        },
+
         $_vuexable_getByKey(key, module = '') {
             return this.$_vuexable_getter(getters.BY_KEY, module, key);
         },
@@ -108,18 +112,36 @@ export const vuexable = {
         $_vuexable_update({
             key,
             value,
-            attr = null
+            attr = null,
+            state = false
         }, module = '') {
             this.$_vuexable_commit(
                 mutations.UPDATE,
                 module, {
                     attr,
                     key,
-                    value
+                    value,
+                    state
                 }
             );
 
             return this;
+        },
+
+        $_vuexable_updateState({
+            key,
+            value,
+            attr = null
+        }, module = '') {
+            return this.$_vuexable_commit(
+                mutations.UPDATE,
+                module, {
+                    attr,
+                    key,
+                    value,
+                    state: true
+                }
+            );
         },
 
         $_vuexable_updatePagination({

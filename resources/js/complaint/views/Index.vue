@@ -88,14 +88,30 @@ export default {
           selected: false,
           color: "deep-orange",
           indeterminate: item => {
-            return item.selected && !this.$_paginatable_isSelectedAll;
+            return this.$_paginatable_someSelected;
           },
+
           onChange: value => {
             this.$_paginatable_selectAll(value);
+
+            const { $_paginatable_currentPaginatedList = [] } = this;
+
+            const selectedIds = _.map($_paginatable_currentPaginatedList, "id");
+
+            this.$_paginatable_syncSelected(selectedIds, value);
+            // if (value) {
+            //   this.$_paginatable_attachSelected(selectedIds);
+            // } else {
+            //   this.$_paginatable_detachSelected(selectedIds);
+            // }
           },
 
           onPaginatedListChange: (value, item, indexes) => {
-            const itemIndex = indexes[0];
+            const itemIndex = indexes[0]; // get checkbox item
+
+            this.$_paginatable_updatedSelected();
+
+            console.log(this.items, itemIndex, this.$_paginatable_someSelected);
 
             this.$set(
               this.items[itemIndex],

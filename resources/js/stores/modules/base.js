@@ -10,6 +10,7 @@ export default {
         return {
             collection: {},
             mapping: {},
+            selected: {},
             sortedIndex: [],
             sortedPaginateIndex: {},
             paginateIndex: {},
@@ -174,9 +175,9 @@ export default {
 
             return _.find(v, (o) => _.kebabCase(o[key]) === _.kebabCase(value));
         },
-        [vuex.getters.GET_STATE]: (state) => (key) => {
+        [vuex.getters.GET_STATE]: (state) => (key, attr = null) => {
             if (state.hasOwnProperty(key)) {
-                return state[key];
+                return attr !== null ? state[key][attr] : state[key];
             }
         },
         [vuex.getters.GET_MAPPING]: (state) => ({
@@ -402,13 +403,22 @@ export default {
         [vuex.mutations.UPDATE](state, {
             key,
             value,
-            attr = null
+            attr = null,
+            state: updateState = false
         }) {
-            if (state.collection.hasOwnProperty(key)) {
+            if (!updateState && state.collection.hasOwnProperty(key)) {
                 if (attr !== null) {
                     Vue.set(state.collection[key], attr, value);
                 } else {
                     Vue.set(state.collection, key, value);
+                }
+            }
+
+            if (updateState && state.hasOwnProperty(key)) {
+                if (attr !== null) {
+                    Vue.set(state[key], attr, value);
+                } else {
+                    Vue.set(state, key, value);
                 }
             }
         },

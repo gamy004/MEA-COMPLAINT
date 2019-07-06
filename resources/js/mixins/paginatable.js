@@ -9,7 +9,7 @@ export const paginatable = {
         return {
             paginatable_rowsPerPage: [
                 10, 15, 20, 25, 50, 100
-            ]
+            ],
         };
     },
 
@@ -172,19 +172,50 @@ export const paginatable = {
             return `${$_paginatable_startOfPage}-${$_paginatable_endOfPage} of ${$_paginatable_total}`;
         },
 
+        $_paginatable_selected: {
+            get() {
+                return this.$_vuexable_getState(
+                    "selected",
+                    this.$_paginatable_module
+                )
+            },
+
+            set(value) {
+                this.$_vuexable_setState({
+                        key: "selected",
+                        value
+                    },
+                    this.$_paginatable_module
+                )
+            }
+        },
+
+        $_paginatable_paginatedSelected() {
+            const {
+                $_paginatable_currentPaginatedList = []
+            } = this;
+            return _.map($_paginatable_currentPaginatedList, "id").reduce(
+                (res, id) => {
+                    this.$set(res, id, this.$_paginatable_selected[id]);
+
+                    return res;
+                }, {}
+            )
+        },
+
         $_paginatable_isSelectedAll() {
             return _.every(
-                this.$_paginatable_currentPaginatedList,
-                ['selected', true]
+                Object.values(this.$_paginatable_paginatedSelected),
+                Boolean
             );
         },
 
         $_paginatable_someSelected() {
             return _.some(
-                this.$_paginatable_currentPaginatedList,
-                ['selected', true]
+                Object.values(this.$_paginatable_paginatedSelected),
+                Boolean
             );
-        }
+        },
     },
 
     methods: {
@@ -208,14 +239,63 @@ export const paginatable = {
                 id = null
             }) => {
                 if (id) {
-                    this.$_vuexable_update({
-                        key: 'selected',
-                        id,
+                    // this.$_vuexable_update({
+                    //     key: id,
+                    //     value,
+                    //     attr: 'selected'
+                    // }, this.$_paginatable_module);
+
+                    this.$_vuexable_updateState({
+                        key: "selected",
+                        attr: id,
                         value
                     }, this.$_paginatable_module);
                 }
             });
-        }
+        },
+
+        $_paginatable_updatedSelected() {
+            this.$_paginatable_currentPaginatedList.map(({
+                id = null
+            }) => {
+                if (id) {
+                    const stateSeletected = this.$_paginatable_selected.hasOwnProperty(id) ?
+                        this.$_paginatable_selected[id] : false;
+
+                    // this.$_vuexable_update({
+                    //     key: id,
+                    //     value: stateSeletected,
+                    //     attr: "selected"
+                    // }, this.$_paginatable_module);
+
+                    this.$_vuexable_updateState({
+                        key: "selected",
+                        attr: id,
+                        value: stateSeletected
+                    }, this.$_paginatable_module);
+                }
+            });
+        },
+
+        // $_paginatable_attachSelected(value = []) {
+        //     value.forEach(v => this.$set(this.paginatable_selected, v, true));
+        // },
+
+        // $_paginatable_detachSelected(value) {
+        //     value.forEach(v => this.$set(this.paginatable_selected, v, false));
+        // },
+
+        $_paginatable_syncSelected(arr = [], value = null) {
+            const selected = {
+                ...this.$_paginatable_selected
+            };
+
+            arr.forEach(v => this.$set(selected, v, value !== null ? value : !selected[v]));
+
+            this.$_paginatable_selected = {
+                ...selected
+            };
+        },
     }
 };
 

@@ -199,13 +199,27 @@ export default {
 
     itemSelected: {
       get() {
-        const { selected = false } = this.item;
+        // const { selected = false } = this.item;
 
-        return selected;
+        // return selected;
+
+        return this.$_vuexable_getStateAttr(
+          "selected",
+          this.item.id,
+          vuex.modules.ISSUE
+        );
       },
 
       set(value) {
-        this.item.update("selected", value);
+        // this.item.update("selected", value);
+        this.$_vuexable_updateState(
+          {
+            key: "selected",
+            attr: this.item.id,
+            value
+          },
+          vuex.modules.ISSUE
+        );
       }
     },
 
