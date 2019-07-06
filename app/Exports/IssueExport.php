@@ -39,7 +39,7 @@ class IssueExport implements FromQuery, WithEvents, WithColumnFormatting, WithMa
     {
         return [
             AfterSheet::class    => function(AfterSheet $event) {
-                $headerRange = 'A1:I1';
+                $headerRange = 'A1:J1';
                 
                 $event->sheet->getDelegate()->getStyle($headerRange)->getFill()
                     ->setFillType(
@@ -50,7 +50,7 @@ class IssueExport implements FromQuery, WithEvents, WithColumnFormatting, WithMa
                 
                 $event->sheet->getDelegate()->getStyle($headerRange)->getFont()->setBold(true);
 
-                $noteRage = 'I2:I'.$event->sheet->getHighestRow();
+                $noteRage = 'J2:J'.$event->sheet->getHighestRow();
 
                 $event->sheet->getDelegate()->getStyle($noteRage)->getAlignment()->setWrapText(true);
 
@@ -73,6 +73,7 @@ class IssueExport implements FromQuery, WithEvents, WithColumnFormatting, WithMa
         return [
             '#',
             'Created at',
+            'Updated at',
             'Category',
             'Latest Status',
             'Issuer',
@@ -109,6 +110,9 @@ class IssueExport implements FromQuery, WithEvents, WithColumnFormatting, WithMa
             Date::dateTimeToExcel(
                 Carbon::parse($issue->getOriginal(DBCol::CREATED_AT))
             ),
+            Date::dateTimeToExcel(
+                Carbon::parse($issue->getOriginal(DBCol::UPDATED_AT))
+            ),
             $category,
             $status,
             $issuer,
@@ -125,7 +129,8 @@ class IssueExport implements FromQuery, WithEvents, WithColumnFormatting, WithMa
     public function columnFormats(): array
     {
         return [
-            'B' => NumberFormat::FORMAT_DATE_DDMMYYYY
+            'B' => NumberFormat::FORMAT_DATE_XLSX22,
+            'C' => NumberFormat::FORMAT_DATE_XLSX22,
         ];
     }
 }

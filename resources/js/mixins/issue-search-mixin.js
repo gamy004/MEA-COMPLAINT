@@ -9,11 +9,15 @@ import {
     filterIn,
     filterNotContains
 } from "../helpers";
+import {
+    views
+} from "../constants";
 
 export const SEARCH_FIELDS = [
     "issuer",
     "recipients",
     "subject",
+    "latest_status",
     "description",
     "created_at"
 ];
@@ -24,7 +28,7 @@ export const issueSearchMixin = {
     data() {
         return {
             issue_search_mixin_dateMenu: false,
-            issue_search_mixin_searchKeyword: "",
+            issue_search_mixin_searchKeyword: this.$route.query.q || "",
             issue_search_mixin_form: vuex.models.FORM.make({
                 from: [],
                 to: [],
@@ -313,6 +317,18 @@ export const issueSearchMixin = {
             return response;
         },
 
+        $_issue_search_mixin_clearState() {
+            this.$_vuexable_setState({
+                key: "searchKeyword",
+                value: ""
+            }, vuex.modules.ISSUE);
+
+            this.$_vuexable_setState({
+                key: "backupFormdata",
+                value: {}
+            }, vuex.modules.ISSUE);
+        },
+
         async $_issue_search_mixin_onSearch() {
             const {
                 issue_search_mixin_searchKeyword,
@@ -324,16 +340,16 @@ export const issueSearchMixin = {
                 this.$emit("alert:invalidSearchForm");
             }
 
-            if ($_issue_search_mixin_searchFilters.length) {
-                this.$_issue_search_mixin_updateSearchKeyword();
+            this.$_issue_search_mixin_updateSearchKeyword();
 
+            if ($_issue_search_mixin_searchFilters.length) {
                 this.$_vuexable_updatePagination({
                     key: "search",
                     value: {
                         keyword: "",
                         fields: []
                     }
-                });
+                }, vuex.modules.ISSUE);
 
                 this.$_vuexable_setState({
                     key: "backupFormdata",
@@ -346,10 +362,8 @@ export const issueSearchMixin = {
                         keyword: issue_search_mixin_searchKeyword,
                         fields: SEARCH_FIELDS
                     }
-                })
+                }, vuex.modules.ISSUE)
             }
-
-
 
             this.$_vuexable_setState({
                     key: "filter_groups",
@@ -360,13 +374,18 @@ export const issueSearchMixin = {
                 vuex.modules.ISSUE
             );
 
+            let response;
+
             try {
-                return await this.$_issue_search_mixin_searchComplaint();
+                response = await this.$_issue_search_mixin_searchComplaint();
             } catch (error) {
                 this.$emit("alert:searchError");
-
                 throw error;
             }
+
+            this.$_issue_search_mixin_updateRoute();
+
+            return response;
         },
 
         $_issue_search_mixin_extractSearchKeywordToFilters() {
@@ -374,9 +393,9 @@ export const issueSearchMixin = {
                 issue_search_mixin_searchKeyword = ""
             } = this;
 
-            if (!issue_search_mixin_searchKeyword.length) return;
-
             this.$_issue_search_mixin_clearSearchFilters();
+
+            if (!issue_search_mixin_searchKeyword.length) return;
 
             const regex = /([\w-]+):\(([0-9A-Za-zก-๙-!$%^&*()_+|~=`{}\[\]";'<>?,.\/\s]+)\)/gm;
 
@@ -473,6 +492,43 @@ export const issueSearchMixin = {
             this.issue_search_mixin_searchKeyword = "";
         },
 
+        $_issue_search_mixin_updateRoute() {
+            const pagination = this.$_vuexable_getState("pagination", vuex.modules.ISSUE);
+
+            this.$router.push({
+                name: views.ISSUE.INDEX,
+                query: {
+                    ...this.$route.query,
+                    q: this.issue_search_mixin_searchKeyword,
+                    // page: pagination.page,
+                    // descending: pagination.descending
+                }
+            })
+        },
+
+        $_issue_search_mixin_updateKeywordAndBackup() {
+            const {
+                $_issue_search_mixin_stateSearchKeyword,
+                $_issue_search_mixin_stateBackupFormdata
+            } = this;
+
+            if (
+                $_issue_search_mixin_stateSearchKeyword &&
+                $_issue_search_mixin_stateSearchKeyword.length
+            ) {
+                this.issue_search_mixin_searchKeyword = $_issue_search_mixin_stateSearchKeyword;
+            }
+
+            if (
+                $_issue_search_mixin_stateBackupFormdata &&
+                Object.keys($_issue_search_mixin_stateBackupFormdata).length
+            ) {
+                this.issue_search_mixin_form = vuex.models.FORM.make({
+                    ...$_issue_search_mixin_stateBackupFormdata
+                });
+            }
+        },
+
         $_issue_search_mixin_makeGroupKeyword(prefix, ids = []) {
             return this.$_issue_search_mixin_makeKeyword(prefix, (res, groupId) => {
                 const group = this.$_vuexable_getByKey(
@@ -523,6 +579,19 @@ export const issueSearchMixin = {
                 key: "backupFormdata",
                 value: {}
             }, vuex.modules.ISSUE);
+        }
+
+        if (this.issue_search_mixin_searchKeyword.length) {
+            this.$_issue_search_mixin_extractSearchKeywordToFilters();
+            this.$_issue_search_mixin_updateSearchKeyword();
+            this.$_vuexable_setState({
+                    key: "filter_groups",
+                    value: [{
+                        filters: [...this.$_issue_search_mixin_searchFilters]
+                    }]
+                },
+                vuex.modules.ISSUE
+            );
         }
     }
 };

@@ -420,7 +420,7 @@ abstract class BaseApi
                 SelectParser::$messages['missing_keyword_argument']
             );
         }
-
+        
         $keywords = getWords($search_data[Data::KEYWORD]);
         // dd($keywords);
         $fields = $search_data[Data::FIELDS];

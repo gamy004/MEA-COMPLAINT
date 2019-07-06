@@ -156,6 +156,18 @@ const userStore = {
                 throw error;
             }
         },
+
+        async [vuex.actions.ISSUE.EXPORT_SEARCH](context, params) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'ISSUE',
+                    action: 'EXPORT_SEARCH',
+                    params
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
         // },
 
         // async [vuex.actions.STORE]({

@@ -42,6 +42,7 @@ Route::group([
 
             Route::group(['as' => 'export.', 'prefix' => 'export'], function () {
                 Route::get('/issues', 'IssueController@export')->name('issues');
+                Route::get('/search-issues', 'IssueController@exportSearch')->name('search-issues');
             });
             
             /**

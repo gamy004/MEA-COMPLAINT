@@ -21,7 +21,7 @@
           <v-tooltip bottom>
             <template v-slot:activator="{ on: tooltipClear }">
               <v-btn
-                v-show="$_issue_search_mixin_filtered"
+                v-show="issue_search_mixin_searchKeyword.length || $_issue_search_mixin_filtered"
                 v-on="tooltipClear"
                 class="clear-search__button"
                 icon
@@ -277,27 +277,7 @@ export default {
       async handler(v, ov) {
         console.log("ComplaintSearchFilter pagination changed: ", v);
 
-        const {
-          $_issue_search_mixin_stateSearchKeyword,
-          $_issue_search_mixin_stateBackupFormdata
-        } = this;
-        console.log($_issue_search_mixin_stateSearchKeyword);
-
-        if (
-          $_issue_search_mixin_stateSearchKeyword &&
-          $_issue_search_mixin_stateSearchKeyword.length
-        ) {
-          this.issue_search_mixin_searchKeyword = $_issue_search_mixin_stateSearchKeyword;
-        }
-
-        if (
-          $_issue_search_mixin_stateBackupFormdata &&
-          Object.keys($_issue_search_mixin_stateBackupFormdata).length
-        ) {
-          this.issue_search_mixin_form = vuex.models.FORM.make({
-            ...$_issue_search_mixin_stateBackupFormdata
-          });
-        }
+        this.$_issue_search_mixin_updateKeywordAndBackup();
       }
     }
   },
@@ -333,8 +313,8 @@ export default {
     },
 
     onSearchByKeyword() {
+      this.$_issue_search_mixin_clearState();
       this.$_issue_search_mixin_extractSearchKeywordToFilters();
-
       return this.onSearch();
     },
 

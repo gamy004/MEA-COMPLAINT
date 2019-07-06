@@ -29,9 +29,22 @@
         offset-y
       >
         <template v-slot:activator="{ on }">
+          <v-tooltip
+            v-if="item.icon && item.text"
+            :key="i"
+            v-bind="item.tooltipAttr ? item.tooltipAttr : { bottom: true }"
+          >
+            <template v-slot:activator="{ on: tooltip }">
+              <v-btn v-on="{ ...on, ...tooltip }" icon small :disabled="getDisabledAttribute(item)">
+                <v-icon>{{ item.icon }}</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ item.text }}</span>
+          </v-tooltip>
+
           <v-icon
             color="grey darken-4"
-            v-if="hasIcon(item)"
+            v-else-if="hasIcon(item)"
             v-text="item.icon"
             :class="getClasses(item)"
             v-on="on"
@@ -102,7 +115,15 @@
         <span>{{ item.text }}</span>
       </v-tooltip>
 
-      <v-btn v-else-if="item.icon" :key="i" icon small :class="getClasses(item)">
+      <v-btn
+        v-else-if="item.icon"
+        :key="i"
+        icon
+        small
+        :class="getClasses(item)"
+        :disabled="getDisabledAttribute(item)"
+        @click="onEmit('onClick', $event, item, i)"
+      >
         <v-icon>{{ item.icon }}</v-icon>
       </v-btn>
 

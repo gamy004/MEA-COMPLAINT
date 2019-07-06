@@ -28,9 +28,7 @@ class DateTimeHelper
     {
         $date_time_fields = [
             DBCol::CREATED_AT,
-            DBCol::UPDATED_AT,
-            DBCol::SUGGESTED_AT,
-            DBCol::ALERT_AT
+            DBCol::UPDATED_AT
         ];
 
         return in_array($field, $date_time_fields);

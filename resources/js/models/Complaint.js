@@ -25,6 +25,7 @@ class Complaint extends BaseVuexModel {
         try {
             response = await api.get('api:issues.index', {
                 includes: [
+                    'issuer:sideload',
                     'recipients:sideload',
                     'status:sideload',
                     'attachments:sideload',
@@ -45,6 +46,7 @@ class Complaint extends BaseVuexModel {
         try {
             response = await api.get('api:issues.search', {
                 includes: [
+                    'issuer:sideload',
                     'recipients:sideload',
                     'status:sideload',
                     'attachments:sideload',
@@ -65,11 +67,11 @@ class Complaint extends BaseVuexModel {
         try {
             response = await api.get('api:issues.show', {
                 includes: [
+                    'issuer:sideload',
                     'recipients:sideload',
                     'status:sideload',
                     'attachments:sideload',
                     'category:sideload',
-                    'issuer:sideload',
                     'notes:ids'
                 ],
                 ...data,
@@ -87,6 +89,7 @@ class Complaint extends BaseVuexModel {
         try {
             response = await api.get('api:issues.edit', {
                 includes: [
+                    'issuer:sideload',
                     'recipients:sideload',
                     'status:sideload',
                     'attachments:sideload',
@@ -108,6 +111,7 @@ class Complaint extends BaseVuexModel {
         try {
             response = await api.post('api:issues.store', {
                 includes: [
+                    'issuer:sideload',
                     'recipients:sideload',
                     'status:sideload',
                     'attachments:sideload',
@@ -129,6 +133,7 @@ class Complaint extends BaseVuexModel {
         try {
             response = await api.put('api:issues.update', {
                 includes: [
+                    'issuer:sideload',
                     'recipients:sideload',
                     'status:sideload',
                     'attachments:sideload',
@@ -165,11 +170,11 @@ class Complaint extends BaseVuexModel {
             response = await api.post('api:issues.restore', {
                 ...data,
                 includes: [
+                    'issuer:sideload',
                     'recipients:sideload',
                     'status:sideload',
                     'attachments:sideload',
                     'category:sideload',
-                    'issuer:sideload',
                     'notes:ids'
                 ]
             });
@@ -185,6 +190,25 @@ class Complaint extends BaseVuexModel {
 
         try {
             response = await axios.get(route('api:export.issues'), {
+                params: {
+                    ...data,
+                    includes: ["notes", "notes.creator", "recipients", "issuer", "status", "category"]
+                },
+                paramsSerializer: window.$paramSerializer,
+                responseType: 'blob',
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
+    static async [actions.ISSUE.EXPORT_SEARCH](data) {
+        let response;
+
+        try {
+            response = await axios.get(route('api:export.search-issues'), {
                 params: {
                     ...data,
                     includes: ["notes", "notes.creator", "recipients", "issuer", "status", "category"]
@@ -234,7 +258,7 @@ class Complaint extends BaseVuexModel {
         return topic;
     }
 
-    get issuer() {
+    get complaintIssuer() {
         let {
             issued_by = null
         } = this;
@@ -242,6 +266,8 @@ class Complaint extends BaseVuexModel {
         let issuer = "Admin";
 
         if (issued_by) {
+            console.log(this.$context);
+
             const {
                 vuex,
                 rootGetters

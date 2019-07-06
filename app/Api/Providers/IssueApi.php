@@ -19,8 +19,10 @@ use Illuminate\Support\Str;
 use App\Exports\IssueExport;
 use App\Models\IssueCategory;
 use App\Models\IssueRecipient;
+use App\Api\Parsers\BaseParser;
 use App\Contracts\ApiInterface;
 use App\Models\IssueStatusConfig;
+use App\Exports\IssueSearchExport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
@@ -42,9 +44,16 @@ class IssueApi extends BaseApi implements ApiInterface
         $request_parser = $this->getParser();
         $parser_result = $request_parser->result();
         
+        $search_fields = isset($parser_result[BaseParser::PARAMS['SEARCH']][BaseParser::PARAMS['FIELDS']])
+            ? $parser_result[BaseParser::PARAMS['SEARCH']][BaseParser::PARAMS['FIELDS']]
+            : [];
+            
         $request_parser->setResult(
             "select",
-            ["issues" => ["id"]]
+            ["issues" => array_merge(
+                ["id"],
+                $search_fields
+            )]
         );
         
         $this->setParser($request_parser);
@@ -52,7 +61,7 @@ class IssueApi extends BaseApi implements ApiInterface
         $search_result = $this->setCustomQuery(
             $this->querySearch()
         )->get();
-        // dump($search_result);
+        
         $data = $search_result->get($this->getArchitectKey());
 
         $total = $search_result->get(Data::TOTAL);
@@ -61,6 +70,8 @@ class IssueApi extends BaseApi implements ApiInterface
             $ids = $data->pluck("id")->toArray();
             
             $original_parser->setResult("select", []);
+            $original_parser->setResult("search", ["keyword" => "", "fields" => []]);
+            // $original_parser->setResult("sort", []);
             $original_parser->setResult("offset", 0);
 
             $original_parser->setResult("filter_groups", [
@@ -76,7 +87,7 @@ class IssueApi extends BaseApi implements ApiInterface
                     "or" => false
                 ]
             ]);
-            // dd($original_parser->result());
+            
             $this->setParser($original_parser);
             $this->setCustomQuery(null);
             
@@ -95,10 +106,7 @@ class IssueApi extends BaseApi implements ApiInterface
         $issueStatusTable = model_table(IssueStatus::class);
         $issueCategoryTable = model_table(IssueCategory::class);
         $issueRecipientTable = model_table(IssueRecipient::class);
-
         $recipients = $this->getQueryRecipient();
-        // $status = $this->getQueryStatus();
-
         $sub_recipients = 'subquery_'.Data::RECIPIENTS;
         $sub_status = 'subquery_'.DBCol::STATUS;
 
@@ -142,13 +150,7 @@ class IssueApi extends BaseApi implements ApiInterface
                 sprintf("%s.%s", $baseTable, IssueCategory::FK),
                 sprintf("%s.%s", $issueCategoryTable, DBCol::CATEGORY),
                 sprintf("%s.%s", $sub_recipients, Data::RECIPIENT_IDS),
-                sprintf("%s.%s", $sub_recipients, Data::RECIPIENTS),
-
-                // sprintf("%s.%s", $baseTable, DBCol::AVAILABLE),
-                // sprintf("%s.%s", $baseTable, DBCol::EXPIRE_AT),
-                // sprintf("%s.%s", $intermediateTable, Role::FK),
-                // sprintf("%s.%s as %s", $roleTable, DBCol::NAME, Data::ROLE),
-                // sprintf("%s.%s as %s", $fileTable, DBCol::PATH, DBCol::AVATAR),
+                sprintf("%s.%s", $sub_recipients, Data::RECIPIENTS)
             ]
         );
     }
@@ -487,5 +489,60 @@ class IssueApi extends BaseApi implements ApiInterface
         $export = new IssueExport($this, $raw);
 
         return $export->download('complaints.xlsx');
+    }
+
+    public function exportSearch(array $raw)
+    {
+        $original_parser = $this->getParser();
+        $request_parser = $this->getParser();
+        $parser_result = $request_parser->result();
+        
+        $search_fields = isset($parser_result[BaseParser::PARAMS['SEARCH']][BaseParser::PARAMS['FIELDS']])
+            ? $parser_result[BaseParser::PARAMS['SEARCH']][BaseParser::PARAMS['FIELDS']]
+            : [];
+            
+        $request_parser->setResult(
+            "select",
+            ["issues" => array_merge(
+                ["id"],
+                $search_fields
+            )]
+        );
+        
+        $this->setParser($request_parser);
+        
+        $search_result = $this->setCustomQuery(
+            $this->querySearch()
+        )->get();
+        
+        $data = $search_result->get($this->getArchitectKey());
+        $ids = [];
+
+        if (count($data)) {
+            $ids = $data->pluck("id")->toArray();
+        }
+
+        $original_parser->setResult("select", []);
+        $original_parser->setResult("search", ["keyword" => "", "fields" => []]);
+        // $original_parser->setResult("sort", []);
+        $original_parser->setResult("offset", 0);
+        $original_parser->setResult("filter_groups", [
+            [
+                "filters" => [
+                    [
+                        "key" => "id",
+                        "value" => $ids,
+                        "operator" => "in",
+                        "not" => false
+                    ]
+                ],
+                "or" => false
+            ]
+        ]);
+        
+        $this->setParser($original_parser);
+        $this->setCustomQuery(null);
+        
+        return $this->export($raw);
     }
 }

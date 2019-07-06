@@ -116,5 +116,16 @@ class IssueController extends BaseApiController
     {
         return $this->api->search($request->all());
     }
+
+    /**
+     * Generate report the specified resource from searchResult.
+     *
+     * @param  \App\Issue  $issue
+     * @return \Illuminate\Http\Response
+     */
+    public function exportSearch(Request $request)
+    {
+        return $this->api->exportSearch($request->all());
+    }
     
 }

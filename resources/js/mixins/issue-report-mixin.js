@@ -118,7 +118,10 @@ const IssueReportMixin = {
     },
 
     methods: {
-        ...vuex.mapWaitingActions(vuex.modules.ISSUE, [vuex.actions.ISSUE.EXPORT]),
+        ...vuex.mapWaitingActions(vuex.modules.ISSUE, [
+            vuex.actions.ISSUE.EXPORT,
+            vuex.actions.ISSUE.EXPORT_SEARCH,
+        ]),
 
         $_issue_report_mixin_switchType() {
             if (this.$_issue_report_mixin_isTypeDate) {
@@ -126,6 +129,31 @@ const IssueReportMixin = {
             } else {
                 this.$_issue_report_mixin_reportType = 'date';
             }
+        },
+
+        async $_issue_report_mixin_generateCurrentFilter() {
+            const filter_groups = this.$_vuexable_getState(
+                "filter_groups",
+                vuex.modules.ISSUE
+            );
+
+            const pagination = this.$_vuexable_getState(
+                "pagination",
+                vuex.modules.ISSUE
+            );
+
+            let sort = pagination.sortBy;
+
+            if (pagination.descending) {
+                sort = `-${sort}`;
+            }
+
+            this.$_issue_report_mixin_export(
+                filter_groups, {
+                    action: vuex.actions.ISSUE.EXPORT_SEARCH,
+                    sort: [sort]
+                }
+            );
         },
 
         async $_issue_report_mixin_generateThisWeekReport() {
@@ -154,26 +182,30 @@ const IssueReportMixin = {
         },
 
         async $_issue_report_mixin_generateReport(ranges, fileName = null) {
-            this.$_issue_report_mixin_reportDialog = false;
-            this.$_issue_report_mixin_reportGenerate = true;
-
-            let content;
             let filter_groups = [{
                 filters: ranges.map(range => filterContains("created_at", range)),
                 or: true
             }];
 
-            // ranges.forEach(d => {
-            //     filter_groups.push({
-            //         filters: [filterContains("created_at", d)],
-            //         or: true
-            //     });
-            // });
+            return this.$_issue_report_mixin_export(filter_groups, {
+                fileName
+            });
+        },
+
+        async $_issue_report_mixin_export(filter_groups = [], {
+            fileName = null,
+            action = vuex.actions.ISSUE.EXPORT,
+            sort = ["-updated_at"]
+        }) {
+            this.$_issue_report_mixin_reportDialog = false;
+            this.$_issue_report_mixin_reportGenerate = true;
+
+            let content;
 
             try {
-                content = await this[vuex.actions.ISSUE.EXPORT]({
+                content = await this[action]({
                     filter_groups,
-                    sort: ["-created_at"]
+                    sort
                 });
             } catch (error) {
                 throw error;
@@ -197,7 +229,7 @@ const IssueReportMixin = {
             this.$_vuexable_setState({
                     key: "report",
                     value: {
-                        reportType: "month",
+                        reportType: "date",
                         types: [{
                                 label: "Month",
                                 value: "month"

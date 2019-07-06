@@ -3,7 +3,7 @@
     <v-flex xs12>
       <transition name="slide-y-transition" mode="out-in">
         <v-progress-linear
-          v-if="isFetchingComplaint || $_issue_search_mixin_isSearchingComplaint"
+          v-if="$_complaint_mixin_isFetchingComplaint || $_issue_search_mixin_isSearchingComplaint"
           key="complaintLoading"
           :indeterminate="true"
         ></v-progress-linear>
@@ -40,6 +40,8 @@ import { vuex, vuexable } from "../../mixins/vuexable";
 import ComplaintListItem from "./ComplaintListItem";
 import MessageAlert from "../../components/MessageAlert";
 import { issueSearchMixin } from "../../mixins/issue-search-mixin";
+import { views } from "../../constants";
+import complaintMixin from "../../mixins/complaint-mixin";
 
 export default {
   props: {
@@ -50,7 +52,7 @@ export default {
     }
   },
 
-  mixins: [alertable, paginatable, vuexable, issueSearchMixin],
+  mixins: [alertable, paginatable, vuexable, complaintMixin, issueSearchMixin],
 
   components: {
     ComplaintListItem,
@@ -107,6 +109,15 @@ export default {
           } else {
             await this.callFetch();
           }
+
+          this.$router.push({
+            name: views.ISSUE.INDEX,
+            query: {
+              ...this.$route.query,
+              page: this.$_paginatable_currentPage,
+              descending: this.$_paginatable_descending
+            }
+          });
         }
       }
     }
@@ -117,16 +128,16 @@ export default {
       return vuex.modules.ISSUE;
     },
 
-    ...vuex.mapGetters(["isMobile", "isMobileClasses"]),
+    ...vuex.mapGetters(["isMobile", "isMobileClasses"])
 
-    ...vuex.mapWaitingGetters({
-      isFetchingComplaint: [vuex.actions.ISSUE.FETCH]
-    })
+    // ...vuex.mapWaitingGetters({
+    //   isFetchingComplaint: [vuex.actions.ISSUE.FETCH]
+    // })
   },
 
   methods: {
     ...vuex.mapWaitingActions(vuex.modules.ISSUE, [
-      vuex.actions.ISSUE.FETCH,
+      // vuex.actions.ISSUE.FETCH,
       vuex.actions.ISSUE.EDIT,
       vuex.actions.ISSUE.DELETE,
       vuex.actions.ISSUE.RESTORE
@@ -174,11 +185,16 @@ export default {
   },
 
   created() {
-    this.callFetch = _.debounce(this.callFetch, 400);
+    let descending = true;
+
+    if (this.$route.query.hasOwnProperty("descending")) {
+      descending = this.$route.query.descending == "true";
+    }
 
     this.$_paginatable_pagination = {
       sortBy: "updated_at",
-      descending: true
+      page: this.$route.query.page || 1,
+      descending
     };
   }
 };

@@ -20,7 +20,8 @@ export const ISSUE = {
     DELETE: 'complaintDelete',
     RESTORE: 'complaintRestore',
     EXPORT: 'complaintExport',
-    SEARCH: 'complaintSearch'
+    SEARCH: 'complaintSearch',
+    EXPORT_SEARCH: 'complaintExportSearch'
 };
 
 export const GROUP = {

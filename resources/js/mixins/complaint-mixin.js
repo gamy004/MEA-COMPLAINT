@@ -29,6 +29,7 @@ const complaintMixin = {
 
     computed: {
         ...vuex.mapWaitingGetters({
+            $_complaint_mixin_isFetchingComplaint: "fetching complaint",
             $_complaint_mixin_isFetchingShowComplaint: "fetching show complaint",
         }),
 
@@ -73,6 +74,7 @@ const complaintMixin = {
 
     methods: {
         ...vuex.mapWaitingActions(vuex.modules.ISSUE, {
+            [vuex.actions.ISSUE.FETCH]: "fetching complaint",
             [vuex.actions.ISSUE.SHOW]: "fetching show complaint"
         }),
 
