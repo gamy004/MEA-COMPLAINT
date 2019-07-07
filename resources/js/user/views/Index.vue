@@ -45,6 +45,10 @@
               <td :key="`group-${item.id}`">
                 <span class="body-1">{{ item.group_name }}</span>
               </td>
+
+              <td :key="`subgroup-${item.id}`">
+                <span class="body-1">{{ item.sub_group_name }}</span>
+              </td>
             </template>
           </custom-table>
           <!-- <v-data-table
@@ -137,6 +141,12 @@ export default {
           align: "left",
           sortable: true,
           value: "group_name"
+        },
+        {
+          text: "Sub Group",
+          align: "left",
+          sortable: true,
+          value: "sub_group_name"
         }
       ],
       alertable_messages: {

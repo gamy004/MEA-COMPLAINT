@@ -15,7 +15,12 @@ class Group extends BaseVuexModel {
         let response;
 
         try {
-            response = await api.get('api:groups.index', props);
+            response = await api.get('api:groups.index', {
+                filters: {
+                    parent_id: null
+                },
+                ...props
+            });
         } catch (error) {
             throw error;
         }

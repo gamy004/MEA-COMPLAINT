@@ -15,7 +15,9 @@ export const userMixin = {
             $_user_mixin_editing: "userMixin edit action",
             $_user_mixin_deleting: "userMixin delete action",
             $_user_mixin_restoring: "userMixin restore action",
-            $_user_mixin_fetchingRole: "userMixin fetch roles action"
+            $_user_mixin_fetchingRole: "userMixin fetch roles action",
+            $_user_mixin_fetchingGroup: "userMixin fetch groups action",
+            $_user_mixin_fetchingSubGroup: "userMixin fetch sub groups action",
         }),
 
         $_user_mixin_statuses() {
@@ -91,6 +93,18 @@ export const userMixin = {
 
             return roles ? mapTextValue(roles, "role", "id") : [];
         },
+
+        $_user_mixin_availableGroups() {
+            const roles = this.$_vuexable_getSortedValues(vuex.modules.GROUP);
+
+            return roles ? mapTextValue(roles, "name", "id") : [];
+        },
+
+        $_user_mixin_availableSubGroups() {
+            const roles = this.$_vuexable_getSortedValues(vuex.modules.SUB_GROUP);
+
+            return roles ? mapTextValue(roles, "name", "id") : [];
+        }
     },
 
     methods: {
@@ -120,8 +134,26 @@ export const userMixin = {
             }
         }),
 
-        $_user_mixin_findUser(statusId) {
-            return this.$_vuexable_getByKey(statusId, vuex.modules.USER);
+        ...vuex.mapWaitingActions(vuex.modules.GROUP, {
+            $_user_mixin_fetchGroup: {
+                action: vuex.actions.GROUP.FETCH,
+                loader: "userMixin fetch groups action"
+            }
+        }),
+
+        ...vuex.mapWaitingActions(vuex.modules.SUB_GROUP, {
+            $_user_mixin_fetchSubGroup: {
+                action: vuex.actions.SUB_GROUP.FETCH,
+                loader: "userMixin fetch sub groups action"
+            }
+        }),
+
+        $_user_mixin_findRole(id) {
+            return this.$_vuexable_getByKey(id, vuex.modules.ROLE);
+        },
+
+        $_user_mixin_findUser(id) {
+            return this.$_vuexable_getByKey(id, vuex.modules.USER);
         },
 
         async $_user_mixin_fetchUsers() {

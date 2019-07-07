@@ -17,7 +17,7 @@ const uploadable = {
             default: false
         },
 
-        avatar: {
+        uploadableAvatar: {
             type: String,
             default: ""
         }
@@ -32,11 +32,25 @@ const uploadable = {
             uploadable_uploaderRef: 'uploadable_uploader',
             uploadable_uploader: null,
             uploadable_uploading: false,
+            uploadable_uploadProgress: null,
             uploadable_uploadedFiles: []
         };
     },
 
     computed: {
+        $_uploadable_isIndeterminate() {
+            return _.isNull(this.uploadProgress);
+        },
+        $_uploadable_progressAdditionalProps() {
+            let props = {};
+
+            if (!this.$_uploadable_isIndeterminate) {
+                this.$set(props, "value", this.uploadable_uploadProgress);
+            }
+
+            return props;
+        },
+
         $_uploadable_uploaderFiles() {
             return this.uploadable_uploader ?
                 this.uploadable_uploader.getFiles : [];
@@ -52,14 +66,16 @@ const uploadable = {
                     hash_name,
                     filesize: size,
                     formattedFilesize: formatted_size,
-                    upload_path
+                    upload_path,
+                    url
                 }) => {
                     acc.push({
                         display_name: file.name,
                         hash_name,
                         size,
                         formatted_size,
-                        upload_path
+                        upload_path,
+                        url
                     });
 
                     return acc;
@@ -94,13 +110,13 @@ const uploadable = {
 
     methods: {
         onStartUpload() {
-            // this.uploading = true;
+            this.uploadable_uploading = true;
         },
 
         onChunkUploaded({
             totalParts
         }, currentChunk) {
-            // this.uploadProgress = (currentChunk / totalParts) * 100;
+            this.uploadable_uploadProgress = (currentChunk / totalParts) * 100;
         },
 
         onUploadError(error) {
@@ -108,9 +124,8 @@ const uploadable = {
         },
 
         stopUploading() {
-            // this.uploading = false;
-            // this.uploadProgress = null;
-            // this.this.uploadable_totalFiles = 0;
+            this.uploadable_uploading = false;
+            this.uploadable_uploadProgress = null;
         },
 
         dropFiles(event) {
@@ -142,6 +157,10 @@ const uploadable = {
             }
 
             this.stopUploading();
+
+            if (file.url) {
+                this.$emit("update:uploadable-avatar", file.url);
+            }
 
             this.$set(file, "uploaded", true);
 

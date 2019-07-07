@@ -2,6 +2,7 @@ import ISSUE from './Complaint';
 import USER from './User';
 import ROLE from './Role';
 import GROUP from './Group';
+import SUB_GROUP from './SubGroup';
 import ISSUE_STATUS from './IssueStatus';
 import FORM from './Form';
 import ISSUE_CATEGORY from './IssueCategory';
@@ -13,6 +14,7 @@ export default {
     USER,
     ROLE,
     GROUP,
+    SUB_GROUP,
     ISSUE_STATUS,
     FORM,
     ISSUE_CATEGORY,

@@ -35,6 +35,10 @@ export const GROUP = {
     FETCH: 'groupFetch'
 };
 
+export const SUB_GROUP = {
+    FETCH: 'subGroupFetch'
+};
+
 export const ROLE = {
     FETCH: 'roleFetch'
 };

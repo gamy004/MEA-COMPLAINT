@@ -40,7 +40,7 @@ class UsersTableSeeder extends Seeder
 
                 if ($r->role !== 'admin') {
                     $group_ids = factory(Group::class, 5)
-                        ->create()
+                        ->create(['parent_id' => null])
                         ->pluck('id')
                         ->toArray();
                 }
@@ -49,13 +49,23 @@ class UsersTableSeeder extends Seeder
 
                 foreach ($group_ids as $group_id) {
                     // loop user
+                    
                     for ($j=1; $j <= 10; $j++) {
+                        $sub_group_id = null;
+
+                        if ($r->role !== 'admin') {
+                            $sub_group_id = factory(Group::class, 1)
+                                ->create(['parent_id' => $group_id])
+                                ->pluck('id')
+                                ->first();
+                        }
+
                         $username = $r->role.$i;
                         $password = Hash::make($username.'password');
 
                         $user = factory(User::class)
                             ->create(
-                                compact('username', 'password', 'group_id')
+                                compact('username', 'password', 'group_id', 'sub_group_id')
                             );
 
                         array_push($user_ids, $user->id);

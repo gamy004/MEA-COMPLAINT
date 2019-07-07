@@ -30,13 +30,32 @@ class User extends BaseModel {
         return '';
     }
 
+    static async [actions.USER.STORE](data) {
+        let response;
+
+        try {
+            response = await api.post('api:users.store', {
+                includes: [
+                    'roles:sideload',
+                    'avatar'
+                ],
+                ...data,
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
     static async [actions.USER.UPDATE](data) {
         let response;
 
         try {
             response = await api.put('api:users.update', {
                 includes: [
-                    'roles:sideload'
+                    'roles:sideload',
+                    'avatar'
                 ],
                 ...data,
             });
@@ -91,7 +110,7 @@ class User extends BaseModel {
 
         try {
             response = await api.get('api:users.index', {
-                includes: ["roles:sideload"],
+                includes: ["roles:sideload", 'avatar'],
                 ...data
             });
         } catch (error) {

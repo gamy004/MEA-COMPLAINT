@@ -65,6 +65,9 @@ class DBCol
     const _PUBLIC = 'public';
 
     const GROUP_ID = 'group_id';
+    const SUB_GROUP_ID = 'sub_group_id';
     const ROLE_ID = 'role_id';
     const TYPE_ID = 'type_id';
+    const AVATAR_ID = 'avatar_id';
+    const PARENT_ID = 'parent_id';
 }

@@ -51,5 +51,8 @@ class Data
      */
     const USERS = 'users';
     const GROUP = 'group';
+    const SUB_GROUP = 'sub_group';
     const GROUP_NAME = 'group_name';
+    const SUB_GROUP_NAME = 'sub_group_name';
+    const AVATAR = 'avatar';
 }

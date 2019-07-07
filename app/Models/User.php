@@ -25,8 +25,9 @@ class User extends Authenticatable
         DBCol::NAME,
         DBCol::PASSWORD,
         DBCol::EMAIL,
-        DBCol::AVATAR,
         DBCol::GROUP_ID,
+        DBCol::SUB_GROUP_ID,
+        DBCol::AVATAR_ID,
         DBCol::INBOX_SETTINGS
     ];
 
@@ -65,5 +66,10 @@ class User extends Authenticatable
     public function group()
     {
         return $this->belongsTo(Group::class);
+    }
+
+    public function avatar()
+    {
+        return $this->belongsTo(File::class);
     }
 }

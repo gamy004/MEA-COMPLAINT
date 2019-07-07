@@ -7,6 +7,7 @@ import * as getters from './stores/getters';
 import user from './stores/modules/users';
 import role from './stores/modules/roles';
 import file from './stores/modules/files';
+import subGroup from './stores/modules/sub-groups';
 
 const debug = process.env.NODE_ENV !== 'production';
 
@@ -31,7 +32,8 @@ const store = new Vuex.Store({
     modules: {
         [modules.USER]: user,
         [modules.ROLE]: role,
-        [modules.FILE]: file
+        [modules.FILE]: file,
+        [modules.SUB_GROUP]: subGroup
     },
 
     strict: debug,

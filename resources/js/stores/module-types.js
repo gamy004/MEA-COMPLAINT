@@ -3,6 +3,7 @@ export const USER = 'users';
 export const ROLE = 'roles';
 export const ISSUE = 'complaints';
 export const GROUP = 'groups';
+export const SUB_GROUP = 'subGroups';
 export const ISSUE_NOTE = 'issueNotes';
 export const ISSUE_STATUS = 'issueStatuses';
 export const ISSUE_CATEGORY = 'issueCategories';

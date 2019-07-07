@@ -9,6 +9,10 @@ class Group extends Model
 {
     const FK = 'group_id';
 
+    protected $fillable = [
+        DBCol::NAME
+    ];
+
     public function users()
     {
         return $this->hasMany(User::class, self::FK);
@@ -22,6 +26,16 @@ class Group extends Model
     public function notes()
     {
         return $this->hasMany(IssueNote::class, DBCol::CREATED_BY);
+    }
+
+    public function subGroups()
+    {
+        return $this->hasMany(Group::class, DBCol::PARENT_ID);
+    }
+
+    public function parentGroup()
+    {
+        return $this->belongsTo(Group::class, DBCol::PARENT_ID);
     }
 
     public function relatedIssues()

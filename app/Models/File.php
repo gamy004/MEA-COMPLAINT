@@ -37,6 +37,11 @@ class File extends Model
         return array('Content-Type' => $this->{DBCol::MIME});
     }
 
+    public function users()
+    {
+        return $this->hasMany(User::class, DBCol::AVATAR_ID);
+    }
+
     /**
      * Relation with issues table
      *

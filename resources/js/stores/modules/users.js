@@ -53,6 +53,18 @@ const userStore = {
             }
         },
 
+        async [vuex.actions.STORE](context, input) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'USER',
+                    action: 'STORE',
+                    params: input
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
         async [vuex.actions.UPDATE](context, input) {
             try {
                 return await context.dispatch(vuex.actions.REQUEST, {
