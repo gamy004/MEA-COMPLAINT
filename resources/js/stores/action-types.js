@@ -8,11 +8,18 @@ export const DELETE = 'delete';
 
 export const USER = {
     SIGN_IN: 'userSignIn',
-    GET_AUTH: 'userGetAuth'
+    GET_AUTH: 'userGetAuth',
+    FETCH: 'userFetch',
+    STORE: 'userStore',
+    EDIT: 'userEdit',
+    UPDATE: 'userUpdate',
+    DELETE: 'userDelete',
+    RESTORE: 'userRestore',
 };
 
 export const ISSUE = {
     FETCH: 'complaintFetch',
+    FETCH_SEARCH: 'complaintFetchAllSearch',
     SHOW: 'complaintShow',
     STORE: 'complaintStore',
     EDIT: 'complaintEdit',
@@ -26,6 +33,10 @@ export const ISSUE = {
 
 export const GROUP = {
     FETCH: 'groupFetch'
+};
+
+export const ROLE = {
+    FETCH: 'roleFetch'
 };
 
 export const FILE = {

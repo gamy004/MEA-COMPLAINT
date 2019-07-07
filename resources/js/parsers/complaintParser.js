@@ -188,8 +188,33 @@ function parseDelete(context, {
     );
 };
 
+function parseFetchSearch(context, {
+    issues = []
+} = {}) {
+
+    const {
+        rootCommit,
+        vuex
+    } = context;
+
+    const ids = _.map(issues, "id");
+
+    ids.forEach(id => {
+        rootCommit(
+            vuex.mutations.UPDATE,
+            vuex.modules.ISSUE, {
+                key: "selected",
+                attr: id,
+                value: true,
+                state: true
+            }
+        );
+    });
+};
+
 export default {
     [actions.ISSUE.FETCH]: parseFetch,
+    [actions.ISSUE.FETCH_SEARCH]: parseFetchSearch,
     [actions.ISSUE.SEARCH]: parseFetch,
     [actions.ISSUE.SHOW]: parseStore,
     [actions.ISSUE.EDIT]: parseEdit,

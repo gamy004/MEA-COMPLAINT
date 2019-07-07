@@ -1,5 +1,6 @@
 import ISSUE from './Complaint';
 import USER from './User';
+import ROLE from './Role';
 import GROUP from './Group';
 import ISSUE_STATUS from './IssueStatus';
 import FORM from './Form';
@@ -10,6 +11,7 @@ import FILE from './File';
 export default {
     ISSUE,
     USER,
+    ROLE,
     GROUP,
     ISSUE_STATUS,
     FORM,

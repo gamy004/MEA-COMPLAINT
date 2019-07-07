@@ -47,7 +47,9 @@ class Data
     const UPLOADED_FILES = 'uploaded_files';
 
     /**
-     * Company API
+     * User API
      */
     const USERS = 'users';
+    const GROUP = 'group';
+    const GROUP_NAME = 'group_name';
 }

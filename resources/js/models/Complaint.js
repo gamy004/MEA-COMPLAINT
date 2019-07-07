@@ -61,6 +61,21 @@ class Complaint extends BaseVuexModel {
         return response;
     }
 
+    static async [actions.ISSUE.FETCH_SEARCH](props = {}) {
+        let response;
+
+        try {
+            response = await api.get('api:issues.fetch-search', {
+                select: ["issues:id"],
+                ...props
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
     static async [actions.ISSUE.SHOW](data) {
         let response;
 
@@ -336,7 +351,7 @@ class Complaint extends BaseVuexModel {
                             for (let index = 0; index < groupedConfigs[unit].length; index++) {
                                 const config = groupedConfigs[unit][index];
                                 const currentMoment = moment();
-                                const configMoment = moment(this.created_at).add(config.duration, config.unit);
+                                const configMoment = moment(this.updated_at).add(config.duration, config.unit);
 
                                 // console.log(
                                 //     this.created_at,

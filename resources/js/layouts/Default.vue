@@ -117,16 +117,16 @@ export default {
           text: "Inbox",
           route: { name: views.ISSUE.INDEX }
         },
-        {
-          icon: "start",
-          text: "Starred",
-          route: { name: views.ISSUE.INDEX }
-        },
-        {
-          icon: "lightbulb_outline",
-          text: "Notes",
-          route: { name: views.ISSUE.INDEX }
-        },
+        // {
+        //   icon: "start",
+        //   text: "Starred",
+        //   route: { name: views.ISSUE.INDEX }
+        // },
+        // {
+        //   icon: "lightbulb_outline",
+        //   text: "Notes",
+        //   route: { name: views.ISSUE.INDEX }
+        // },
         { divider: true },
         {
           icon: "send",
@@ -159,6 +159,11 @@ export default {
           icon: "bookmarks",
           text: "Statuses",
           route: { name: views.ISSUE_STATUS.INDEX }
+        },
+        {
+          icon: "group",
+          text: "Users & Groups",
+          route: { name: views.USER.INDEX }
         }
         //   { icon: "chat_bubble", text: "Trash" },
         //   { icon: "help", text: "Help" },

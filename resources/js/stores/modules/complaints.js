@@ -51,6 +51,29 @@ const userStore = {
             }
         },
 
+        async [vuex.actions.ISSUE.FETCH_SEARCH](context, params = {}) {
+            let response;
+
+            try {
+                response = await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'ISSUE',
+                    action: 'FETCH_SEARCH',
+                    params: {
+                        pagination: {
+                            ...context.state.base.pagination,
+                            rowsPerPage: -1
+                        },
+                        filter_groups: context.state.base.filter_groups,
+                        ...params
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+
+            return response;
+        },
+
         async [vuex.actions.ISSUE.SHOW](context, issue) {
             try {
                 return await context.dispatch(vuex.actions.REQUEST, {

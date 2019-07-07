@@ -5,12 +5,15 @@ namespace App\IOCs;
 class DBCol
 {
     const ID = 'id';
+    const USERNAME = 'username';
     const NAME = 'name';
     const EMAIL = 'email';
     const PASSWORD = 'password';
     const PHONE = 'phone';
     const AVATAR = 'avatar';
     const AVAILABLE = 'available';
+    const INBOX_SETTINGS = 'inbox_settings';
+    const ROLE = 'role';
     const TYPE = 'type';
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
@@ -63,6 +66,5 @@ class DBCol
 
     const GROUP_ID = 'group_id';
     const ROLE_ID = 'role_id';
-    const ROLE = 'role';
     const TYPE_ID = 'type_id';
 }

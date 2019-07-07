@@ -48,7 +48,13 @@ Route::group([
             /**
              * Custom route IssueController
              */
-            Route::get('issues/search', 'IssueController@search')->name('issues.search');
+            // Route::get('issues/search', 'IssueController@search')->name('issues.search');
+            // Route::get('issues/search', 'IssueController@search')->name('issues.search');
+
+            Route::group(['as' => 'issues.', 'prefix' => 'issues'], function () {
+                Route::get('/search', 'IssueController@search')->name('search');
+                Route::get('/fetch-search', 'IssueController@fetchSearch')->name('fetch-search');
+            });
 
             Route::group(['as' => 'issues.', 'prefix' => 'issues/{issue}'], function () {
                 Route::post('/restore', 'IssueController@restore')->name('restore');
@@ -76,7 +82,9 @@ Route::group([
             });
 
             Route::resources([
+                'users' => 'UserController',
                 'issues' => 'IssueController',
+                'roles' => 'RoleController',
                 'groups' => 'GroupController',
                 'issue-statuses' => 'IssueStatusController',
                 'issue-categories' => 'IssueCategoryController',

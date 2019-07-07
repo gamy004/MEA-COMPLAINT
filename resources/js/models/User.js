@@ -19,6 +19,7 @@ class User extends BaseModel {
             phone: null,
             avatar: '',
             roles: [],
+            inbox_settings: null,
             ...data
         });
 
@@ -27,6 +28,23 @@ class User extends BaseModel {
 
     static get defaultAvatar() {
         return '';
+    }
+
+    static async [actions.USER.UPDATE](data) {
+        let response;
+
+        try {
+            response = await api.put('api:users.update', {
+                includes: [
+                    'roles:sideload'
+                ],
+                ...data,
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
     }
 
     static async [actions.USER.SIGN_IN](username, password) {
@@ -66,6 +84,21 @@ class User extends BaseModel {
         return new User({
             ...user
         });
+    }
+
+    static async [actions.USER.FETCH](data) {
+        let response;
+
+        try {
+            response = await api.get('api:users.index', {
+                includes: ["roles:sideload"],
+                ...data
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
     }
 
     $initRoleMapping() {

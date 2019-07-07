@@ -41,91 +41,29 @@ const userStore = {
             return authUser;
         },
 
-        async [vuex.actions.STORE]({
-            commit,
-            dispatch
-        }, {
-            form,
-            routeParam
-        }) {
-            let v;
-
+        async [vuex.actions.USER.FETCH](context, params = {}) {
             try {
-                v = await API.create(form, routeParam);
-            } catch (error) {
-                dispatch(`${vuex.modules.SNACKBAR}/${vuex.actions.TOAST}`, {
-                    text: error,
-                    color: 'error'
-                }, {
-                    root: true
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'USER',
+                    action: 'FETCH',
+                    params
                 });
-
+            } catch (error) {
                 throw error;
             }
-
-            const {
-                response
-            } = v, {
-                user
-            } = response.data,
-                authUser = new Auth(user);
-
-            commit(vuex.mutations.STORE, {
-                value: [authUser],
-                strategy: "merge"
-            });
-
-            dispatch(`${vuex.modules.SNACKBAR}/${vuex.actions.TOAST}`, {
-                text: 'User is created successfully'
-            }, {
-                root: true
-            });
-
-            return v;
         },
 
-        async [vuex.actions.UPDATE]({
-            commit,
-            dispatch
-        }, {
-            form,
-            routeParam
-        }) {
-            let v;
-
+        async [vuex.actions.UPDATE](context, input) {
             try {
-                v = await API.update(form, routeParam);
-            } catch (error) {
-                dispatch(`${vuex.modules.SNACKBAR}/${vuex.actions.TOAST}`, {
-                    text: error,
-                    color: 'error'
-                }, {
-                    root: true
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'USER',
+                    action: 'UPDATE',
+                    params: input
                 });
-
+            } catch (error) {
                 throw error;
             }
-
-            const {
-                response
-            } = v, {
-                user
-            } = response.data,
-                authUser = new Auth(user);
-
-            commit(vuex.mutations.STORE, {
-                value: [authUser],
-                strategy: "merge"
-            });
-
-            dispatch(`${vuex.modules.SNACKBAR}/${vuex.actions.TOAST}`, {
-                text: 'User is updated successfully'
-            }, {
-                root: true
-            });
-
-            return v;
-        }
+        },
     },
 
     mutations: {

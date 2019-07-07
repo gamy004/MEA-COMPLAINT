@@ -15,3 +15,7 @@ export const issueCategory = {
 export const issueStatus = {
     index: () => import( /* webpackChunkName: "mea-status-index" */ './issueStatus/views/Index')
 }
+
+export const user = {
+    index: () => import( /* webpackChunkName: "mea-user-index" */ './user/views/Index')
+}

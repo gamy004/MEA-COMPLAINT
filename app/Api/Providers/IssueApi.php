@@ -38,7 +38,7 @@ class IssueApi extends BaseApi implements ApiInterface
         parent::__construct($model);
     }
 
-    public function search()
+    public function fetchSearch()
     {
         $original_parser = $this->getParser();
         $request_parser = $this->getParser();
@@ -60,10 +60,24 @@ class IssueApi extends BaseApi implements ApiInterface
         
         $search_result = $this->setCustomQuery(
             $this->querySearch()
-        )->get();
-        
-        $data = $search_result->get($this->getArchitectKey());
+        );
 
+        $data = $this->get();
+        // dd($data);
+        $this->setParser($original_parser);
+
+        $this->setCustomQuery(null);
+
+        return $data;
+    }
+
+    public function search(array $raw)
+    {
+        $original_parser = $this->getParser();
+        $search_result = $this->fetchSearch($raw);
+        // dd($search_result);
+        $key = $this->getArchitectKey();
+        $data = $search_result->get($key);
         $total = $search_result->get(Data::TOTAL);
 
         if (count($data)) {
@@ -71,7 +85,6 @@ class IssueApi extends BaseApi implements ApiInterface
             
             $original_parser->setResult("select", []);
             $original_parser->setResult("search", ["keyword" => "", "fields" => []]);
-            // $original_parser->setResult("sort", []);
             $original_parser->setResult("offset", 0);
 
             $original_parser->setResult("filter_groups", [
@@ -87,9 +100,6 @@ class IssueApi extends BaseApi implements ApiInterface
                     "or" => false
                 ]
             ]);
-            
-            $this->setParser($original_parser);
-            $this->setCustomQuery(null);
             
             $search_result = $this->get();
             $search_result->put(Data::TOTAL, $total);

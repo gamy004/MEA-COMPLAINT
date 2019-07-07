@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar tabs dense class="custom-toolbar elevation-0">
+  <v-toolbar tabs dense :absolute="absolute" class="custom-toolbar elevation-0">
     <slot name="left"></slot>
 
     <template v-for="(item, i) in items">
@@ -144,6 +144,10 @@ export default {
     items: {
       type: Array,
       default: () => []
+    },
+    absolute: {
+      type: Boolean,
+      default: () => false
     }
   },
   methods: {

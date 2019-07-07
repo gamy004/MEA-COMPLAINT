@@ -86,14 +86,34 @@ export default {
   },
 
   watch: {
-    // active: {
-    //   immediate: true,
-    //   async handler(active) {
-    //     if (active) {
-    //       await this[vuex.actions.ISSUE.FETCH]();
-    //     }
-    //   }
-    // },
+    auth: {
+      immediate: true,
+      deep: true,
+      handler({ inbox_settings = null } = {}) {
+        let rowsPerPage = 10;
+
+        if (inbox_settings) {
+          inbox_settings = JSON.parse(inbox_settings);
+
+          rowsPerPage = inbox_settings.rowsPerPage;
+        }
+
+        if (rowsPerPage === this.$_paginatable_rowsPerPage) return;
+
+        let descending = true;
+
+        if (this.$route.query.hasOwnProperty("descending")) {
+          descending = this.$route.query.descending == "true";
+        }
+
+        this.$_paginatable_pagination = {
+          sortBy: "updated_at",
+          page: this.$route.query.page || 1,
+          descending,
+          rowsPerPage
+        };
+      }
+    },
 
     $_paginatable_pagination: {
       immediate: true,
@@ -101,6 +121,9 @@ export default {
       async handler(v, ov) {
         if (this.active) {
           console.log("ComplaintList pagination changed: ", v);
+
+          // if (!this.$_vuexable_shouldUpdatePagination(v, vuex.modules.ISSUE))
+          //   return;
 
           const { $_issue_search_mixin_searchFiltersVuex = [] } = this;
 
@@ -127,6 +150,8 @@ export default {
     $_paginatable_module() {
       return vuex.modules.ISSUE;
     },
+
+    ...vuex.mapState(["auth"]),
 
     ...vuex.mapGetters(["isMobile", "isMobileClasses"])
 
@@ -182,20 +207,6 @@ export default {
         throw error;
       }
     }
-  },
-
-  created() {
-    let descending = true;
-
-    if (this.$route.query.hasOwnProperty("descending")) {
-      descending = this.$route.query.descending == "true";
-    }
-
-    this.$_paginatable_pagination = {
-      sortBy: "updated_at",
-      page: this.$route.query.page || 1,
-      descending
-    };
   }
 };
 </script>

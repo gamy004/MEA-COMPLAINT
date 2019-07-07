@@ -33,7 +33,12 @@ const routes = [{
                 path: 'statuses',
                 name: constants.views.ISSUE_STATUS.INDEX,
                 component: views.issueStatus.index
-            }
+            },
+            {
+                path: 'users',
+                name: constants.views.USER.INDEX,
+                component: views.user.index
+            },
         ]
     },
 

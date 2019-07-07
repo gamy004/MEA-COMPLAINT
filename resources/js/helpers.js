@@ -136,7 +136,7 @@ export function onEmit(eventName, $event, item, ...indexes) {
         () => ({});
 }
 
-export function mapTextValue(data, text, value) {
+export function mapTextValue(data, text = 'id', value = 'id') {
     return _.map(data, (x) => ({
         text: x[text],
         value: x[value]

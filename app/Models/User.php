@@ -13,13 +13,21 @@ class User extends Authenticatable
     use Notifiable,
         SoftDeletes;
 
+    const FK = 'user_id';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'username', 'name', 'email', 'avatar', 'password',
+        DBCol::USERNAME,
+        DBCol::NAME,
+        DBCol::PASSWORD,
+        DBCol::EMAIL,
+        DBCol::AVATAR,
+        DBCol::GROUP_ID,
+        DBCol::INBOX_SETTINGS
     ];
 
     /**

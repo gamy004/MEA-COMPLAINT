@@ -117,6 +117,11 @@ class IssueController extends BaseApiController
         return $this->api->search($request->all());
     }
 
+    public function fetchSearch(Request $request)
+    {
+        return $this->api->fetchSearch($request->all());
+    }
+
     /**
      * Generate report the specified resource from searchResult.
      *

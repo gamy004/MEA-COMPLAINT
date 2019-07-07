@@ -22,7 +22,7 @@
           </v-list>
         </v-menu>-->
         <v-spacer></v-spacer>
-        <custom-toolbar class="bb-1 pb-0 align-right" :items="itemsRight"></custom-toolbar>
+        <!-- <custom-toolbar class="bb-1 pb-0 align-right" :items="itemsRight"></custom-toolbar> -->
       </v-layout>
 
       <v-layout class="content__wrapper" column>

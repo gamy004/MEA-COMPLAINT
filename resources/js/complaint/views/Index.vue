@@ -1,18 +1,30 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <custom-toolbar id="complaintToolbar" class="bb-1 pb-0" :items="items">
+      <custom-toolbar
+        id="complaintToolbar"
+        class="bb-1 pb-0 grey lighten-4"
+        absolute
+        :items="items"
+      >
         <template v-slot:extension>
-          <v-tabs v-model="tab" v-if="showTab" slider-color="deep-orange">
-            <v-tab
-              v-for="(tab, tabIndex) in tabs"
-              :key="`tab-${tabIndex}`"
-              :href="`#tab-${tabIndex}`"
-            >
-              <v-icon v-if="tab.icon">{{ tab.icon }}</v-icon>
-              <span v-if="tab.text" class="ml-3">{{ tab.text }}</span>
-            </v-tab>
-          </v-tabs>
+          <v-layout row wrap>
+            <v-flex xs12>
+              <complaint-select-all-search class="grey lighten-4" @click:clear="unCheckAll" />
+            </v-flex>
+            <v-flex>
+              <v-tabs v-model="tab" v-if="showTab" slider-color="deep-orange">
+                <v-tab
+                  v-for="(tab, tabIndex) in tabs"
+                  :key="`tab-${tabIndex}`"
+                  :href="`#tab-${tabIndex}`"
+                >
+                  <v-icon v-if="tab.icon">{{ tab.icon }}</v-icon>
+                  <span v-if="tab.text" class="ml-3">{{ tab.text }}</span>
+                </v-tab>
+              </v-tabs>
+            </v-flex>
+          </v-layout>
         </template>
       </custom-toolbar>
 
@@ -47,6 +59,8 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <dialog-inbox-config :dialogable-visible.sync="showConfig" />
   </v-layout>
 </template>
 
@@ -55,6 +69,8 @@ import ComplaintList from "../components/ComplaintList";
 import ComplaintReportGenerator from "../components/ComplaintReportGenerator";
 import CustomToolbar from "../../components/CustomToolbar";
 import ComplaintForm from "../components/ComplaintForm";
+import ComplaintSelectAllSearch from "../components/ComplaintSelectAllSearch";
+import DialogInboxConfig from "../components/DialogInboxConfig";
 import complaintMixin from "../../mixins/complaint-mixin";
 import { onEmit } from "../../helpers";
 import issueStatusMixin from "../../mixins/issue-status-mixin";
@@ -77,18 +93,67 @@ export default {
     ComplaintList,
     ComplaintReportGenerator,
     CustomToolbar,
-    ComplaintForm
+    ComplaintForm,
+    ComplaintSelectAllSearch,
+    DialogInboxConfig
   },
 
   data() {
     return {
-      items: [
+      tab: null,
+      showTab: false,
+      showConfig: false,
+      tabs: [
+        {
+          icon: "inbox",
+          text: "Primary",
+          type: "primary"
+        }
+      ]
+    };
+  },
+
+  watch: {
+    tabs: {
+      immediate: true,
+      handler(v) {
+        setTimeout(() => {
+          this.showTab = true; // slider problem
+        }, 200);
+      }
+    },
+
+    $_paginatable_currentPaginatedList(paginatedList) {
+      this.items.forEach((item, index) => {
+        onEmit("onPaginatedListChange", paginatedList, item, index);
+      });
+    }
+
+    // $_paginatable_currentPage(page) {
+    //   this.items.forEach((item, index) => {
+    //     this.onEmit("onPageChange", page, item, index);
+    //   });
+    // },
+
+    // $_paginatable_descending(descending) {
+    //   this.items.forEach((item, index) => {
+    //     this.onEmit("onDescendingChange", descending, item, index);
+    //   });
+    // }
+  },
+
+  computed: {
+    items() {
+      return [
         {
           select: true,
           selected: false,
           color: "deep-orange",
           indeterminate: item => {
-            return this.$_paginatable_someSelected;
+            return (
+              this.$_paginatable_someSelected &&
+              !this.$_paginatable_isSelectedAll
+            );
           },
 
           onChange: value => {
@@ -154,10 +219,14 @@ export default {
             if ($_issue_search_mixin_searchFiltersVuex.length) {
               this.$_issue_search_mixin_searchComplaint();
             } else {
-              this.callFetch();
+              this[vuex.actions.ISSUE.FETCH]();
             }
           }
         },
+        { spacer: true },
+        // {
+        //   component: () => ComplaintSelectAllSearch
+        // },
         { spacer: true },
         {
           menu: true,
@@ -216,6 +285,13 @@ export default {
           menuItems: [
             { text: "Generate", subheading: true },
             {
+              text: "By Current Selected",
+              disabled: () => !this.vuexSomeSelectedValues,
+              onClick: () => {
+                this.$_issue_report_mixin_generateCurrentSelected();
+              }
+            },
+            {
               text: "By Current Filter",
               onClick: () => {
                 this.$_issue_report_mixin_generateCurrentFilter();
@@ -237,53 +313,45 @@ export default {
             { component: () => ComplaintReportGenerator }
           ]
         },
-        { icon: "settings", text: "Settings" }
-      ],
-
-      tab: null,
-      showTab: false,
-      tabs: [
         {
-          icon: "inbox",
-          text: "Primary",
-          type: "primary"
+          icon: "settings",
+          text: "Settings",
+          onClick: () => {
+            this.showConfig = true;
+          }
         }
-      ]
-    };
-  },
+      ];
+    },
+    vuexSelected: {
+      get() {
+        return this.$_vuexable_getState("selected", vuex.modules.ISSUE);
+      },
 
-  watch: {
-    tabs: {
-      immediate: true,
-      handler(v) {
-        setTimeout(() => {
-          this.showTab = true; // slider problem
-        }, 200);
+      set(value) {
+        this.$_vuexable_setState(
+          { key: "selected", value },
+          vuex.modules.ISSUE
+        );
+
+        return this;
       }
     },
+    vuexSelectedValues() {
+      return Object.values(this.vuexSelected);
+    },
 
-    $_paginatable_currentPaginatedList(paginatedList) {
-      this.items.forEach((item, index) => {
-        onEmit("onPaginatedListChange", paginatedList, item, index);
-      });
+    vuexSomeSelectedValues() {
+      return _.some(this.vuexSelectedValues, Boolean);
     }
-
-    // $_paginatable_currentPage(page) {
-    //   this.items.forEach((item, index) => {
-    //     this.onEmit("onPageChange", page, item, index);
-    //   });
-    // },
-
-    // $_paginatable_descending(descending) {
-    //   this.items.forEach((item, index) => {
-    //     this.onEmit("onDescendingChange", descending, item, index);
-    //   });
-    // }
   },
 
   methods: {
     isTabActive(key) {
       return this.tab === key;
+    },
+
+    unCheckAll() {
+      this.$set(this.items[0], "selected", false);
     }
   },
 
@@ -301,6 +369,10 @@ export default {
 }
 
 #complaintToolbar {
+  position: sticky;
+  top: 65px;
+  z-index: 2;
+
   .v-toolbar__content {
     border-bottom: 1px solid #E0E0E0;
     padding: 0 16px;
@@ -308,6 +380,7 @@ export default {
 
   .v-toolbar__extension {
     padding: 0;
+    height: auto !important;
 
     .v-tabs__item {
       padding-right: 5rem;
@@ -326,5 +399,11 @@ export default {
 .complaint-selection-menu {
   width: 30px;
   margin-left: -0.5rem;
+}
+
+@media only screen and (max-width: 1024px) {
+  #complaintToolbar {
+    top: 57px;
+  }
 }
 </style>

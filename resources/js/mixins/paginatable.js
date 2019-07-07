@@ -47,12 +47,12 @@ export const paginatable = {
                     page = 1
                 } = this.$_paginatable_pagination;
 
-                return page;
+                return _.toInteger(page);
             },
             set(value) {
                 this.$_vuexable_updatePagination({
                     key: 'page',
-                    value
+                    value: _.toInteger(value)
                 }, this.$_paginatable_module);
             }
         },

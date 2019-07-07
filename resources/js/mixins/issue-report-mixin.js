@@ -5,7 +5,8 @@ import {
 } from "./vuexable";
 import {
     filterContains,
-    formatDateFile
+    formatDateFile,
+    filterIn
 } from "../helpers";
 
 const IssueReportMixin = {
@@ -129,6 +130,59 @@ const IssueReportMixin = {
             } else {
                 this.$_issue_report_mixin_reportType = 'date';
             }
+        },
+
+        async $_issue_report_mixin_generateCurrentSelected() {
+            let filter_groups = this.$_vuexable_getState(
+                "filter_groups",
+                vuex.modules.ISSUE
+            );
+
+            const pagination = this.$_vuexable_getState(
+                "pagination",
+                vuex.modules.ISSUE
+            );
+
+            const selected = this.$_vuexable_getState(
+                "selected",
+                vuex.modules.ISSUE
+            );
+
+            let selectAll = this.$_vuexable_getState(
+                "selectAll",
+                vuex.modules.ISSUE
+            );
+
+            if (!selectAll) {
+                const selectedIds = [];
+
+                for (const id in selected) {
+                    if (selected.hasOwnProperty(id)) {
+                        const isSelected = selected[id];
+
+                        if (isSelected) {
+                            selectedIds.push(id);
+                        }
+                    }
+                }
+
+                filter_groups = [{
+                    filters: [filterIn("id", selectedIds)]
+                }];
+            }
+
+            let sort = pagination.sortBy;
+
+            if (pagination.descending) {
+                sort = `-${sort}`;
+            }
+
+            this.$_issue_report_mixin_export(
+                filter_groups, {
+                    action: vuex.actions.ISSUE.EXPORT_SEARCH,
+                    sort: [sort]
+                }
+            );
         },
 
         async $_issue_report_mixin_generateCurrentFilter() {

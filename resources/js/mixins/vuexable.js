@@ -203,6 +203,7 @@ export const vuexable = {
 
         $_vuexable_shouldUpdatePagination(newPagination, module = '') {
             const oldPagination = this.$_vuexable_getState("pagination", module);
+            console.log(newPagination, oldPagination);
 
             return !_.isEqual(newPagination, oldPagination);
         },

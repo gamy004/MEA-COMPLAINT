@@ -5,6 +5,7 @@ import * as getters from './stores/getters';
 
 // Modules
 import user from './stores/modules/users';
+import role from './stores/modules/roles';
 import file from './stores/modules/files';
 
 const debug = process.env.NODE_ENV !== 'production';
@@ -29,6 +30,7 @@ const store = new Vuex.Store({
 
     modules: {
         [modules.USER]: user,
+        [modules.ROLE]: role,
         [modules.FILE]: file
     },
 

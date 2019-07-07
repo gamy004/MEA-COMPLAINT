@@ -13,6 +13,7 @@ class Role extends Model
 
     const ADMIN = 'admin';
     const USER = 'user';
+    const FK = 'role_id';
 
     public function users()
     {

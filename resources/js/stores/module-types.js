@@ -1,5 +1,6 @@
 export const BASE = 'base';
 export const USER = 'users';
+export const ROLE = 'roles';
 export const ISSUE = 'complaints';
 export const GROUP = 'groups';
 export const ISSUE_NOTE = 'issueNotes';
