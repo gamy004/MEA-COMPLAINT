@@ -22,7 +22,7 @@
                     <v-text-field
                       label="Username (required)"
                       v-model="form.username"
-                      color="deep-orange"
+                      color="indigo accent-2"
                       :error="form.errors.has('username')"
                       :error-messages="form.errors.getError('username')"
                       @input="form.errors.clear('username')"
@@ -33,7 +33,7 @@
                     <v-text-field
                       label="Name (required)"
                       v-model="form.name"
-                      color="deep-orange"
+                      color="indigo accent-2"
                       :error="form.errors.has('name')"
                       :error-messages="form.errors.getError('name')"
                       @input="form.errors.clear('name')"
@@ -43,21 +43,26 @@
                     <v-text-field
                       label="Email"
                       v-model="form.email"
-                      color="deep-orange"
+                      color="indigo accent-2"
                       :error="form.errors.has('email')"
                       :error-messages="form.errors.getError('email')"
                       @input="form.errors.clear('email')"
                     ></v-text-field>
                   </v-flex>
                   <v-flex xs12 md6>
-                    <v-text-field label="Phone" mask="phone" v-model="form.phone"></v-text-field>
+                    <v-text-field
+                      label="Phone"
+                      mask="phone"
+                      v-model="form.phone"
+                      color="indigo accent-2"
+                    ></v-text-field>
                   </v-flex>
                   <v-flex xs12 md6>
                     <v-autocomplete
                       :items="$_user_mixin_availableRoles"
                       label="Role"
                       v-model="form.role"
-                      color="deep-orange"
+                      color="indigo accent-2"
                       hide-no-data
                       :loading="$_user_mixin_fetchingRole"
                       :error="form.errors.has('role')"
@@ -68,7 +73,7 @@
                   </v-flex>
                 </v-layout>
 
-                <v-subheader class="px-0 mt-3">Advance</v-subheader>
+                <v-subheader v-if="!selectRoleAdmin" class="px-0 mt-3">Group</v-subheader>
 
                 <v-layout wrap>
                   <!-- <v-flex sm12>
@@ -145,6 +150,10 @@ export default {
 
     dialogTitle() {
       return _.capitalize(`${this.$_managable_actionButton} User`);
+    },
+
+    selectRoleAdmin() {
+      return false;
     }
   },
 
