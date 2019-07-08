@@ -53,6 +53,24 @@ const userStore = {
             }
         },
 
+        async [vuex.actions.USER.EDIT](context, {
+            id: user
+        } = {}) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'USER',
+                    action: 'EDIT',
+                    params: {
+                        routeParam: {
+                            user
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
         async [vuex.actions.STORE](context, input) {
             try {
                 return await context.dispatch(vuex.actions.REQUEST, {

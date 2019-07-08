@@ -3,7 +3,7 @@
     <v-avatar
       slot-scope="{ hover }"
       :size="130"
-      color="grey lighten-3 elevation-3"
+      color="elevation-3"
       class="overflow-hidden"
     >
       <transition name="fade-transition">
@@ -69,4 +69,3 @@ export default {
   background: rgba(82, 82, 82, 0.6);
 }
 </style>
-

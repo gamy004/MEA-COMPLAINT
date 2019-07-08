@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Model;
 class UserApi extends BaseApi implements ApiInterface
 {
     use HasAvatar;
-    
+
     public function __construct(User $q)
     {
         parent::__construct($q);
@@ -143,7 +143,7 @@ class UserApi extends BaseApi implements ApiInterface
                 ), $id
             )
             ->first();
-        
+
         return compact('users');
     }
 
@@ -153,8 +153,8 @@ class UserApi extends BaseApi implements ApiInterface
             DB::beginTransaction();
 
             $record = [];
-            $record[DBCol::PASSWORD] = Hash::make(Str::uuid()->toString());
             $record = $this->parseGeneralFields($record, $raw);
+            $record = $this->parsePassword($record, $raw);
             $record = $this->parseAvatar($record, $raw);
             $record = $this->parseGroup($record, $raw);
             $user = User::firstOrCreate($record);
@@ -171,7 +171,7 @@ class UserApi extends BaseApi implements ApiInterface
             throw new Exception("Error Creating User Request", 1);
         }
 
-        
+
     }
 
     public function update(Model $user, array $raw)
@@ -181,7 +181,9 @@ class UserApi extends BaseApi implements ApiInterface
 
             $record = [];
             $record = $this->parseGeneralFields($record, $raw);
+            $record = $this->parsePassword($record, $raw);
             $record = $this->parseAvatar($record, $raw);
+            $record = $this->parseGroup($record, $raw);
             $user->update($record);
             $this->syncRole($user, $raw);
 
@@ -191,6 +193,7 @@ class UserApi extends BaseApi implements ApiInterface
         } catch (Exception $exception) {
             DB::rollback();
             Log::error($exception);
+            dd($exception);
             throw new Exception("Error Updating User Request", 1);
         }
     }
@@ -220,21 +223,29 @@ class UserApi extends BaseApi implements ApiInterface
         return $record;
     }
 
+    private function parsePassword($record, array $raw = [])
+    {
+        if (isset($raw[DBCol::PASSWORD])) {
+            $record[DBCol::PASSWORD] = Hash::make($raw[DBCol::PASSWORD]);
+        }
+
+        return $record;
+    }
+
     private function parseGroup($record, array $raw = [])
     {
-        if (isset($record[DBCol::GROUP_ID])) {
-            $group = Group::findOrFail($record[DBCol::GROUP_ID]);
-        }
+        $record[DBCol::GROUP_ID] = isset($raw[DBCol::GROUP_ID])
+            ? $raw[DBCol::GROUP_ID]
+            : null;
+        $record[DBCol::SUB_GROUP_ID] = isset($raw[DBCol::SUB_GROUP_ID])
+            ? $raw[DBCol::SUB_GROUP_ID]
+            : null;
 
         if (isset($raw[Data::GROUP])) {
             $group = Group::create([
                 DBCol::NAME => $raw[Data::GROUP]
             ]);
-
             $record[DBCol::GROUP_ID] = $group->{DBCol::ID};
-        }
-
-        if (isset($group)) {
             $record = $this->parseSubGroup($group, $record, $raw);
         }
 

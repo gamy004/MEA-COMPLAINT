@@ -34,7 +34,10 @@
                   </v-flex>
 
                   <v-flex xs12>
+                    <v-switch v-if="$_user_mixin_edit" color="indigo accent-2" v-model="updatePassword" label="Update Password"></v-switch>
+
                     <v-text-field
+                      v-if="!$_user_mixin_edit || updatePassword"
                       label="Password (required)"
                       v-model="form.password"
                       color="indigo accent-2"
@@ -50,6 +53,7 @@
 
                   <v-flex xs12>
                     <v-text-field
+                      v-if="!$_user_mixin_edit || updatePassword"
                       label="Password Confirmation (required)"
                       v-model="form.password_confirmation"
                       color="indigo accent-2"
@@ -104,7 +108,6 @@
                       :error="form.errors.has('role')"
                       :error-messages="form.errors.getError('role')"
                       @input="form.errors.clear('role')"
-                      @focus="fetchRole"
                     ></v-autocomplete>
                   </v-flex>
                 </v-layout>
@@ -125,7 +128,6 @@
                         :error-messages="form.errors.getError('group')"
                         @input="form.errors.clear('group')"
                         @focus="fetchGroup"
-                        @change="fetchSubGroup"
                         @update:searchInput="updateGroupInput"
                       ></v-combobox>
                     </v-flex>
@@ -134,8 +136,6 @@
 
                 <transition name="slide-y-reverse-transition" appear mode="out-in">
                   <v-layout row wrap v-if="showSubGroupSelector">
-                    <v-subheader class="px-0 mt-3">Group</v-subheader>
-
                     <v-flex xs12>
                       <v-combobox
                         :items="availableSubGroups"
@@ -147,6 +147,7 @@
                         :error="form.errors.has('sub_group')"
                         :error-messages="form.errors.getError('sub_group')"
                         @input="form.errors.clear('sub_group')"
+                        @focus="onFocusSubGroupInput"
                         @update:searchInput="updateSubGroupInput"
                       ></v-combobox>
                     </v-flex>
@@ -217,6 +218,7 @@ export default {
   data() {
     return {
       mockAvatar: "",
+      updatePassword: false,
       showPassword: false,
       showPasswordConfirm: false,
       groupInput: null,
@@ -237,7 +239,7 @@ export default {
   watch: {
     // "form.group": "onFormGroupChange",
     dialog(v) {
-      if (v) {
+      if (!v) {
         this.form = vuex.models.FORM.make({
           name: "",
           username: "",
@@ -246,12 +248,16 @@ export default {
           password_confirmation: "",
           role: null
         });
+      } else {
+        setTimeout(() => {
+          this.fetchRole();
+          this.fetchGroup();
+        }, 500);
       }
     },
 
     $_user_mixin_edit: {
-      deep: true,
-      handler(edittedUser) {
+      async handler(edittedUser) {
         if (edittedUser) {
           const {
             id = null,
@@ -260,9 +266,12 @@ export default {
             email = "",
             password = "",
             password_confirmation = "",
-            role = null,
-            group = null,
-            sub_group = null
+            role_id: role = null,
+            group_id: group = null,
+            group_name = null,
+            sub_group_id: sub_group = null,
+            sub_group_name = null,
+            avatar = null
           } = _.cloneDeep(edittedUser);
 
           this.form.record({
@@ -276,6 +285,40 @@ export default {
             group,
             sub_group
           });
+
+          if (group_name) {
+            this.groupInput = group_name;
+            // const selectedGroup = _.find(
+            //   this.$_user_mixin_availableGroups,
+            //   ["text", group_name]
+            // );
+
+            // if (selectedGroup) {
+            //   this.groupInput = selectedGroup.text;
+
+            //   await this.fetchSubGroup(selectedGroup);
+            //   console.log("fetched");
+
+            //   if (sub_group_name) {
+            //     const selectedSubGroup = _.find(
+            //       this.availableSubGroups,
+            //       ["text", sub_group_name]
+            //     );
+
+            //     if (selectedSubGroup) {
+            //       this.subGroupInput = selectedSubGroup.text;
+            //     }
+            //   }
+            // }
+
+            if (sub_group_name) {
+              this.subGroupInput = sub_group_name;
+            }
+
+            if (avatar) {
+              this.mockAvatar = avatar;
+            }
+          }
         }
       }
     }
@@ -293,7 +336,7 @@ export default {
 
       const selectedRole = this.$_user_mixin_findRole(this.form.role);
 
-      return selectedRole.role === "admin";
+      return selectedRole && selectedRole.role === "admin";
     },
 
     showGroupSelector() {
@@ -347,6 +390,7 @@ export default {
 
     async fetchSubGroup({ text, value }) {
       let response;
+      console.log(this.groupInput, text, value);
 
       if (this.groupInput !== text) {
         this.onFormGroupChange();
@@ -372,8 +416,32 @@ export default {
       this.subGroupInput = null;
     },
 
+    onFocusSubGroupInput() {
+      const { selectedGroup } = this;
+      console.log(selectedGroup);
+
+      if (selectedGroup) {
+        this.fetchSubGroup(selectedGroup);
+      }
+    },
+
     updateGroupInput(value) {
+      const oldSelectedGroup = this.selectedGroup;
+      console.log(value, oldSelectedGroup);
+
       this.groupInput = value;
+
+      if (!this.groupInput) {
+        console.log("subGroupInput was cleared due to empty groupInput");
+
+        this.subGroupInput = null;
+      }
+
+      if (oldSelectedGroup && this.groupInput !== oldSelectedGroup.text) {
+        console.log("subGroupInput was cleared due to changed selected group");
+
+        this.subGroupInput = null;
+      }
     },
 
     // onGroupChange(data) {
@@ -394,10 +462,8 @@ export default {
 
     async onSubmit() {
       const { form, $_uploadable_metaData = [] } = this;
-      const submitFields = [
+      let submitFields = [
         "username",
-        "password",
-        "password_confirmation",
         "name",
         "email",
         "role",
@@ -405,6 +471,14 @@ export default {
       ];
 
       let v;
+
+      if (!this.$_user_mixin_edit || this.updatePassword) {
+        submitFields = [
+          ...submitFields,
+          "password",
+          "password_confirmation"
+        ];
+      }
 
       if ($_uploadable_metaData.length) {
         const avatar = _.find($_uploadable_metaData, ["url", this.mockAvatar]);
@@ -450,4 +524,3 @@ export default {
   }
 };
 </script>
-
