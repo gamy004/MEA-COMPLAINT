@@ -123,7 +123,7 @@
 
                     <v-flex xs12>
                       <v-combobox
-                        :items="$_user_mixin_availableGroups"
+                        :items="$_user_mixin_fetchingGroup ? [] : $_user_mixin_availableGroups"
                         label="Group"
                         :value="groupInput"
                         color="indigo accent-2"
@@ -154,7 +154,7 @@
                   <v-layout row wrap v-if="showSubGroupSelector">
                     <v-flex xs12>
                       <v-combobox
-                        :items="availableSubGroups"
+                        :items="$_user_mixin_fetchingSubGroup ? [] : availableSubGroups"
                         label="Sub Group"
                         :value="subGroupInput"
                         color="indigo accent-2"
