@@ -89,6 +89,7 @@ class UserApi extends BaseApi implements ApiInterface
                 "=",
                 sprintf("%s.%s", $roleIntermediateTable, Role::FK)
             )
+            ->whereNull(sprintf("%s.%s", $groupTable, DBCol::DELETED_AT))
             // ->join(
             //     $fileTable,
             //     sprintf("%s.%s", $fileTable, DBCol::ID),
@@ -125,7 +126,9 @@ class UserApi extends BaseApi implements ApiInterface
                 "=",
                 sprintf("%s.%s", $groupTable, DBCol::ID),
                 "left"
-            )->select([
+            )
+            ->whereNull(sprintf("%s.%s", $groupTable, DBCol::DELETED_AT))
+            ->select([
                 sprintf("%s.%s", $baseTable, DBCol::ID),
                 sprintf("%s.%s as %s", $groupTable, DBCol::ID, DBCol::SUB_GROUP_ID),
                 sprintf("%s.%s as %s", $groupTable, DBCol::NAME, Data::SUB_GROUP_NAME),

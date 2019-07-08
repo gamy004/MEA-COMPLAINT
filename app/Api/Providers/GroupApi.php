@@ -48,28 +48,21 @@ class GroupApi extends BaseApi implements ApiInterface
 
     public function update(Model $model, array $raw)
     {
-        // try {
-        //     DB::beginTransaction();
+        try {
+            DB::beginTransaction();
 
-        //     $record = [];
-        //     $record = $this->parseGeneralFields($record, $raw);
-        //     $record = $this->parseAvatar($record, $raw);
-        //     $model->update($record);
-        //     $this->syncRole($model, $raw);
+            $record = [];
+            $record = $this->parseGeneralFields($record, $raw);
+            $model->update($record);
 
-        //     DB::commit();
-        // } catch (Exception $exception) {
-        //     DB::rollback();
-        //     Log::error($exception);
-        //     throw new Exception("Error Updating model Request", 1);
-        // }
+            DB::commit();
 
-        // return $this->find($model->id);
-    }
-
-    public function destroy(Model $model)
-    {
-
+            return $this->find($model->id);
+        } catch (Exception $exception) {
+            DB::rollback();
+            Log::error($exception);
+            throw new Exception("Error Updating Group Request", 1);
+        }
     }
 
     private function parseGeneralFields($record, $raw)

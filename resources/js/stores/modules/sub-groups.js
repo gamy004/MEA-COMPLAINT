@@ -28,6 +28,36 @@ const subGroupStore = {
             } catch (error) {
                 throw error;
             }
+        },
+
+        async [vuex.actions.UPDATE](context, input) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'SUB_GROUP',
+                    action: 'UPDATE',
+                    params: input
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        async [vuex.actions.DELETE](context, {
+            id: group
+        }) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'SUB_GROUP',
+                    action: 'DELETE',
+                    params: {
+                        routeParam: {
+                            group
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
         }
         // async [vuex.actions.ISSUE.FETCH]({
         //     state,

@@ -4,18 +4,49 @@ namespace App\Models;
 
 use App\IOCs\DBCol;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Group extends Model
 {
+    use SoftDeletes;
+    
     const FK = 'group_id';
 
     protected $fillable = [
         DBCol::NAME
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::deleting(function ($self) {
+            $self->users()->each(function ($user) use ($self) {
+                $user->{self::FK} = null;
+                $user->{DBCol::SUB_GROUP_ID} = null;
+                $user->save();
+            });
+
+            $self->subGroupUsers()->each(function ($user) use ($self) {
+                $user->{DBCol::SUB_GROUP_ID} = null;
+                $user->save();
+            });
+            
+            // $self->issues()->each(function ($issue) {
+            //     $issue->{DBCol::ISSUED_BY} = null;
+            //     $issue->save();
+            // });
+        });
+    }
+
     public function users()
     {
         return $this->hasMany(User::class, self::FK);
+    }
+
+    public function subGroupUsers()
+    {
+        return $this->hasMany(User::class, DBCol::SUB_GROUP_ID);
     }
 
     public function issues()

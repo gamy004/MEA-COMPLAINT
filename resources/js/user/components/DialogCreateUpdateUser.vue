@@ -34,7 +34,12 @@
                   </v-flex>
 
                   <v-flex xs12>
-                    <v-switch v-if="$_user_mixin_edit" color="indigo accent-2" v-model="updatePassword" label="Update Password"></v-switch>
+                    <v-switch
+                      v-if="$_user_mixin_edit"
+                      color="indigo accent-2"
+                      v-model="updatePassword"
+                      label="Update Password"
+                    ></v-switch>
 
                     <v-text-field
                       v-if="!$_user_mixin_edit || updatePassword"
@@ -129,7 +134,18 @@
                         @input="form.errors.clear('group')"
                         @focus="fetchGroup"
                         @update:searchInput="updateGroupInput"
-                      ></v-combobox>
+                      >
+                        <template v-slot:item="{ index, item }">
+                          <group-item
+                            :item="item"
+                            :index="index"
+                            managable-edit
+                            :managable-module="vuex.modules.GROUP"
+                            :managable-route-param="{ group: item.value }"
+                            v-model="groupInput"
+                          />
+                        </template>
+                      </v-combobox>
                     </v-flex>
                   </v-layout>
                 </transition>
@@ -149,7 +165,18 @@
                         @input="form.errors.clear('sub_group')"
                         @focus="onFocusSubGroupInput"
                         @update:searchInput="updateSubGroupInput"
-                      ></v-combobox>
+                      >
+                        <template v-slot:item="{ index, item }">
+                          <group-item
+                            :item="item"
+                            :index="index"
+                            managable-edit
+                            :managable-module="vuex.modules.SUB_GROUP"
+                            :managable-route-param="{ group: item.value }"
+                            v-model="subGroupInput"
+                          />
+                        </template>
+                      </v-combobox>
                     </v-flex>
                   </v-layout>
                 </transition>
@@ -207,16 +234,19 @@ import managable from "../../mixins/managable";
 import { userMixin } from "../../mixins/user-mixin";
 import AvatarUploader from "./AvatarUploader";
 import uploadable from "../../mixins/uploadable";
+import GroupItem from "../../group/components/GroupItem";
 
 export default {
   mixins: [dialogable, managable, userMixin, uploadable],
 
   components: {
-    AvatarUploader
+    AvatarUploader,
+    GroupItem
   },
 
   data() {
     return {
+      vuex,
       mockAvatar: "",
       updatePassword: false,
       showPassword: false,
@@ -477,22 +507,12 @@ export default {
 
     async onSubmit() {
       const { form, $_uploadable_metaData = [] } = this;
-      let submitFields = [
-        "username",
-        "name",
-        "email",
-        "role",
-        "avatar"
-      ];
+      let submitFields = ["username", "name", "email", "role", "avatar"];
 
       let v;
 
       if (!this.$_user_mixin_edit || this.updatePassword) {
-        submitFields = [
-          ...submitFields,
-          "password",
-          "password_confirmation"
-        ];
+        submitFields = [...submitFields, "password", "password_confirmation"];
       }
 
       if ($_uploadable_metaData.length) {

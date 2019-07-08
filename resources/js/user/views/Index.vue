@@ -81,6 +81,7 @@
       :managable-edit="$_user_mixin_isEditing"
       @form:create="$_alertable_alert('create_success')"
       @form:update="$_alertable_alert('update_success')"
+      @form:submitted="onFormSubmitted"
     />
 
     <message-alert
@@ -218,6 +219,12 @@ export default {
   },
 
   methods: {
+    onFormSubmitted() {
+      return this.$_user_mixin_fetchUser({
+        pagination: this.$_user_mixin_pagination
+      });
+    },
+
     async onPaginationChange(newPagination, { force = false } = {}) {
       const original = this.$_user_mixin_pagination;
 
