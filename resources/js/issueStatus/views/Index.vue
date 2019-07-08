@@ -84,6 +84,7 @@ import DialogCreateUpdateStatus from "../components/DialogCreateUpdateStatus";
 import { vuex } from "../../mixins/vuexable";
 import { views } from "../../constants";
 import alertable from "../../mixins/alertable";
+import SearchStatusInput from '../components/SearchStatusInput';
 
 export default {
   mixins: [alertable, issueStatusMixin],
@@ -157,6 +158,7 @@ export default {
       return [
         { text: "Statuses", classes: { title: true } },
         { spacer: true },
+        { component: () => SearchStatusInput },
         { component: () => ButtonCreateStatus }
       ];
     },

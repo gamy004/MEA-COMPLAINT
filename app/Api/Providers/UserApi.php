@@ -103,6 +103,7 @@ class UserApi extends BaseApi implements ApiInterface
                     sprintf("%s.%s", $baseTable, DBCol::USERNAME),
                     sprintf("%s.%s", $baseTable, DBCol::NAME),
                     sprintf("%s.%s", $baseTable, DBCol::EMAIL),
+                    sprintf("%s.%s as %s", $fileTable, DBCol::ID, DBCol::AVATAR_ID),
                     sprintf("%s.%s as %s", $fileTable, DBCol::URL, DBCol::AVATAR),
                     sprintf("%s.%s", $baseTable, DBCol::GROUP_ID),
                     sprintf("%s.%s as %s", $groupTable, DBCol::NAME, Data::GROUP_NAME),

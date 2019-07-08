@@ -81,6 +81,8 @@ class FileController extends BaseApiController
      */
     public function destroy(File $file)
     {
+        $this->api->destroyByPath($file->path);
+
         return $this->api->destroy($file);
     }
 
@@ -117,7 +119,7 @@ class FileController extends BaseApiController
     public function download($hash)
     {
         $downloadContent = $this->api->generateDownloadContent($hash);
-        
+
         extract($downloadContent);
 
         return response()->download($path, $display_name, $headers);
@@ -141,7 +143,7 @@ class FileController extends BaseApiController
     public function destroyByPath(Request $request)
     {
         $upload_path = $request->upload_path;
-        
+
         return $this->api->destroyByPath($upload_path);
     }
 }

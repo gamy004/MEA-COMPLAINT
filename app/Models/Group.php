@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Group extends Model
 {
     use SoftDeletes;
-    
+
     const FK = 'group_id';
 
     protected $fillable = [
@@ -19,19 +19,19 @@ class Group extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::deleting(function ($self) {
-            $self->users()->each(function ($user) use ($self) {
+            $self->users()->each(function ($user) {
                 $user->{self::FK} = null;
                 $user->{DBCol::SUB_GROUP_ID} = null;
                 $user->save();
             });
 
-            $self->subGroupUsers()->each(function ($user) use ($self) {
+            $self->subGroupUsers()->each(function ($user) {
                 $user->{DBCol::SUB_GROUP_ID} = null;
                 $user->save();
             });
-            
+
             // $self->issues()->each(function ($issue) {
             //     $issue->{DBCol::ISSUED_BY} = null;
             //     $issue->save();

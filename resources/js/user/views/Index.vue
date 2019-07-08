@@ -103,6 +103,7 @@ import MessageAlert from "../../components/MessageAlert";
 import { userMixin } from "../../mixins/user-mixin";
 import ButtonCreateUser from "../components/ButtonCreateUser";
 import DialogCreateUpdateUser from "../components/DialogCreateUpdateUser";
+import SearchUserInput from "../components/SearchUserInput";
 import { vuex } from "../../mixins/vuexable";
 import { views } from "../../constants";
 import alertable from "../../mixins/alertable";
@@ -114,6 +115,7 @@ export default {
     AvatarUser,
     ButtonCreateUser,
     DialogCreateUpdateUser,
+    SearchUserInput,
     CustomToolbar,
     CustomTable,
     MessageAlert
@@ -199,6 +201,7 @@ export default {
       return [
         { text: "Users & Groups", classes: { title: true } },
         { spacer: true },
+        { component: () => SearchUserInput },
         { component: () => ButtonCreateUser }
       ];
     },

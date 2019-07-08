@@ -15,7 +15,7 @@
         <v-container grid-list-md>
           <v-layout justify-space-around row wrap :reverse="isMobile">
             <v-flex class="mt-5" shrink>
-              <avatar-uploader @fileUploaded="onFileUploaded" :uploadable-avatar.sync="mockAvatar" />
+              <avatar-uploader @fileUploaded="onAvatarUploaded" :uploadable-avatar.sync="mockAvatar" />
             </v-flex>
 
             <v-flex xs12 sm8 md6>
@@ -248,6 +248,7 @@ export default {
     return {
       vuex,
       mockAvatar: "",
+      mockAvatarId: null,
       updatePassword: false,
       showPassword: false,
       showPasswordConfirm: false,
@@ -271,6 +272,7 @@ export default {
     dialog(v) {
       if (!v) {
         this.mockAvatar = "";
+        this.mockAvatarId = null;
         this.showPassword = false;
         this.showPasswordConfirm = false;
         this.updatePassword = false;
@@ -308,6 +310,7 @@ export default {
             group_name = null,
             sub_group_id: sub_group = null,
             sub_group_name = null,
+            avatar_id = null,
             avatar = null
           } = _.cloneDeep(edittedUser);
 
@@ -322,6 +325,10 @@ export default {
             group,
             sub_group
           });
+
+          if (avatar_id) {
+            this.mockAvatarId = avatar_id;
+          }
 
           if (group_name) {
             this.groupInput = group_name;
@@ -401,6 +408,10 @@ export default {
   },
 
   methods: {
+    ...vuex.mapWaitingActions(vuex.modules.FILE, [
+      vuex.actions.FILE.DELETE
+    ]),
+
     async fetchRole() {
       let response;
 
@@ -451,6 +462,14 @@ export default {
 
     onFormGroupChange() {
       this.subGroupInput = null;
+    },
+
+    async onAvatarUploaded({ file, response } = {}) {
+      if (this.mockAvatarId !== null) {
+        await this[vuex.actions.FILE.DELETE]({ id: this.mockAvatarId });
+      }
+
+      this.onFileUploaded({ file, response });
     },
 
     onRoleChange(value) {

@@ -39,9 +39,21 @@
           :indeterminate="$_uploadable_isIndeterminate"
           v-bind="$_uploadable_progressAdditionalProps"
           color="accent"
+          class="avatar-progress"
         ></v-progress-circular>
 
-        <img v-if="uploadableAvatar.length" :src="`${uploadableAvatar}`" />
+        <!-- <img v-if="uploadableAvatar.length" :src="`${uploadableAvatar}`" /> -->
+      </transition>
+
+      <transition name="fade-transition" mode="out-in">
+        <!-- <v-progress-circular
+          v-if="uploadable_uploading"
+          :indeterminate="$_uploadable_isIndeterminate"
+          v-bind="$_uploadable_progressAdditionalProps"
+          color="accent"
+        ></v-progress-circular> -->
+
+        <img v-if="!uploadable_uploading && uploadableAvatar.length" :src="`${uploadableAvatar}`" />
       </transition>
     </v-avatar>
   </v-hover>
@@ -67,5 +79,9 @@ export default {
   left: 0;
   right: 0;
   background: rgba(82, 82, 82, 0.6);
+}
+
+.avatar-progress {
+  position: absolute;
 }
 </style>
