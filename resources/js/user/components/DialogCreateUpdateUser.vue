@@ -240,6 +240,12 @@ export default {
     // "form.group": "onFormGroupChange",
     dialog(v) {
       if (!v) {
+        this.mockAvatar = "";
+        this.showPassword = false;
+        this.showPasswordConfirm = false;
+        this.updatePassword = false;
+        this.groupInput = null;
+        this.subGroupInput = null;
         this.form = vuex.models.FORM.make({
           name: "",
           username: "",
@@ -248,6 +254,7 @@ export default {
           password_confirmation: "",
           role: null
         });
+        this.$_user_mixin_edit = null;
       } else {
         setTimeout(() => {
           this.fetchRole();
@@ -414,6 +421,14 @@ export default {
 
     onFormGroupChange() {
       this.subGroupInput = null;
+    },
+
+    onRoleChange(value) {
+      // console.log(value, this.selectedRoleAdmin);
+      if (this.selectedRoleAdmin) {
+        this.groupInput = null;
+        this.subGroupInput = null;
+      }
     },
 
     onFocusSubGroupInput() {
