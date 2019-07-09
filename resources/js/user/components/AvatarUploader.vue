@@ -3,7 +3,7 @@
     <v-avatar
       slot-scope="{ hover }"
       :size="130"
-      color="grey lighten-3 elevation-3"
+      color="elevation-3"
       class="overflow-hidden"
     >
       <transition name="fade-transition">
@@ -39,9 +39,21 @@
           :indeterminate="$_uploadable_isIndeterminate"
           v-bind="$_uploadable_progressAdditionalProps"
           color="accent"
+          class="avatar-progress"
         ></v-progress-circular>
 
-        <img v-if="uploadableAvatar.length" :src="`${uploadableAvatar}`" />
+        <!-- <img v-if="uploadableAvatar.length" :src="`${uploadableAvatar}`" /> -->
+      </transition>
+
+      <transition name="fade-transition" mode="out-in">
+        <!-- <v-progress-circular
+          v-if="uploadable_uploading"
+          :indeterminate="$_uploadable_isIndeterminate"
+          v-bind="$_uploadable_progressAdditionalProps"
+          color="accent"
+        ></v-progress-circular> -->
+
+        <img v-if="!uploadable_uploading && uploadableAvatar.length" :src="`${uploadableAvatar}`" />
       </transition>
     </v-avatar>
   </v-hover>
@@ -68,5 +80,8 @@ export default {
   right: 0;
   background: rgba(82, 82, 82, 0.6);
 }
-</style>
 
+.avatar-progress {
+  position: absolute;
+}
+</style>

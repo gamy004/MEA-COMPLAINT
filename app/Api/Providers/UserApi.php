@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Model;
 class UserApi extends BaseApi implements ApiInterface
 {
     use HasAvatar;
-    
+
     public function __construct(User $q)
     {
         parent::__construct($q);
@@ -89,6 +89,7 @@ class UserApi extends BaseApi implements ApiInterface
                 "=",
                 sprintf("%s.%s", $roleIntermediateTable, Role::FK)
             )
+            ->whereNull(sprintf("%s.%s", $groupTable, DBCol::DELETED_AT))
             // ->join(
             //     $fileTable,
             //     sprintf("%s.%s", $fileTable, DBCol::ID),
@@ -102,6 +103,7 @@ class UserApi extends BaseApi implements ApiInterface
                     sprintf("%s.%s", $baseTable, DBCol::USERNAME),
                     sprintf("%s.%s", $baseTable, DBCol::NAME),
                     sprintf("%s.%s", $baseTable, DBCol::EMAIL),
+                    sprintf("%s.%s as %s", $fileTable, DBCol::ID, DBCol::AVATAR_ID),
                     sprintf("%s.%s as %s", $fileTable, DBCol::URL, DBCol::AVATAR),
                     sprintf("%s.%s", $baseTable, DBCol::GROUP_ID),
                     sprintf("%s.%s as %s", $groupTable, DBCol::NAME, Data::GROUP_NAME),
@@ -125,7 +127,9 @@ class UserApi extends BaseApi implements ApiInterface
                 "=",
                 sprintf("%s.%s", $groupTable, DBCol::ID),
                 "left"
-            )->select([
+            )
+            ->whereNull(sprintf("%s.%s", $groupTable, DBCol::DELETED_AT))
+            ->select([
                 sprintf("%s.%s", $baseTable, DBCol::ID),
                 sprintf("%s.%s as %s", $groupTable, DBCol::ID, DBCol::SUB_GROUP_ID),
                 sprintf("%s.%s as %s", $groupTable, DBCol::NAME, Data::SUB_GROUP_NAME),
@@ -143,7 +147,7 @@ class UserApi extends BaseApi implements ApiInterface
                 ), $id
             )
             ->first();
-        
+
         return compact('users');
     }
 
@@ -153,8 +157,8 @@ class UserApi extends BaseApi implements ApiInterface
             DB::beginTransaction();
 
             $record = [];
-            $record[DBCol::PASSWORD] = Hash::make(Str::uuid()->toString());
             $record = $this->parseGeneralFields($record, $raw);
+            $record = $this->parsePassword($record, $raw);
             $record = $this->parseAvatar($record, $raw);
             $record = $this->parseGroup($record, $raw);
             $user = User::firstOrCreate($record);
@@ -171,7 +175,7 @@ class UserApi extends BaseApi implements ApiInterface
             throw new Exception("Error Creating User Request", 1);
         }
 
-        
+
     }
 
     public function update(Model $user, array $raw)
@@ -181,7 +185,9 @@ class UserApi extends BaseApi implements ApiInterface
 
             $record = [];
             $record = $this->parseGeneralFields($record, $raw);
+            $record = $this->parsePassword($record, $raw);
             $record = $this->parseAvatar($record, $raw);
+            $record = $this->parseGroup($record, $raw);
             $user->update($record);
             $this->syncRole($user, $raw);
 
@@ -191,6 +197,7 @@ class UserApi extends BaseApi implements ApiInterface
         } catch (Exception $exception) {
             DB::rollback();
             Log::error($exception);
+            dd($exception);
             throw new Exception("Error Updating User Request", 1);
         }
     }
@@ -220,21 +227,29 @@ class UserApi extends BaseApi implements ApiInterface
         return $record;
     }
 
+    private function parsePassword($record, array $raw = [])
+    {
+        if (isset($raw[DBCol::PASSWORD])) {
+            $record[DBCol::PASSWORD] = Hash::make($raw[DBCol::PASSWORD]);
+        }
+
+        return $record;
+    }
+
     private function parseGroup($record, array $raw = [])
     {
-        if (isset($record[DBCol::GROUP_ID])) {
-            $group = Group::findOrFail($record[DBCol::GROUP_ID]);
-        }
+        $record[DBCol::GROUP_ID] = isset($raw[DBCol::GROUP_ID])
+            ? $raw[DBCol::GROUP_ID]
+            : null;
+        $record[DBCol::SUB_GROUP_ID] = isset($raw[DBCol::SUB_GROUP_ID])
+            ? $raw[DBCol::SUB_GROUP_ID]
+            : null;
 
         if (isset($raw[Data::GROUP])) {
             $group = Group::create([
                 DBCol::NAME => $raw[Data::GROUP]
             ]);
-
             $record[DBCol::GROUP_ID] = $group->{DBCol::ID};
-        }
-
-        if (isset($group)) {
             $record = $this->parseSubGroup($group, $record, $raw);
         }
 

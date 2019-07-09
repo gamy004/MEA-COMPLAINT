@@ -39,6 +39,56 @@ function parseFetch(context, {
     // }
 };
 
+function parseEdit(context, {
+    groups: group
+} = {}) {
+
+    const {
+        rootCommit,
+        rootGetters,
+        vuex,
+        models
+    } = context;
+
+    const oldGroup = rootGetters[
+        `${vuex.modules.SUB_GROUP}/${vuex.getters.BY_KEY}`
+    ](group.id) || {};
+
+    const updatedGroup = _.merge({
+        ..._.cloneDeep(oldGroup.data)
+    }, group);
+
+    rootCommit(
+        vuex.mutations.UPDATE,
+        vuex.modules.SUB_GROUP, {
+            key: group.id,
+            value: new models.SUB_GROUP({
+                ...updatedGroup,
+                context
+            })
+        }
+    );
+};
+
+function parseDelete(context, {
+    id
+} = {}) {
+
+    const {
+        rootCommit,
+        vuex
+    } = context;
+
+    rootCommit(
+        vuex.mutations.DELETE,
+        vuex.modules.SUB_GROUP, {
+            id
+        }
+    );
+};
+
 export default {
-    [actions.SUB_GROUP.FETCH]: parseFetch
+    [actions.SUB_GROUP.FETCH]: parseFetch,
+    [actions.SUB_GROUP.UPDATE]: parseEdit,
+    [actions.SUB_GROUP.DELETE]: parseDelete,
 }

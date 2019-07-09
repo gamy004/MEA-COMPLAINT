@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Group;
 use Illuminate\Http\Request;
+use App\Http\Requests\UpdateGroupRequest;
 
 class GroupController extends BaseApiController
 {
@@ -67,9 +68,9 @@ class GroupController extends BaseApiController
      * @param  \App\Group  $group
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Group $group)
+    public function update(UpdateGroupRequest $request, Group $group)
     {
-        //
+        return $this->api->update($group, $request->all());
     }
 
     /**
@@ -80,6 +81,6 @@ class GroupController extends BaseApiController
      */
     public function destroy(Group $group)
     {
-        //
+        return $this->api->destroy($group);
     }
 }

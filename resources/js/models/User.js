@@ -120,6 +120,20 @@ class User extends BaseModel {
         return response;
     }
 
+    static async [actions.USER.EDIT](data) {
+        let response;
+
+        try {
+            response = await api.get('api:users.edit', {
+                ...data
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
     $initRoleMapping() {
         const {
             roles = []

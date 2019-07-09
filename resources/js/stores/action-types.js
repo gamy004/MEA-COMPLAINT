@@ -32,11 +32,15 @@ export const ISSUE = {
 };
 
 export const GROUP = {
-    FETCH: 'groupFetch'
+    FETCH: 'groupFetch',
+    UPDATE: 'groupUpdate',
+    DELETE: 'groupDelete',
 };
 
 export const SUB_GROUP = {
-    FETCH: 'subGroupFetch'
+    FETCH: 'subGroupFetch',
+    UPDATE: 'subGroupUpdate',
+    DELETE: 'subGroupDelete',
 };
 
 export const ROLE = {

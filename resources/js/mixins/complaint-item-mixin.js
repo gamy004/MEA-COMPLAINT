@@ -54,6 +54,18 @@ const complaintItemMixin = {
             ) : [];
         },
 
+        $_complaint_item_mixin_complaintLogs() {
+            let result = [];
+
+            if (this.$_complaint_item_mixin_complaint) {
+                const { logs = [] } = this.$_complaint_item_mixin_complaint;
+
+                result = logs;
+            }
+
+            return result;
+        },
+
         $_complaint_item_mixin_hasAttachments() {
             return this.$_complaint_item_mixin_complaint ? this.$_complaint_item_mixin_complaint.attachments.length : false;
         }

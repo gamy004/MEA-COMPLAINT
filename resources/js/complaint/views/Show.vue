@@ -22,7 +22,7 @@
           </v-list>
         </v-menu>-->
         <v-spacer></v-spacer>
-        <!-- <custom-toolbar class="bb-1 pb-0 align-right" :items="itemsRight"></custom-toolbar> -->
+        <custom-toolbar class="bb-1 pb-0 align-right" :items="itemsRight"></custom-toolbar>
       </v-layout>
 
       <v-layout class="content__wrapper" column>
@@ -105,6 +105,49 @@
         </v-tab-item>
       </v-tabs-items>-->
     </v-flex>
+
+    <v-navigation-drawer
+      v-model="showStatusLogs"
+      fixed
+      clipped
+      class="pl-2"
+      app
+      :width="400"
+    >
+      <v-list dense>
+        <v-subheader>Status logs</v-subheader>
+
+        <!-- <template v-for="(item, i) in items"> -->
+          <!-- <v-layout v-if="item.heading" :key="i" row align-center>
+            <v-flex :class="item.route ? 'xs6' : 'xs12'">
+              <v-subheader v-if="item.heading">{{ item.heading }}</v-subheader>
+            </v-flex>
+            <v-flex v-if="item.route" xs6 class="text-xs-right">
+              <v-btn small flat @click="gotoPage(item.route)">edit</v-btn>
+            </v-flex>
+          </v-layout> -->
+          <!-- <v-list-tile :key="`status-${i}`">
+            <v-list-tile-action>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title class="grey--text">{{ item.text }}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile> -->
+
+        <!-- </template> -->
+
+        <v-timeline align-top dense>
+          <template v-for="(log, logIndex) in $_complaint_item_mixin_complaintLogs">
+            <status-log-item
+              :key="`log-${logIndex}`"
+              :item="log"
+              :issue-id="$_complaint_item_mixin_complaint.id" />
+          </template>
+        </v-timeline>
+      </v-list>
+    </v-navigation-drawer>
+
     <complaint-form
       v-if="hasEdittedComplaint && complaintDialog"
       :managable-module="vuex.modules.ISSUE"
@@ -114,6 +157,7 @@
       :is-full-screen="true"
       @form:submitted="onComplaintUpdated"
     />
+
     <message-alert
       key="alertComplaintShow"
       :alertable-visible.sync="alertable_alert"
@@ -138,6 +182,7 @@ import ComplaintNoteCard from "../components/ComplaintNoteCard";
 import complaintItemMixin from "../../mixins/complaint-item-mixin";
 import issueNoteItemMixin from "../../mixins/issue-note-item-mixin";
 import issueStatusMixin from "../../mixins/issue-status-mixin";
+import StatusLogItem from "../components/StatusLogItem";
 
 export default {
   mixins: [
@@ -153,11 +198,13 @@ export default {
     MessageAlert,
     ComplaintForm,
     ComplaintDetailCard,
-    ComplaintNoteCard
+    ComplaintNoteCard,
+    StatusLogItem
   },
   data() {
     return {
       gobackTimer: null,
+      showStatusLogs: false,
       alertable_messages: {
         update_status_success: {
           text: "Complaint Status was updated successfully",
@@ -296,23 +343,34 @@ export default {
 
     itemsRight() {
       return [
+        // {
+        //   icon: "keyboard_arrow_left",
+        //   text: "Newer",
+        //   disabled: () => this.$_paginatable_isFirstPage,
+        //   onClick: () => {
+        //     this.$_paginatable_toPrevPage();
+        //   }
+        // },
+        // {
+        //   icon: "keyboard_arrow_right",
+        //   text: "Older",
+        //   disabled: () => this.$_paginatable_isLastPage,
+        //   onClick: () => {
+        //     this.$_paginatable_toNextPage();
+        //   }
+        // },
+        // { icon: "settings", text: "Settings" }
         {
-          icon: "keyboard_arrow_left",
-          text: "Newer",
-          disabled: () => this.$_paginatable_isFirstPage,
-          onClick: () => {
-            this.$_paginatable_toPrevPage();
-          }
-        },
-        {
-          icon: "keyboard_arrow_right",
-          text: "Older",
-          disabled: () => this.$_paginatable_isLastPage,
-          onClick: () => {
-            this.$_paginatable_toNextPage();
-          }
-        },
-        { icon: "settings", text: "Settings" }
+          icon: "history",
+          text: "Status logs",
+          disabled: () => {
+            const { logs = [] } = this.$_complaint_item_mixin_complaint;
+            console.log(logs);
+
+            return !logs.length;
+          },
+          onClick: () => this.showStatusLogs = !this.showStatusLogs
+        }
       ];
     },
     // statuses() {

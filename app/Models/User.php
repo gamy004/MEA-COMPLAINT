@@ -68,6 +68,11 @@ class User extends Authenticatable
         return $this->belongsTo(Group::class);
     }
 
+    public function subGroup()
+    {
+        return $this->belongsTo(Group::class, DBCol::SUB_GROUP_ID);
+    }
+
     public function avatar()
     {
         return $this->belongsTo(File::class);

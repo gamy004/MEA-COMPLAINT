@@ -130,17 +130,28 @@ function parseStore(context, {
     category = [],
     notes = [],
     attachments = [],
-    issuer = []
+    issuer = [],
+    "logs.status": logStatuses = []
 } = {}) {
 
     const {
         vuex,
-        rootGetters
+        rootGetters,
+        parsers
     } = context;
 
     const oldComplaint = rootGetters[
         `${vuex.modules.ISSUE}/${vuex.getters.BY_KEY}`
     ](issue.id) || null;
+
+    if (logStatuses.length) {
+        console.log("Logs statuses detected: ", logStatuses);
+
+        parsers.ISSUE_STATUS[vuex.actions.ISSUE_STATUS.FETCH](context, {
+            issue_statuses: logStatuses,
+            strategy: 'merge'
+        });
+    }
 
     if (oldComplaint) {
         parseEdit(context, {

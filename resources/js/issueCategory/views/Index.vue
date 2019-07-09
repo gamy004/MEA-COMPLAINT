@@ -75,6 +75,7 @@ import ButtonCreateCategory from "../components/ButtonCreateCategory";
 import DialogCreateUpdateCategory from "../components/DialogCreateUpdateCategory";
 import { views } from "../../constants";
 import alertable from "../../mixins/alertable";
+import SearchCategoryInput from '../components/SearchCategoryInput';
 
 export default {
   mixins: [alertable, issueCategoryMixin],
@@ -133,6 +134,7 @@ export default {
       return [
         { text: "Categories", classes: { title: true } },
         { spacer: true },
+        { component: () => SearchCategoryInput },
         { component: () => ButtonCreateCategory }
       ];
     },

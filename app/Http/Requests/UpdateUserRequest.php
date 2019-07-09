@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\IOCs\Data;
 use App\IOCs\DBCol;
+use App\Models\Role;
 use App\Models\User;
 use App\Traits\HasFile;
 use Illuminate\Validation\Rule;
@@ -28,6 +29,8 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules()
     {
+        $roleAdmin = Role::where("role", Role::ADMIN)->first();
+
         return array_merge(
             [
                 DBCol::USERNAME => [
@@ -48,7 +51,7 @@ class UpdateUserRequest extends FormRequest
                 ],
                 DBCol::EMAIL => [
                     'sometimes',
-                    'required',
+                    'nullable',
                     'email',
                     'max:255'
                 ],
@@ -59,12 +62,61 @@ class UpdateUserRequest extends FormRequest
                     'string',
                     'max:255'
                 ],
-                DBCol::GROUP_ID => [
+
+                Data::ROLE => [
                     'sometimes',
                     'required',
-                    'numeric',
-                    'exists:groups,id'
+                    'exists:roles,id'
                 ],
+
+                Data::GROUP => [
+                    Rule::requiredIf(
+                        $this->{Data::ROLE} !== null &&
+                        $this->{Data::ROLE} !== $roleAdmin->{DBCol::ID} &&
+                        $this->{DBCol::GROUP_ID} === null
+                    ),
+                    Rule::unique('groups', DBCol::NAME)
+                        ->where(function ($query) {
+                            $query->whereNull('parent_id')->where('deleted_at', null);
+                        }),
+                    'string',
+                    'nullable',
+                    'max:255'
+                ],
+
+                Data::SUB_GROUP => [
+                    'sometimes',
+                    // Rule::requiredIf($this->{Data::ROLE} !== $roleAdmin->{DBCol::ID} && $this->{Data::GROUP} !== null),
+                    'string',
+                    'nullable',
+                    'max:255'
+                ],
+
+                DBCol::GROUP_ID => [
+                    Rule::requiredIf(
+                        $this->{Data::ROLE} !== null &&
+                        $this->{Data::ROLE} !== $roleAdmin->{DBCol::ID} &&
+                        $this->{Data::GROUP} === null
+                    ),
+                    'numeric',
+                    'nullable',
+                    Rule::exists('groups', DBCol::ID)
+                    ->where(function ($query) {
+                        $query->where('deleted_at', null);
+                    })
+                ],
+
+                DBCol::SUB_GROUP_ID => [
+                    'sometimes',
+                    // Rule::requiredIf($this->{Data::ROLE} !== $roleAdmin->{DBCol::ID} && $this->{DBCol::GROUP_ID} !== null),
+                    'numeric',
+                    'nullable',
+                    Rule::exists('groups', DBCol::ID)
+                    ->where(function ($query) {
+                        $query->where('parent_id', $this->{DBCol::GROUP_ID})->where('deleted_at', null);
+                    })
+                ],
+
                 DBCol::INBOX_SETTINGS => [
                     'sometimes',
                     'required',

@@ -25,27 +25,36 @@ const GroupStore = {
                     params
                 });
 
-                // let {
-                //     issues = [], issuer = [], total = 0
-                // } = await Complaint[
-                //     vuex.actions.ISSUE.FETCH
-                // ](state.base.pagination);
+            } catch (error) {
+                throw error;
+            }
+        },
 
-                // commit(vuex.mutations.STORE, {
-                //     value: issues
-                // });
+        async [vuex.actions.UPDATE](context, input) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'GROUP',
+                    action: 'UPDATE',
+                    params: input
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
 
-                // commit(vuex.mutations.STORE, {
-                //     value: issues
-                // });
-
-                // commit(vuex.mutations.UPDATE_PAGINATION, {
-                //     key: 'totalItems',
-                //     value: total
-                // });
-
-                // return issues;
-
+        async [vuex.actions.DELETE](context, {
+            id: group
+        }) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'GROUP',
+                    action: 'DELETE',
+                    params: {
+                        routeParam: {
+                            group
+                        }
+                    }
+                });
             } catch (error) {
                 throw error;
             }

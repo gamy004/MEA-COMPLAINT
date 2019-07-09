@@ -81,7 +81,7 @@ function parseEdit(context, {
         `${vuex.modules.ISSUE_STATUS}/${vuex.getters.BY_KEY}`
     ](issue_status.id) || {};
 
-    const updatedCategory = _.merge({
+    const updatedStatus = _.merge({
         ..._.cloneDeep(oldStatus.data)
     }, issue_status);
 
@@ -89,8 +89,8 @@ function parseEdit(context, {
         vuex.mutations.UPDATE,
         vuex.modules.ISSUE_STATUS, {
             key: issue_status.id,
-            value: new models.ISSUE({
-                ...updatedCategory,
+            value: new models.ISSUE_STATUS({
+                ...updatedStatus,
                 context
             })
         }

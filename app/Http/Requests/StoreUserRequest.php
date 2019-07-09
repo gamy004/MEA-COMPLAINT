@@ -31,7 +31,7 @@ class StoreUserRequest extends FormRequest
     public function rules()
     {
         $roleAdmin = Role::where("role", Role::ADMIN)->first();
-        
+
         return array_merge(
             $this->avatarRules(),
             [
@@ -60,6 +60,7 @@ class StoreUserRequest extends FormRequest
                     'string',
                     'max:255'
                 ],
+
                 Data::ROLE => [
                     'required',
                     'exists:roles,id'
@@ -67,8 +68,8 @@ class StoreUserRequest extends FormRequest
 
                 Data::GROUP => [
                     Rule::requiredIf(
-                        $this->{Data::ROLE} !== $roleAdmin->{DBCol::ID} &&
                         $this->{Data::ROLE} !== null &&
+                        $this->{Data::ROLE} !== $roleAdmin->{DBCol::ID} &&
                         $this->{DBCol::GROUP_ID} === null
                     ),
                     Rule::unique('groups', DBCol::NAME)
@@ -112,7 +113,7 @@ class StoreUserRequest extends FormRequest
                         $query->where('parent_id', $this->{DBCol::GROUP_ID})->where('deleted_at', null);
                     })
                 ],
-                
+
             ]
         );
     }

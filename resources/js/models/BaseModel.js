@@ -35,8 +35,6 @@ class BaseModel {
     }
 
     set(key, value) {
-        console.log(key, value);
-
         set(this.$data, key, value);
 
         return this;

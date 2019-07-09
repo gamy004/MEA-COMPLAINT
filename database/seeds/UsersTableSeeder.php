@@ -1,5 +1,7 @@
 <?php
 
+use Carbon\Carbon;
+use App\IOCs\DBCol;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Group;
@@ -30,10 +32,11 @@ class UsersTableSeeder extends Seeder
         Issue::truncate();
 
         $issue_statuses = IssueStatus::all();
+        $issue_status_ids = $issue_statuses->pluck("id")->toArray();
         $issue_categories = IssueCategory::all();
 
         $roles = Role::all()->each(
-            function($r) use ($issue_statuses, $issue_categories) {
+            function($r) use ($issue_statuses, $issue_status_ids, $issue_categories) {
                 $user_ids = [];
 
                 $group_ids = [null];
@@ -49,7 +52,7 @@ class UsersTableSeeder extends Seeder
 
                 foreach ($group_ids as $group_id) {
                     // loop user
-                    
+
                     for ($j=1; $j <= 10; $j++) {
                         $sub_group_id = null;
 
@@ -102,6 +105,19 @@ class UsersTableSeeder extends Seeder
                                     )
                                 );
 
+                            for ($x=0; $x < 3; $x++) {
+                                $random_status = Arr::random(
+                                    $issue_status_ids,
+                                    1
+                                );
+
+                                $issue->logs()->create([
+                                    IssueStatus::FK => $random_status[0]
+                                ]);
+
+                                $issue->{DBCol::STATUS_UPDATED_AT} = Carbon::now();
+                                $issue->save();
+                            }
                             $random_recipients = Arr::random(
                                 $other_group_ids,
                                 rand(1, count($other_group_ids))
