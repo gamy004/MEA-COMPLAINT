@@ -1,5 +1,7 @@
 import BaseVuexModel from "./BaseVuexModel";
-import { actions } from "../constants";
+import {
+    actions
+} from "../constants";
 
 class Status extends BaseVuexModel {
     constructor(data) {
@@ -103,7 +105,9 @@ class Status extends BaseVuexModel {
     }
 
     $updateGroupConfig() {
-        let { configs = [] } = this;
+        let {
+            configs = []
+        } = this;
 
         if (configs.length) {
             this.groupedConfigs = _(configs)
@@ -115,8 +119,10 @@ class Status extends BaseVuexModel {
         return this;
     }
 
-    getColorByTime(timeStamp = null) {
-        let { groupedConfigs = {} } = this;
+    getColorByTime(timeStamp = null, customStartTimeStamp = null) {
+        let {
+            groupedConfigs = {}
+        } = this;
         let color = this.color;
 
         if (timeStamp && Object.keys(groupedConfigs).length > 0) {
@@ -132,12 +138,10 @@ class Status extends BaseVuexModel {
             units.forEach(unit => {
                 if (groupedConfigs[unit]) {
                     for (
-                        let index = 0;
-                        index < groupedConfigs[unit].length;
-                        index++
+                        let index = 0; index < groupedConfigs[unit].length; index++
                     ) {
                         const config = groupedConfigs[unit][index];
-                        const currentMoment = moment();
+                        const currentMoment = _.isNull(customStartTimeStamp) ? moment() : moment(customStartTimeStamp);
                         const configMoment = moment(timeStamp).add(
                             config.duration,
                             config.unit
@@ -164,6 +168,59 @@ class Status extends BaseVuexModel {
         }
 
         return color;
+    }
+
+    getConfigByTime(timeStamp = null, customStartTimeStamp = null) {
+        let {
+            groupedConfigs = {}
+        } = this;
+
+        let result = null;
+
+        if (timeStamp && Object.keys(groupedConfigs).length > 0) {
+            const units = [
+                "minutes",
+                "hours",
+                "days",
+                "weeks",
+                "months",
+                "years"
+            ];
+
+            units.forEach(unit => {
+                if (groupedConfigs[unit]) {
+                    for (
+                        let index = 0; index < groupedConfigs[unit].length; index++
+                    ) {
+                        const config = groupedConfigs[unit][index];
+                        const currentMoment = _.isNull(customStartTimeStamp) ? moment() : moment(customStartTimeStamp);
+                        const configMoment = moment(timeStamp).add(
+                            config.duration,
+                            config.unit
+                        );
+
+                        // console.log(
+                        //     this.created_at,
+                        //     configMoment.toString(),
+                        //     currentMoment.toString(),
+                        //     configMoment.isBefore(currentMoment),
+                        //     config.duration,
+                        //     config.unit
+                        // );
+                        // console.log(timeStamp, customStartTimeStamp, configMoment.isBefore(currentMoment));
+
+                        if (configMoment.isBefore(currentMoment)) {
+                            result = config;
+                            continue;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            });
+        }
+
+        return result;
     }
 }
 

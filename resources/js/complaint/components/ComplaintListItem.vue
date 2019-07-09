@@ -30,6 +30,18 @@
           <template v-slot:activator="{ on }">
             <v-list-tile-sub-title
               v-on="on"
+              class="complaint-list__sender font-weight-bold"
+              :class="isMobileClasses"
+              v-text="issuerName"
+            ></v-list-tile-sub-title>
+          </template>
+          <span v-text="issuerName"></span>
+        </v-tooltip>
+
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-list-tile-sub-title
+              v-on="on"
               class="complaint-list__title font-weight-bold"
               :class="isMobileClasses"
               v-text="title"
@@ -38,13 +50,32 @@
           <span v-html="title"></span>
         </v-tooltip>
 
+        <v-chip v-if="!isMobile && category" small>
+          <span>{{ categoryName }}</span>
+        </v-chip>
+
         <v-chip
+          v-if="!isMobile"
           class="complaint-list__status"
           small
-          :color="item.statusColor"
+          :color="itemStatusColor"
           :style="statusStyles"
           dark
         >{{ item.currentStatus }}</v-chip>
+
+        <v-layout v-if="isMobile">
+          <v-chip v-if="category" small>
+            <span>{{ categoryName }}</span>
+          </v-chip>
+
+          <v-chip
+            class="complaint-list__status"
+            small
+            :color="itemStatusColor"
+            :style="statusStyles"
+            dark
+          >{{ item.currentStatus }}</v-chip>
+        </v-layout>
 
         <!-- Merge line on desktop and tablet -->
         <v-list-tile-sub-title
@@ -182,8 +213,25 @@ export default {
 
   data() {
     return {
-      selectingStatus: false
+      selectingStatus: false,
+      itemStatusColor: "#E0E0E0FF",
+      statusStyles: {
+        color: getCorrectTextColor("#E0E0E0FF")
+      }
     };
+  },
+
+  watch: {
+    item: {
+      immediate: true,
+      deep: true,
+      handler(item) {
+        this.itemStatusColor = item.statusColor;
+        this.statusStyles = {
+          color: getCorrectTextColor(this.itemStatusColor)
+        };
+      }
+    }
   },
 
   computed: {
@@ -195,6 +243,21 @@ export default {
 
     issuer() {
       return this.$_vuexable_getByKey(this.item.issued_by, vuex.modules.GROUP);
+    },
+
+    category() {
+      return this.$_vuexable_getByKey(
+        this.item.issue_category_id,
+        vuex.modules.ISSUE_CATEGORY
+      );
+    },
+
+    issuerName() {
+      return this.issuer ? this.issuer.name : "แอดมิน";
+    },
+
+    categoryName() {
+      return this.category ? this.category.category : "ไม่ระบุ";
     },
 
     itemSelected: {
@@ -229,15 +292,19 @@ export default {
         (issue, status) => {
           this.selectingStatus = false;
           this.$emit("update:status", this.item);
+          // this.itemStatusColor = this.item.statusColor;
+          // this.statusStyles = {
+          //   color: getCorrectTextColor(this.itemStatusColor)
+          // };
         }
       );
-    },
-
-    statusStyles() {
-      return {
-        color: getCorrectTextColor(this.item.statusColor)
-      };
     }
+
+    // statusStyles() {
+    //   return {
+    //     color: getCorrectTextColor(this.item.statusColor)
+    //   };
+    // }
   },
 
   methods: {
@@ -322,7 +389,7 @@ export default {
   }
 
   &__action-right {
-    min-width: 150px;
+    min-width: 75px;
     padding-top: 0;
     padding-bottom: 0;
     margin-left: 16px;
@@ -348,13 +415,21 @@ export default {
     margin-left: 16px;
   }
 
+  &__sender {
+    max-width: 100px;
+
+    &.is-mobile {
+      max-width: fit-content;
+    }
+  }
+
   &__title {
     max-width: 168px;
     min-width: 125px;
     padding-right: 32px;
 
     &.is-mobile {
-      max-width: 100%;
+      max-width: fit-content;
     }
   }
 

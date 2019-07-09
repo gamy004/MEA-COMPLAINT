@@ -524,6 +524,8 @@ export default {
 
       this.$_alertable_alert(`${this.$_managable_action}_success`);
 
+      this.dialog = false;
+
       return this.resetComplaintForm();
     },
 

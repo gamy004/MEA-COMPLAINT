@@ -81,6 +81,13 @@ Route::group([
                 Route::post('/restore', 'IssueStatusController@restore')->name('restore');
             });
 
+            /**
+             * Custom route IssueStatusController
+             */
+            Route::group(['as' => 'users.', 'prefix' => 'users/{user}'], function () {
+                Route::put('/update-config', 'UserController@updateConfig')->name('update-config');
+            });
+
             Route::resources([
                 'users' => 'UserController',
                 'issues' => 'IssueController',

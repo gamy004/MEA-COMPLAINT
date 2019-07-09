@@ -1,14 +1,15 @@
 <template>
   <v-layout class="complaint-list" :class="isMobileClasses" row wrap>
     <v-flex xs12>
-      <transition name="slide-y-transition" mode="out-in">
-        <v-progress-linear
-          v-if="$_complaint_mixin_isFetchingComplaint || $_issue_search_mixin_isSearchingComplaint"
-          key="complaintLoading"
-          :indeterminate="true"
-        ></v-progress-linear>
+      <v-progress-linear
+        v-if="$_complaint_mixin_isFetchingComplaint || $_issue_search_mixin_isSearchingComplaint"
+        key="complaintLoading"
+        color="deep-orange accent-2"
+        :indeterminate="true"
+      ></v-progress-linear>
 
-        <v-list v-else key="complaintList" :three-line="isMobile" :class="isMobileClasses">
+      <transition name="slide-y-transition" mode="out-in">
+        <v-list key="complaintList" :three-line="isMobile" :class="isMobileClasses">
           <template v-for="(item, itemIndex) in $_paginatable_currentPaginatedList">
             <complaint-list-item
               :key="`complaint-${itemIndex}`"
@@ -90,13 +91,7 @@ export default {
       immediate: true,
       deep: true,
       handler({ inbox_settings = null } = {}) {
-        let rowsPerPage = 10;
-
-        if (inbox_settings) {
-          inbox_settings = JSON.parse(inbox_settings);
-
-          rowsPerPage = inbox_settings.rowsPerPage;
-        }
+        const rowsPerPage = this.authSettingPerPage;
 
         if (rowsPerPage === this.$_paginatable_rowsPerPage) return;
 
@@ -153,7 +148,20 @@ export default {
 
     ...vuex.mapState(["auth"]),
 
-    ...vuex.mapGetters(["isMobile", "isMobileClasses"])
+    ...vuex.mapGetters(["isMobile", "isMobileClasses"]),
+
+    authSettingPerPage() {
+      let { inbox_settings = null } = this.auth;
+      let rowsPerPage = 10;
+
+      if (inbox_settings) {
+        inbox_settings = JSON.parse(inbox_settings);
+
+        rowsPerPage = inbox_settings.rowsPerPage;
+      }
+
+      return rowsPerPage;
+    }
 
     // ...vuex.mapWaitingGetters({
     //   isFetchingComplaint: [vuex.actions.ISSUE.FETCH]
@@ -207,6 +215,21 @@ export default {
         throw error;
       }
     }
+  },
+
+  mounted() {
+    let descending = true;
+
+    if (this.$route.query.hasOwnProperty("descending")) {
+      descending = this.$route.query.descending == "true";
+    }
+
+    this.$_paginatable_pagination = {
+      sortBy: "updated_at",
+      page: this.$route.query.page || 1,
+      descending,
+      rowsPerPage: this.authSettingPerPage
+    };
   }
 };
 </script>
@@ -239,7 +262,7 @@ export default {
   }
 
   &__sub-title {
-    display: flex;
+    // display: flex;
 
     * {
       margin: 0 !important;

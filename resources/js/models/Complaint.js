@@ -316,7 +316,7 @@ class Complaint extends BaseVuexModel {
     }
 
     get statusColor() {
-        let color = '#C3C3C3FF';
+        let color = '#E0E0E0FF';
 
         const {
             vuex,
@@ -332,8 +332,6 @@ class Complaint extends BaseVuexModel {
             ](issue_status_id);
 
             if (status) {
-                console.log(status);
-
                 color = status.getColorByTime(status_updated_at);
             }
         }

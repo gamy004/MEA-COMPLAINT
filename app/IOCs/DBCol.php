@@ -49,6 +49,8 @@ class DBCol
     const UNIT = 'unit';
     const DEFAULT = 'default';
     const STATUS_UPDATED_AT = 'status_updated_at';
+    const STARTED_AT = 'started_at';
+    const ENDED_AT = 'ended_at';
     /**
      * ISSUE NOTE
      */

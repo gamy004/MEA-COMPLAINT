@@ -115,6 +115,72 @@
 
             <v-list-tile>
               <v-list-tile-action>
+                <span class="mr-3 body-2">Status</span>
+              </v-list-tile-action>
+
+              <v-autocomplete
+                class="search-complaint-form__input-status bdb-1"
+                v-model="issue_search_mixin_form.statuses"
+                :items="$_issue_search_mixin_storeStatuses"
+                small-chips
+                cache-items
+                :loading="$_issue_search_mixin_isFetchingFormStatus"
+                full-width
+                hide-details
+                hide-no-data
+                multiple
+                single-line
+                color="deep-orange"
+                @focus="$_issue_search_mixin_fetchStatuses"
+                @keydown.enter.prevent="onSearch"
+              >
+                <template v-slot:selection="{ item, index }">
+                  <v-chip v-if="index < 3">
+                    <span>{{ item }}</span>
+                  </v-chip>
+                  <span
+                    v-if="index === 3"
+                    class="grey--text caption"
+                  >(+{{ issue_search_mixin_form.statuses.length - 3 }} others)</span>
+                </template>
+              </v-autocomplete>
+            </v-list-tile>
+
+            <v-list-tile>
+              <v-list-tile-action>
+                <span class="mr-3 body-2">Category</span>
+              </v-list-tile-action>
+
+              <v-autocomplete
+                class="search-complaint-form__input-status bdb-1"
+                v-model="issue_search_mixin_form.categories"
+                :items="$_issue_search_mixin_storeCategories"
+                small-chips
+                cache-items
+                :loading="$_issue_search_mixin_isFetchingFormCategory"
+                full-width
+                hide-details
+                hide-no-data
+                multiple
+                single-line
+                color="deep-orange"
+                @focus="$_issue_search_mixin_fetchIssueCategories"
+                @keydown.enter.prevent="onSearch"
+              >
+                <template v-slot:selection="{ item, index }">
+                  <v-chip v-if="index < 3">
+                    <span>{{ item }}</span>
+                  </v-chip>
+                  <span
+                    v-if="index === 3"
+                    class="grey--text caption"
+                  >(+{{ issue_search_mixin_form.categories.length - 3 }} others)</span>
+                </template>
+              </v-autocomplete>
+            </v-list-tile>
+
+            <v-list-tile>
+              <v-list-tile-action>
                 <span class="mr-3 body-2">Subject</span>
               </v-list-tile-action>
 

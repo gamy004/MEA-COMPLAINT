@@ -70,7 +70,8 @@ function parseEdit(context, {
     category: issue_categories = [],
     notes: issue_notes = [],
     attachments: files = [],
-    issuer = []
+    issuer = [],
+    "logs.status": logStatuses = []
 } = {}) {
 
     const {
@@ -91,7 +92,7 @@ function parseEdit(context, {
     });
 
     parsers.ISSUE_STATUS[vuex.actions.ISSUE_STATUS.FETCH](context, {
-        issue_statuses,
+        issue_statuses: [...issue_statuses, ...logStatuses],
         strategy: 'merge'
     });
 
@@ -108,7 +109,7 @@ function parseEdit(context, {
     ](issue.id) || {};
 
     const updatedCompaint = _.merge({
-        ...oldComplaint.data
+        ..._.cloneDeep(oldComplaint.data)
     }, issue);
 
     rootCommit(

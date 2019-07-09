@@ -136,7 +136,7 @@ class UserApi extends BaseApi implements ApiInterface
             ]);
     }
 
-    public function find($id)
+    public function findCustom($id)
     {
         $users = $this->queryIndex()
             ->where(
@@ -167,11 +167,10 @@ class UserApi extends BaseApi implements ApiInterface
 
             DB::commit();
 
-            return $this->find($user->id);
+            return $this->findCustom($user->id);
         } catch (Exception $exception) {
             DB::rollback();
             Log::error($exception);
-            dd($exception);
             throw new Exception("Error Creating User Request", 1);
         }
 
@@ -193,12 +192,35 @@ class UserApi extends BaseApi implements ApiInterface
 
             DB::commit();
 
+            return $this->findCustom($user->id);
+        } catch (Exception $exception) {
+            DB::rollback();
+            Log::error($exception);
+            throw new Exception("Error Updating User Request", 1);
+        }
+    }
+
+    public function updateConfig(Model $user, array $raw)
+    {
+        try {
+            DB::beginTransaction();
+
+            $user->update(
+                Arr::only(
+                    $raw,
+                    [
+                        DBCol::INBOX_SETTINGS
+                    ]
+                )
+            );
+
+            DB::commit();
+
             return $this->find($user->id);
         } catch (Exception $exception) {
             DB::rollback();
             Log::error($exception);
-            dd($exception);
-            throw new Exception("Error Updating User Request", 1);
+            throw new Exception("Error Updating User's Config Request", 1);
         }
     }
 
@@ -218,8 +240,7 @@ class UserApi extends BaseApi implements ApiInterface
                     DBCol::NAME,
                     DBCol::EMAIL,
                     DBCol::GROUP_ID,
-                    DBCol::SUB_GROUP_ID,
-                    DBCol::INBOX_SETTINGS
+                    DBCol::SUB_GROUP_ID
                 ]
             )
         );

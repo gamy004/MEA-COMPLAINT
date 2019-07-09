@@ -109,7 +109,6 @@ export function contrastText(rgb) {
     // All browsers should return an rgb value so this isn't critical
 
     // Strip everything except the integers eg. "rgb(" and ")" and " "
-    console.log(rgb);
 
     rgb = rgb.split(/\(([^)]+)\)/)[1].replace(/ /g, '');
 

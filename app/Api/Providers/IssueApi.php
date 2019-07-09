@@ -415,6 +415,7 @@ class IssueApi extends BaseApi implements ApiInterface
         } catch (Exception $exception) {
             DB::rollback();
             Log::error($exception);
+            dd($exception);
             throw new Exception("Error Creating Issue Request", 1);
         }
     }
@@ -485,12 +486,30 @@ class IssueApi extends BaseApi implements ApiInterface
     {
         if (isset($raw[IssueStatus::FK])) {
             $issue_status_id = $raw[IssueStatus::FK];
+            $old_status_id = $issue->{IssueStatus::FK};
+            $old_status_updated_at = $issue->{DBCol::STATUS_UPDATED_AT};
 
-            $issue->{DBCol::STATUS_UPDATED_AT} = Carbon::now();
+            $current_time = Carbon::now();
+
+            $issue->{DBCol::STATUS_UPDATED_AT} = $current_time;
             $issue->{IssueStatus::FK} = $issue_status_id;
+
             $issue->save();
 
-            return $issue->logs()->create(compact('issue_status_id'));
+            if (!is_null($old_status_id)) {
+                $issue->logs()->where([
+                    [IssueStatus::FK, $old_status_id],
+                    [DBCol::STARTED_AT, $old_status_updated_at]
+                ])
+                ->update([
+                    DBCol::ENDED_AT => $current_time
+                ]);
+            }
+
+            return $issue->logs()->create([
+                IssueStatus::FK => $issue_status_id,
+                DBCol::STARTED_AT => $current_time
+            ]);
         }
 
         return false;

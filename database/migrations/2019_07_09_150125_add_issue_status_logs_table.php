@@ -15,6 +15,8 @@ class AddIssueStatusLogsTable extends Migration
     {
         Schema::create('issue_status_logs', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->timestamp("started_at")->nullable();
+            $table->timestamp("ended_at")->nullable();
             $table->bigInteger('issue_id')->unsigned();
             $table->bigInteger('issue_status_id')->unsigned();
             $table->timestamps();

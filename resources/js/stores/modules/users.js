@@ -94,6 +94,18 @@ const userStore = {
                 throw error;
             }
         },
+
+        async [vuex.actions.USER.UPDATE_CONFIG](context, input) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'USER',
+                    action: 'UPDATE_CONFIG',
+                    params: input
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
     },
 
     mutations: {

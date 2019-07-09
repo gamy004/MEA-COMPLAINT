@@ -79,6 +79,18 @@ class UserController extends BaseApiController
     }
 
     /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
+    public function updateConfig(UpdateUserRequest $request, User $user)
+    {
+        return $this->api->updateConfig($user, $request->all());
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\User  $user

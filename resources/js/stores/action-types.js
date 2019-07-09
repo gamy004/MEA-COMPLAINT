@@ -13,6 +13,7 @@ export const USER = {
     STORE: 'userStore',
     EDIT: 'userEdit',
     UPDATE: 'userUpdate',
+    UPDATE_CONFIG: 'userUpdateConfig',
     DELETE: 'userDelete',
     RESTORE: 'userRestore',
 };

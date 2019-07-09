@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\IOCs\DBCol;
 use Illuminate\Database\Eloquent\Model;
 
 class IssueStatusLog extends Model
 {
     protected $fillable = [
         Issue::FK,
-        IssueStatus::FK
+        IssueStatus::FK,
+        DBCol::STARTED_AT,
+        DBCol::ENDED_AT
     ];
 
     public function status() {

@@ -108,32 +108,33 @@
 
     <v-navigation-drawer
       v-model="showStatusLogs"
-      fixed
       clipped
-      class="pl-2"
+      right
+      class="pl-4"
+      :class="{ 'elevation-3': showStatusLogs }"
       app
-      :width="400"
+      :width="375"
     >
       <v-list dense>
-        <v-subheader>Status logs</v-subheader>
+        <v-subheader>ประวัติการเปลี่ยนแปลงสถานะ</v-subheader>
 
         <!-- <template v-for="(item, i) in items"> -->
-          <!-- <v-layout v-if="item.heading" :key="i" row align-center>
+        <!-- <v-layout v-if="item.heading" :key="i" row align-center>
             <v-flex :class="item.route ? 'xs6' : 'xs12'">
               <v-subheader v-if="item.heading">{{ item.heading }}</v-subheader>
             </v-flex>
             <v-flex v-if="item.route" xs6 class="text-xs-right">
               <v-btn small flat @click="gotoPage(item.route)">edit</v-btn>
             </v-flex>
-          </v-layout> -->
-          <!-- <v-list-tile :key="`status-${i}`">
+        </v-layout>-->
+        <!-- <v-list-tile :key="`status-${i}`">
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
             <v-list-tile-content>
               <v-list-tile-title class="grey--text">{{ item.text }}</v-list-tile-title>
             </v-list-tile-content>
-          </v-list-tile> -->
+        </v-list-tile>-->
 
         <!-- </template> -->
 
@@ -142,7 +143,8 @@
             <status-log-item
               :key="`log-${logIndex}`"
               :item="log"
-              :issue-id="$_complaint_item_mixin_complaint.id" />
+              :issue-id="$_complaint_item_mixin_complaint.id"
+            />
           </template>
         </v-timeline>
       </v-list>
@@ -362,14 +364,12 @@ export default {
         // { icon: "settings", text: "Settings" }
         {
           icon: "history",
-          text: "Status logs",
+          text: "ดูประวัติการเปลี่ยนแปลงสถานะ",
           disabled: () => {
             const { logs = [] } = this.$_complaint_item_mixin_complaint;
-            console.log(logs);
-
             return !logs.length;
           },
-          onClick: () => this.showStatusLogs = !this.showStatusLogs
+          onClick: () => (this.showStatusLogs = !this.showStatusLogs)
         }
       ];
     },
