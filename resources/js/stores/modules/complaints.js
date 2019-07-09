@@ -2,9 +2,6 @@ import base from './base';
 import {
     vuex
 } from '../../mixins/vuexable';
-import {
-    filterIn
-} from '../../helpers';
 
 const userStore = {
     state() {
@@ -157,6 +154,24 @@ const userStore = {
                 return await context.dispatch(vuex.actions.REQUEST, {
                     model: 'ISSUE',
                     action: 'RESTORE',
+                    params: {
+                        routeParam: {
+                            issue
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        async [vuex.actions.ISSUE.ARCHIVE](context, {
+            id: issue
+        }) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'ISSUE',
+                    action: 'ARCHIVE',
                     params: {
                         routeParam: {
                             issue

@@ -108,7 +108,7 @@
       >
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" icon @click.prevent.stop="item.archive()" class="mr-2">
+            <v-btn v-on="on" icon @click.prevent.stop="onArchiveItem" class="mr-2">
               <v-icon color="grey darken-1">archive</v-icon>
             </v-btn>
           </template>
@@ -312,6 +312,10 @@ export default {
       return {
         "elevation-2": hover
       };
+    },
+
+    onArchiveItem() {
+      this.$emit("archive", this.item);
     },
 
     onEditItem() {

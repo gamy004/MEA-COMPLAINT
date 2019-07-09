@@ -203,6 +203,20 @@ class Complaint extends BaseVuexModel {
         return response;
     }
 
+    static async [actions.ISSUE.ARCHIVE](data) {
+        let response;
+
+        try {
+            response = await api.put('api:issues.archive', {
+                ...data
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
     static async [actions.ISSUE.EXPORT](data) {
         let response;
 

@@ -152,6 +152,8 @@ class IssueApi extends BaseApi implements ApiInterface
                 sprintf("%s.%s", $baseTable, DBCol::ID),
                 sprintf("%s.%s", $baseTable, DBCol::CREATED_AT),
                 sprintf("%s.%s", $baseTable, DBCol::UPDATED_AT),
+                sprintf("%s.%s", $baseTable, DBCol::DELETED_AT),
+                sprintf("%s.%s", $baseTable, DBCol::ARCHIVE),
                 sprintf("%s.%s", $baseTable, DBCol::SUBJECT),
                 sprintf("%s.%s", $baseTable, DBCol::DESCRIPTION),
                 sprintf("%s.%s", $baseTable, DBCol::ISSUED_BY),
@@ -450,6 +452,62 @@ class IssueApi extends BaseApi implements ApiInterface
             DB::rollback();
             Log::error($exception);
             throw new Exception("Error Updating issue Request", 1);
+        }
+    }
+
+    public function restore($id)
+    {
+        try {
+            DB::beginTransaction();
+            $originalModel = $this->getOriginalModel();
+
+            $issue = $originalModel->withTrashed()
+                ->where(DBCol::ID, $id)
+                ->first();
+
+            if (!is_null($issue->{DBCol::DELETED_AT})) {
+                $issue->restore();
+            }
+
+            if ($issue->{DBCol::ARCHIVE}) {
+                $issue->{DBCol::ARCHIVE} = 0;
+                $issue->save();
+            }
+            // $restore = $originalModel->withTrashed()
+            //     ->where(DBCol::ID, $id)
+            //     ->restore();
+
+            DB::commit();
+
+            return $this->find($id);
+        } catch (Exception $exception) {
+            DB::rollback();
+
+            Log::error($exception);
+
+            throw new Exception("Error Handle Restoring Resource Request");
+        }
+    }
+
+    public function archive(Model $issue, array $raw)
+    {
+        try {
+            DB::beginTransaction();
+
+            $issue->{DBCol::ARCHIVE} = 1;
+            $issue->save();
+
+            DB::commit();
+
+            return response()->json([
+                "message" => "archive success",
+                "id" => $issue->{DBCol::ID}
+            ]);
+
+        } catch (Exception $exception) {
+            DB::rollback();
+            Log::error($exception);
+            throw new Exception("Error Archiving issue Request", 1);
         }
     }
 

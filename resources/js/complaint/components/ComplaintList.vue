@@ -14,6 +14,7 @@
             <complaint-list-item
               :key="`complaint-${itemIndex}`"
               :item="item"
+              @archive="onArchiveItem(item, itemIndex)"
               @edit="onEditItem(item, itemIndex)"
               @update:status="onUpdateStatusItem"
               @delete="onDeleteItem(item, itemIndex)"
@@ -75,8 +76,21 @@ export default {
           actions: [
             {
               text: "Undo",
-              handler: ({ item, itemIndex }) => {
-                this[vuex.actions.ISSUE.RESTORE](item);
+              handler: async ({ item, itemIndex }) => {
+                await this[vuex.actions.ISSUE.RESTORE](item);
+                this.$_alertable_alert("undo");
+              }
+            }
+          ]
+        },
+        archive_success: {
+          text: "Complaint moved to Archive",
+          actions: [
+            {
+              text: "Undo",
+              handler: async ({ item, itemIndex }) => {
+                await this[vuex.actions.ISSUE.RESTORE](item);
+                this.$_alertable_alert("undo");
               }
             }
           ]
@@ -173,11 +187,24 @@ export default {
       // vuex.actions.ISSUE.FETCH,
       vuex.actions.ISSUE.EDIT,
       vuex.actions.ISSUE.DELETE,
-      vuex.actions.ISSUE.RESTORE
+      vuex.actions.ISSUE.RESTORE,
+      vuex.actions.ISSUE.ARCHIVE,
     ]),
 
     callFetch() {
       return this[vuex.actions.ISSUE.FETCH]();
+    },
+
+    async onArchiveItem(item, itemIndex) {
+      const { id } = item;
+
+      try {
+        await this[vuex.actions.ISSUE.ARCHIVE](item);
+      } catch (error) {
+        throw error;
+      }
+
+      this.$_alertable_alert("archive_success", { item, itemIndex });
     },
 
     async onEditItem(item, itemIndex) {

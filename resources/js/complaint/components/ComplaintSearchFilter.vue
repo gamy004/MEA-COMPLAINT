@@ -345,7 +345,9 @@ export default {
 
         this.$_issue_search_mixin_updateKeywordAndBackup();
       }
-    }
+    },
+
+    "$route.query": "onRouteQueryUpdate"
   },
 
   computed: {
@@ -387,6 +389,12 @@ export default {
     onClear() {
       this.$_issue_search_mixin_clearSearchKeyword();
       this.$_issue_search_mixin_clearSearchFilters();
+    },
+
+    onRouteQueryUpdate({ q = "" } = {}) {
+      this.$_issue_search_mixin_clearState();
+      this.issue_search_mixin_searchKeyword = q;
+      this.$_issue_search_mixin_extractSearchKeywordToFilters();
     }
   }
 };

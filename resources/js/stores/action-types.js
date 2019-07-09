@@ -29,7 +29,8 @@ export const ISSUE = {
     RESTORE: 'complaintRestore',
     EXPORT: 'complaintExport',
     SEARCH: 'complaintSearch',
-    EXPORT_SEARCH: 'complaintExportSearch'
+    EXPORT_SEARCH: 'complaintExportSearch',
+    ARCHIVE: 'complaintArchive'
 };
 
 export const GROUP = {

@@ -75,7 +75,7 @@ import complaintMixin from "../../mixins/complaint-mixin";
 import { onEmit } from "../../helpers";
 import issueStatusMixin from "../../mixins/issue-status-mixin";
 import issueReportMixin from "../../mixins/issue-report-mixin";
-import { vuex } from "../../mixins/vuexable";
+import { vuex, vuexable } from "../../mixins/vuexable";
 import { issueSearchMixin } from "../../mixins/issue-search-mixin";
 // import complaintModule from "../../stores/modules/complaints";
 // import groupModule from "../../stores/modules/groups";
@@ -86,7 +86,8 @@ export default {
     complaintMixin,
     issueStatusMixin,
     issueSearchMixin,
-    issueReportMixin
+    issueReportMixin,
+    vuexable
   ],
 
   components: {
@@ -114,6 +115,8 @@ export default {
   },
 
   watch: {
+    "$route.query": "onRouteQueryChange",
+
     tabs: {
       immediate: true,
       handler(v) {
@@ -352,6 +355,32 @@ export default {
 
     unCheckAll() {
       this.$set(this.items[0], "selected", false);
+    },
+
+    onRouteQueryChange(v) {
+      console.log(v);
+      let global_filters = [];
+
+      switch (v) {
+        case "archive":
+            global_filters = [
+                { key: "archive", value: 1 },
+                { key: "deleted_at", value: null }
+            ];
+          break;
+
+        case "trash":
+            global_filters = [
+                { key: "archive", value: 0 },
+                { key: "deleted_at", value: null, not: true }
+            ];
+          break;
+      }
+
+      this.$_vuexable_setState({
+        key: "global_filters",
+        value: global_filters
+      }, vuex.modules.ISSUE);
     }
   },
 
@@ -370,7 +399,7 @@ export default {
 
 #complaintToolbar {
   position: sticky;
-  top: 65px;
+  top: 64px;
   z-index: 2;
 
   .v-toolbar__content {

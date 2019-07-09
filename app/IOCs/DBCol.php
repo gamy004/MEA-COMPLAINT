@@ -36,6 +36,7 @@ class DBCol
     const ISSUED_BY = 'issued_by';
     const REFERENCED_TO = 'referenced_to';
     const RECIPIENT_ID = 'recipient_id';
+    const ARCHIVE = 'archive';
     /**
      * ISSUE_CATEGORY
      */

@@ -233,5 +233,6 @@ export default {
     [actions.ISSUE.UPDATE]: parseEdit,
     [actions.ISSUE.STORE]: parseStore,
     [actions.ISSUE.DELETE]: parseDelete,
+    [actions.ISSUE.ARCHIVE]: parseDelete,
     [actions.ISSUE.RESTORE]: parseStore
 }
