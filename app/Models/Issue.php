@@ -18,7 +18,7 @@ class Issue extends Model
         DBCol::DESCRIPTION,
         DBCol::ISSUED_BY,
         DBCol::REFERENCED_TO,
-        IssueStatus::FK,
+        // IssueStatus::FK,
         IssueCategory::FK
     ];
 
@@ -66,5 +66,10 @@ class Issue extends Model
 
     public function notes() {
         return $this->hasMany(IssueNote::class);
+    }
+
+    public function logs()
+    {
+        return $this->hasMany(IssueStatusLog::class, self::FK);
     }
 }

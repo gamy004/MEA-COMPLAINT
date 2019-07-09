@@ -4,6 +4,7 @@ namespace App\Api\Providers;
 
 use Exception;
 use App\IOCs\Data;
+use Carbon\Carbon;
 use App\IOCs\DBCol;
 use App\Api\BaseApi;
 use App\Models\File;
@@ -43,11 +44,11 @@ class IssueApi extends BaseApi implements ApiInterface
         $original_parser = $this->getParser();
         $request_parser = $this->getParser();
         $parser_result = $request_parser->result();
-        
+
         $search_fields = isset($parser_result[BaseParser::PARAMS['SEARCH']][BaseParser::PARAMS['FIELDS']])
             ? $parser_result[BaseParser::PARAMS['SEARCH']][BaseParser::PARAMS['FIELDS']]
             : [];
-            
+
         $request_parser->setResult(
             "select",
             ["issues" => array_merge(
@@ -55,9 +56,9 @@ class IssueApi extends BaseApi implements ApiInterface
                 $search_fields
             )]
         );
-        
+
         $this->setParser($request_parser);
-        
+
         $search_result = $this->setCustomQuery(
             $this->querySearch()
         );
@@ -82,7 +83,7 @@ class IssueApi extends BaseApi implements ApiInterface
 
         if (count($data)) {
             $ids = $data->pluck("id")->toArray();
-            
+
             $original_parser->setResult("select", []);
             $original_parser->setResult("search", ["keyword" => "", "fields" => []]);
             $original_parser->setResult("offset", 0);
@@ -100,7 +101,7 @@ class IssueApi extends BaseApi implements ApiInterface
                     "or" => false
                 ]
             ]);
-            
+
             $search_result = $this->get();
             $search_result->put(Data::TOTAL, $total);
         }
@@ -390,15 +391,16 @@ class IssueApi extends BaseApi implements ApiInterface
 
             $default_status = IssueStatus::default()->select([DBCol::ID])->first();
 
-            $record = [
-                IssueStatus::FK => $default_status->{DBCol::ID}
-            ];
+            $raw[IssueStatus::FK] = $default_status->{DBCol::ID};
+
+            $record = [];
 
             $record = $this->parseGeneralFields($record, $raw);
 
             $issue = Issue::create($record);
 
             $this->syncRecipients($issue, $raw);
+            $this->syncStatus($issue, $raw);
 
             $uploaded_file_ids = $this->setHasFileRelation('attachments')
                 ->setHasFileRootDirectory('issues/')
@@ -431,6 +433,7 @@ class IssueApi extends BaseApi implements ApiInterface
             }
 
             $this->syncRecipients($issue, $raw);
+            $this->syncStatus($issue, $raw);
 
             $uploaded_file_ids = $this->setHasFileRelation('attachments')
                 ->setHasFileRootDirectory('issues/')
@@ -458,8 +461,8 @@ class IssueApi extends BaseApi implements ApiInterface
                 [
                     DBCol::SUBJECT,
                     DBCol::DESCRIPTION,
-                    IssueCategory::FK,
-                    IssueStatus::FK
+                    IssueCategory::FK
+                    // IssueStatus::FK
                 ]
             )
         );
@@ -473,6 +476,21 @@ class IssueApi extends BaseApi implements ApiInterface
             $recipient_ids = $raw[Data::RECIPIENTS];
 
             return $issue->recipients()->sync($recipient_ids);
+        }
+
+        return false;
+    }
+
+    private function syncStatus(Issue $issue, $raw)
+    {
+        if (isset($raw[IssueStatus::FK])) {
+            $issue_status_id = $raw[IssueStatus::FK];
+
+            $issue->{DBCol::STATUS_UPDATED_AT} = Carbon::now();
+            $issue->{IssueStatus::FK} = $issue_status_id;
+            $issue->save();
+
+            return $issue->logs()->create(compact('issue_status_id'));
         }
 
         return false;
@@ -506,11 +524,11 @@ class IssueApi extends BaseApi implements ApiInterface
         $original_parser = $this->getParser();
         $request_parser = $this->getParser();
         $parser_result = $request_parser->result();
-        
+
         $search_fields = isset($parser_result[BaseParser::PARAMS['SEARCH']][BaseParser::PARAMS['FIELDS']])
             ? $parser_result[BaseParser::PARAMS['SEARCH']][BaseParser::PARAMS['FIELDS']]
             : [];
-            
+
         $request_parser->setResult(
             "select",
             ["issues" => array_merge(
@@ -518,13 +536,13 @@ class IssueApi extends BaseApi implements ApiInterface
                 $search_fields
             )]
         );
-        
+
         $this->setParser($request_parser);
-        
+
         $search_result = $this->setCustomQuery(
             $this->querySearch()
         )->get();
-        
+
         $data = $search_result->get($this->getArchitectKey());
         $ids = [];
 
@@ -549,10 +567,10 @@ class IssueApi extends BaseApi implements ApiInterface
                 "or" => false
             ]
         ]);
-        
+
         $this->setParser($original_parser);
         $this->setCustomQuery(null);
-        
+
         return $this->export($raw);
     }
 }

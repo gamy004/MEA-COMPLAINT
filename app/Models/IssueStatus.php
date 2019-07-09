@@ -23,6 +23,11 @@ class IssueStatus extends Model
         return $this->hasMany(Issue::class, self::FK);
     }
 
+    public function logs()
+    {
+        return $this->hasMany(IssueStatusLog::class, self::FK);
+    }
+
     public function configs()
     {
         return $this->hasMany(IssueStatusConfig::class, self::FK);

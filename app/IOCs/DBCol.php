@@ -48,6 +48,7 @@ class DBCol
     const DURATION = 'duration';
     const UNIT = 'unit';
     const DEFAULT = 'default';
+    const STATUS_UPDATED_AT = 'status_updated_at';
     /**
      * ISSUE NOTE
      */

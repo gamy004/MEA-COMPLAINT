@@ -1,12 +1,10 @@
-import BaseVuexModel from './BaseVuexModel';
-import {
-    actions
-} from '../constants';
+import BaseVuexModel from "./BaseVuexModel";
+import { actions } from "../constants";
 
 class Status extends BaseVuexModel {
     constructor(data) {
         super({
-            status: '',
+            status: "",
             ...data
         });
 
@@ -19,7 +17,7 @@ class Status extends BaseVuexModel {
         let response;
 
         try {
-            response = await api.get('api:issue-statuses.index', {
+            response = await api.get("api:issue-statuses.index", {
                 includes: ["configs"],
                 ...props
             });
@@ -34,7 +32,7 @@ class Status extends BaseVuexModel {
         let response;
 
         try {
-            response = await api.get('api:issue-statuses.edit', {
+            response = await api.get("api:issue-statuses.edit", {
                 includes: ["configs"],
                 ...data
             });
@@ -49,7 +47,7 @@ class Status extends BaseVuexModel {
         let response;
 
         try {
-            response = await api.post('api:issue-statuses.store', {
+            response = await api.post("api:issue-statuses.store", {
                 includes: ["configs"],
                 ...props
             });
@@ -64,7 +62,7 @@ class Status extends BaseVuexModel {
         let response;
 
         try {
-            response = await api.put('api:issue-statuses.update', {
+            response = await api.put("api:issue-statuses.update", {
                 includes: ["configs"],
                 ...props
             });
@@ -79,7 +77,7 @@ class Status extends BaseVuexModel {
         let response;
 
         try {
-            response = await api.delete('api:issue-statuses.destroy', {
+            response = await api.delete("api:issue-statuses.destroy", {
                 ...data
             });
         } catch (error) {
@@ -93,7 +91,7 @@ class Status extends BaseVuexModel {
         let response;
 
         try {
-            response = await api.post('api:issue-statuses.restore', {
+            response = await api.post("api:issue-statuses.restore", {
                 includes: ["configs"],
                 ...data
             });
@@ -105,15 +103,67 @@ class Status extends BaseVuexModel {
     }
 
     $updateGroupConfig() {
-        let {
-            configs = []
-        } = this;
+        let { configs = [] } = this;
 
         if (configs.length) {
-            this.groupedConfigs = _(configs).sortBy("duration").groupBy("unit").value();
+            this.groupedConfigs = _(configs)
+                .sortBy("duration")
+                .groupBy("unit")
+                .value();
         }
 
         return this;
+    }
+
+    getColorByTime(timeStamp = null) {
+        let { groupedConfigs = {} } = this;
+        let color = this.color;
+
+        if (timeStamp && Object.keys(groupedConfigs).length > 0) {
+            const units = [
+                "minutes",
+                "hours",
+                "days",
+                "weeks",
+                "months",
+                "years"
+            ];
+
+            units.forEach(unit => {
+                if (groupedConfigs[unit]) {
+                    for (
+                        let index = 0;
+                        index < groupedConfigs[unit].length;
+                        index++
+                    ) {
+                        const config = groupedConfigs[unit][index];
+                        const currentMoment = moment();
+                        const configMoment = moment(timeStamp).add(
+                            config.duration,
+                            config.unit
+                        );
+
+                        // console.log(
+                        //     this.created_at,
+                        //     configMoment.toString(),
+                        //     currentMoment.toString(),
+                        //     configMoment.isBefore(currentMoment),
+                        //     config.duration,
+                        //     config.unit
+                        // );
+
+                        if (configMoment.isBefore(currentMoment)) {
+                            color = config.color;
+                            continue;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            });
+        }
+
+        return color;
     }
 }
 
