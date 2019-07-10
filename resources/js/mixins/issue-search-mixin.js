@@ -408,25 +408,32 @@ export const issueSearchMixin = {
             }, vuex.modules.ISSUE);
 
             this.$_vuexable_setState({
+                key: "filter_groups",
+                value: []
+            }, vuex.modules.ISSUE);
+
+            this.$_vuexable_setState({
                 key: "backupFormdata",
                 value: {}
             }, vuex.modules.ISSUE);
         },
 
-        async $_issue_search_mixin_onSearch() {
-            this.$_issue_search_mixin_updateSearchKeyword();
-
+        async $_issue_search_mixin_onSearchFilter() {
             const {
-                issue_search_mixin_searchKeyword,
                 issue_search_mixin_form,
                 $_issue_search_mixin_searchFilters = []
             } = this;
 
-            if (!$_issue_search_mixin_searchFilters.length && !issue_search_mixin_searchKeyword.length) {
+            if (!$_issue_search_mixin_searchFilters.length) {
+                this.issue_search_mixin_searchKeyword = "";
+                this.$_vuexable_setState({
+                    key: "searchKeyword",
+                    value: ""
+                }, vuex.modules.ISSUE);
                 this.$emit("alert:invalidSearchForm");
-            }
+            } else {
+                this.$_issue_search_mixin_updateSearchKeywordFromFilters();
 
-            if ($_issue_search_mixin_searchFilters.length) {
                 this.$_vuexable_updatePagination({
                     key: "search",
                     value: {
@@ -439,14 +446,6 @@ export const issueSearchMixin = {
                     key: "backupFormdata",
                     value: _.cloneDeep(issue_search_mixin_form.data)
                 }, vuex.modules.ISSUE);
-            } else {
-                this.$_vuexable_updatePagination({
-                    key: "search",
-                    value: {
-                        keyword: issue_search_mixin_searchKeyword,
-                        fields: SEARCH_FIELDS
-                    }
-                }, vuex.modules.ISSUE)
             }
 
             this.$_vuexable_setState({
@@ -455,6 +454,70 @@ export const issueSearchMixin = {
                 },
                 vuex.modules.ISSUE
             );
+
+            let response;
+
+            try {
+                response = await this.$_issue_search_mixin_searchComplaint();
+            } catch (error) {
+                this.$emit("alert:searchError");
+                throw error;
+            }
+
+            this.$_issue_search_mixin_updateRoute();
+
+            return response;
+        },
+
+        async $_issue_search_mixin_onSearchByKeyword() {
+            this.$_issue_search_mixin_clearState();
+            this.$_issue_search_mixin_extractSearchKeywordToFilters();
+
+            const {
+                issue_search_mixin_searchKeyword,
+                $_issue_search_mixin_searchFilters = []
+            } = this;
+
+            if ($_issue_search_mixin_searchFilters.length) {
+                return this.$_issue_search_mixin_onSearchFilter();
+            }
+
+            if (!issue_search_mixin_searchKeyword.length) {
+                this.$emit("alert:invalidSearchForm");
+
+                this.$_vuexable_updatePagination({
+                    key: "search",
+                    value: {
+                        keyword: "",
+                        fields: []
+                    }
+                }, vuex.modules.ISSUE)
+
+                this.$_vuexable_setState({
+                        key: "filter_groups",
+                        value: []
+                    },
+                    vuex.modules.ISSUE
+                );
+
+                this.$_vuexable_setState({
+                    key: "backupFormdata",
+                    value: {}
+                }, vuex.modules.ISSUE);
+            } else {
+                this.$_vuexable_setState({
+                    key: "searchKeyword",
+                    value: issue_search_mixin_searchKeyword
+                }, vuex.modules.ISSUE);
+
+                this.$_vuexable_updatePagination({
+                    key: "search",
+                    value: {
+                        keyword: issue_search_mixin_searchKeyword,
+                        fields: SEARCH_FIELDS
+                    }
+                }, vuex.modules.ISSUE)
+            }
 
             let response;
 
@@ -550,12 +613,14 @@ export const issueSearchMixin = {
             }
         },
 
-        $_issue_search_mixin_updateSearchKeyword() {
+        $_issue_search_mixin_updateSearchKeywordFromFilters() {
             const {
                 $_issue_search_mixin_searchFiltersKeyword = ""
             } = this;
 
-            this.issue_search_mixin_searchKeyword = $_issue_search_mixin_searchFiltersKeyword;
+            if ($_issue_search_mixin_searchFiltersKeyword.length) {
+                this.issue_search_mixin_searchKeyword = $_issue_search_mixin_searchFiltersKeyword;
+            }
 
             this.$_vuexable_setState({
                 key: "searchKeyword",
@@ -583,15 +648,11 @@ export const issueSearchMixin = {
         },
 
         $_issue_search_mixin_updateRoute() {
-            const pagination = this.$_vuexable_getState("pagination", vuex.modules.ISSUE);
-
             this.$router.push({
                 name: views.ISSUE.INDEX,
                 query: {
                     ...this.$route.query,
-                    q: this.issue_search_mixin_searchKeyword,
-                    // page: pagination.page,
-                    // descending: pagination.descending
+                    q: this.issue_search_mixin_searchKeyword
                 }
             })
         },
@@ -599,8 +660,7 @@ export const issueSearchMixin = {
         $_issue_search_mixin_updateKeywordAndBackup() {
             const {
                 $_issue_search_mixin_stateSearchKeyword,
-                $_issue_search_mixin_stateBackupFormdata,
-                $_issue_search_mixin_searchFilters = []
+                $_issue_search_mixin_stateBackupFormdata
             } = this;
 
             if (
@@ -611,7 +671,6 @@ export const issueSearchMixin = {
             }
 
             if (
-                $_issue_search_mixin_searchFilters.length &&
                 $_issue_search_mixin_stateBackupFormdata &&
                 Object.keys($_issue_search_mixin_stateBackupFormdata).length
             ) {
@@ -675,7 +734,7 @@ export const issueSearchMixin = {
 
         if (this.issue_search_mixin_searchKeyword.length) {
             this.$_issue_search_mixin_extractSearchKeywordToFilters();
-            this.$_issue_search_mixin_updateSearchKeyword();
+            this.$_issue_search_mixin_updateSearchKeywordFromFilters();
             this.$_vuexable_setState({
                     key: "filter_groups",
                     value: this.$_issue_search_mixin_searchFilters

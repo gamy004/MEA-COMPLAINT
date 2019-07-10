@@ -86,7 +86,7 @@ export const paginatable = {
         },
 
         $_paginatable_isLastPage() {
-            return _.toInteger(this.$_paginatable_currentPage) == this.$_paginatable_totalPage;
+            return _.toInteger(this.$_paginatable_currentPage) >= this.$_paginatable_totalPage;
         },
 
         $_paginatable_rowsPerPage: {

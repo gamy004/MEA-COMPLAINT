@@ -7,7 +7,7 @@
     label="Search complaint"
     prepend-inner-icon="search"
     v-model="issue_search_mixin_searchKeyword"
-    @keyup.enter.prevent="onSearchByKeyword"
+    @keyup.enter.stop.prevent="onSearchByKeyword"
   >
     <template #append>
       <v-menu
@@ -66,7 +66,6 @@
                 single-line
                 color="deep-orange"
                 @focus="$_issue_search_mixin_fetchRecipients"
-                @keydown.enter.prevent="onSearch"
               >
                 <template v-slot:selection="{ item, index }">
                   <v-chip v-if="index < 3">
@@ -99,7 +98,6 @@
                 single-line
                 color="deep-orange"
                 @focus="$_issue_search_mixin_fetchRecipients"
-                @keydown.enter.prevent="onSearch"
               >
                 <template v-slot:selection="{ item, index }">
                   <v-chip v-if="index < 3">
@@ -132,7 +130,6 @@
                 single-line
                 color="deep-orange"
                 @focus="$_issue_search_mixin_fetchStatuses"
-                @keydown.enter.prevent="onSearch"
               >
                 <template v-slot:selection="{ item, index }">
                   <v-chip v-if="index < 3">
@@ -165,7 +162,6 @@
                 single-line
                 color="deep-orange"
                 @focus="$_issue_search_mixin_fetchIssueCategories"
-                @keydown.enter.prevent="onSearch"
               >
                 <template v-slot:selection="{ item, index }">
                   <v-chip v-if="index < 3">
@@ -191,7 +187,6 @@
                 full-width
                 hide-details
                 color="deep-orange"
-                @keydown.enter.prevent="onSearch"
               ></v-text-field>
             </v-list-tile>
 
@@ -207,7 +202,6 @@
                 full-width
                 hide-details
                 color="deep-orange"
-                @keydown.enter.prevent="onSearch"
               ></v-text-field>
             </v-list-tile>
 
@@ -223,7 +217,6 @@
                 full-width
                 hide-details
                 color="deep-orange"
-                @keydown.enter.prevent="onSearch"
               ></v-text-field>
             </v-list-tile>
 
@@ -310,7 +303,7 @@
               color="deep-orange"
               :loading="$_issue_search_mixin_isSearchingComplaint"
               flat
-              @click="onSearch"
+              @click.prevent.stop="onSearch"
             >Search</v-btn>
           </v-card-actions>
         </v-card>
@@ -324,6 +317,7 @@ import dialogable from "../../mixins/dialogable";
 import { issueSearchMixin } from "../../mixins/issue-search-mixin";
 import { vuexable, vuex } from "../../mixins/vuexable";
 import paginatable from "../../mixins/paginatable";
+import { views } from "../../constants";
 
 export default {
   mixins: [dialogable, issueSearchMixin, paginatable, vuexable],
@@ -337,22 +331,142 @@ export default {
       }
     },
 
-    $_paginatable_pagination: {
-      immediate: true,
-      deep: true,
+    authSettingPerPage: {
       async handler(v, ov) {
-        console.log("ComplaintSearchFilter pagination changed: ", v);
+        // if (!this.$_vuexable_shouldUpdatePagination(v, vuex.modules.ISSUE))
+        //   return;
 
         this.$_issue_search_mixin_updateKeywordAndBackup();
+
+        this.$_paginatable_rowsPerPage = v;
+
+        const {
+          $_issue_search_mixin_searchFiltersVuex = [],
+          issue_search_mixin_searchKeyword = ""
+        } = this;
+
+        // console.log(
+        //   $_issue_search_mixin_searchFiltersVuex,
+        //   issue_search_mixin_searchKeyword
+        // );
+
+        if (
+          $_issue_search_mixin_searchFiltersVuex.length ||
+          issue_search_mixin_searchKeyword.length
+        ) {
+          // if ($_issue_search_mixin_searchFiltersVuex.length) {
+          //   await this.$_issue_search_mixin_onSearchFilter();
+          // } else {
+          //   await this.$_issue_search_mixin_onSearchByKeyword();
+          // }
+          await this.$_issue_search_mixin_searchComplaint();
+        }
       }
     },
 
-    "$route.query": "onRouteQueryUpdate"
+    "$_paginatable_pagination.descending": {
+      async handler(v, ov) {
+        // if (v == (this.$route.query.descending === "true")) return;
+
+        // if (!this.$_vuexable_shouldUpdatePagination(v, vuex.modules.ISSUE))
+        //   return;
+
+        this.$_issue_search_mixin_updateKeywordAndBackup();
+
+        const {
+          $_issue_search_mixin_searchFiltersVuex = [],
+          issue_search_mixin_searchKeyword = ""
+        } = this;
+
+        // console.log(
+        //   $_issue_search_mixin_searchFiltersVuex,
+        //   issue_search_mixin_searchKeyword
+        // );
+
+        if (
+          $_issue_search_mixin_searchFiltersVuex.length ||
+          issue_search_mixin_searchKeyword.length
+        ) {
+          // if ($_issue_search_mixin_searchFiltersVuex.length) {
+          //   await this.$_issue_search_mixin_onSearchFilter();
+          // } else {
+          //   await this.$_issue_search_mixin_onSearchByKeyword();
+          // }
+          await this.$_issue_search_mixin_searchComplaint();
+
+          this.$router.push({
+            name: views.ISSUE.INDEX,
+            query: {
+              ...this.$route.query,
+              descending: this.$_paginatable_descending
+            }
+          });
+        }
+      }
+    },
+
+    "$_paginatable_pagination.page": {
+      async handler(v, ov) {
+        if (v == _.toInteger(this.$route.query.page)) return;
+
+        // if (!this.$_vuexable_shouldUpdatePagination(v, vuex.modules.ISSUE))
+        //   return;
+
+        this.$_issue_search_mixin_updateKeywordAndBackup();
+
+        const {
+          $_issue_search_mixin_searchFiltersVuex = [],
+          issue_search_mixin_searchKeyword = ""
+        } = this;
+
+        // console.log(
+        //   $_issue_search_mixin_searchFiltersVuex,
+        //   issue_search_mixin_searchKeyword
+        // );
+
+        if (
+          $_issue_search_mixin_searchFiltersVuex.length ||
+          issue_search_mixin_searchKeyword.length
+        ) {
+          // if ($_issue_search_mixin_searchFiltersVuex.length) {
+          //   await this.$_issue_search_mixin_onSearchFilter();
+          // } else {
+          //   await this.$_issue_search_mixin_onSearchByKeyword();
+          // }
+          await this.$_issue_search_mixin_searchComplaint();
+
+          this.$router.push({
+            name: views.ISSUE.INDEX,
+            query: {
+              ...this.$route.query,
+              page: this.$_paginatable_currentPage
+            }
+          });
+        }
+      }
+    },
+
+    $route: "onRouteChange"
   },
 
   computed: {
+    ...vuex.mapState(["auth"]),
+
     $_paginatable_module() {
       return vuex.modules.ISSUE;
+    },
+
+    authSettingPerPage() {
+      let { inbox_settings = null } = this.auth;
+      let rowsPerPage = 10;
+
+      if (inbox_settings) {
+        inbox_settings = JSON.parse(inbox_settings);
+
+        rowsPerPage = inbox_settings.rowsPerPage;
+      }
+
+      return rowsPerPage;
     }
   },
 
@@ -370,7 +484,7 @@ export default {
           vuex.modules.ISSUE
         );
 
-        response = await this.$_issue_search_mixin_onSearch();
+        response = await this.$_issue_search_mixin_onSearchFilter();
       } catch (error) {
         this.dialog = true;
 
@@ -380,10 +494,23 @@ export default {
       this.dialog = false;
     },
 
-    onSearchByKeyword() {
-      this.$_issue_search_mixin_clearState();
-      this.$_issue_search_mixin_extractSearchKeywordToFilters();
-      return this.onSearch();
+    async onSearchByKeyword() {
+      let response;
+
+      try {
+        // reset page
+        this.$_vuexable_updatePagination(
+          {
+            key: "page",
+            value: 1
+          },
+          vuex.modules.ISSUE
+        );
+
+        response = await this.$_issue_search_mixin_onSearchByKeyword();
+      } catch (error) {
+        throw error;
+      }
     },
 
     onClear() {
@@ -391,10 +518,51 @@ export default {
       this.$_issue_search_mixin_clearSearchFilters();
     },
 
-    onRouteQueryUpdate({ q = "" } = {}) {
-      this.$_issue_search_mixin_clearState();
-      this.issue_search_mixin_searchKeyword = q;
-      this.$_issue_search_mixin_extractSearchKeywordToFilters();
+    async onRouteChange() {
+      if (!this.$route.query.q) {
+        console.log(5566);
+
+        this.onClear();
+        this.$_issue_search_mixin_clearState();
+      }
+    }
+  },
+
+  async mounted() {
+    this.$_issue_search_mixin_searchComplaint = _.debounce(
+      this.$_issue_search_mixin_searchComplaint,
+      300
+    );
+    const {
+      $_issue_search_mixin_searchFiltersVuex = [],
+      issue_search_mixin_searchKeyword = ""
+    } = this;
+
+    if (
+      $_issue_search_mixin_searchFiltersVuex.length ||
+      issue_search_mixin_searchKeyword.length
+    ) {
+      let descending = true;
+
+      if (this.$route.query.hasOwnProperty("descending")) {
+        descending = this.$route.query.descending == "true";
+      }
+
+      // let isDescendingChange = descending !== this.$_paginatable_descending;
+
+      this.$_paginatable_pagination = {
+        sortBy: "updated_at",
+        page: this.$route.query.page || 1,
+        descending,
+        rowsPerPage: this.authSettingPerPage
+      };
+
+      if ($_issue_search_mixin_searchFiltersVuex.length) {
+        await this.$_issue_search_mixin_onSearchFilter();
+      } else {
+        await this.$_issue_search_mixin_onSearchByKeyword();
+      }
+      // await this.$_issue_search_mixin_searchComplaint();
     }
   }
 };

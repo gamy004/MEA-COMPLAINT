@@ -8,8 +8,13 @@
         :indeterminate="true"
       ></v-progress-linear>
 
-      <transition name="slide-y-transition" mode="out-in">
-        <v-list key="complaintList" :three-line="isMobile" :class="isMobileClasses">
+      <transition v-else name="slide-y-transition" mode="out-in">
+        <v-list
+          v-if="$_paginatable_currentPaginatedList.length"
+          key="complaintList"
+          :three-line="isMobile"
+          :class="isMobileClasses"
+        >
           <template v-for="(item, itemIndex) in $_paginatable_currentPaginatedList">
             <complaint-list-item
               :key="`complaint-${itemIndex}`"
@@ -21,6 +26,13 @@
             />
           </template>
         </v-list>
+
+        <v-layout v-else column align-center mt-5>
+          <v-icon size="80" color="grey lighten-2">inbox</v-icon>
+          <v-flex shrink>
+            <div class="subheading">ไม่พบข้อร้องเรียน</div>
+          </v-flex>
+        </v-layout>
       </transition>
     </v-flex>
 
@@ -106,53 +118,64 @@ export default {
       deep: true,
       handler({ inbox_settings = null } = {}) {
         const rowsPerPage = this.authSettingPerPage;
+        console.log(rowsPerPage);
 
         if (rowsPerPage === this.$_paginatable_rowsPerPage) return;
 
-        let descending = true;
-
-        if (this.$route.query.hasOwnProperty("descending")) {
-          descending = this.$route.query.descending == "true";
-        }
-
         this.$_paginatable_pagination = {
-          sortBy: "updated_at",
-          page: this.$route.query.page || 1,
-          descending,
           rowsPerPage
         };
       }
     },
 
-    $_paginatable_pagination: {
-      immediate: true,
-      deep: true,
-      async handler(v, ov) {
-        if (this.active) {
-          console.log("ComplaintList pagination changed: ", v);
-
-          // if (!this.$_vuexable_shouldUpdatePagination(v, vuex.modules.ISSUE))
-          //   return;
-
-          const { $_issue_search_mixin_searchFiltersVuex = [] } = this;
-
-          if ($_issue_search_mixin_searchFiltersVuex.length) {
-            await this.$_issue_search_mixin_searchComplaint();
-          } else {
-            await this.callFetch();
-          }
-
-          this.$router.push({
-            name: views.ISSUE.INDEX,
-            query: {
-              ...this.$route.query,
-              page: this.$_paginatable_currentPage,
-              descending: this.$_paginatable_descending
-            }
-          });
-        }
+    async $_paginatable_rowsPerPage(v) {
+      if (
+        !this.$_issue_search_mixin_searchFiltersVuex.length &&
+        !this.$_issue_search_mixin_stateSearchKeyword.length
+      ) {
+        console.log(22);
+        await this.callFetch();
       }
-    }
+    },
+
+    async $_paginatable_currentPage(v) {
+      if (
+        !this.$_issue_search_mixin_searchFiltersVuex.length &&
+        !this.$_issue_search_mixin_stateSearchKeyword.length
+      ) {
+        console.log(33);
+        await this.callFetch();
+
+        this.$router.push({
+          name: views.ISSUE.INDEX,
+          query: {
+            ...this.$route.query,
+            page: this.$_paginatable_currentPage
+          }
+        });
+      }
+    },
+
+    async $_paginatable_descending(v, ov) {
+      if (
+        v !== ov &&
+        !this.$_issue_search_mixin_searchFiltersVuex.length &&
+        !this.$_issue_search_mixin_stateSearchKeyword.length
+      ) {
+        console.log(44, this.$_paginatable_descending);
+        await this.callFetch();
+
+        this.$router.push({
+          name: views.ISSUE.INDEX,
+          query: {
+            ...this.$route.query,
+            descending: this.$_paginatable_descending
+          }
+        });
+      }
+    },
+
+    $route: "onRouteChange"
   },
 
   computed: {
@@ -188,7 +211,7 @@ export default {
       vuex.actions.ISSUE.EDIT,
       vuex.actions.ISSUE.DELETE,
       vuex.actions.ISSUE.RESTORE,
-      vuex.actions.ISSUE.ARCHIVE,
+      vuex.actions.ISSUE.ARCHIVE
     ]),
 
     callFetch() {
@@ -241,22 +264,62 @@ export default {
 
         throw error;
       }
+    },
+
+    async onRouteChange() {
+      if (
+        !this.$route.query.q &&
+        !this.$route.query.page &&
+        !this.$route.query.descending
+      ) {
+        console.log(55);
+
+        let descending = true;
+
+        if (this.$route.query.hasOwnProperty("descending")) {
+          descending = this.$route.query.descending == "true";
+        }
+
+        // let isDescendingChange = descending !== this.$_paginatable_descending;
+        console.log(descending);
+
+        this.$_paginatable_pagination = {
+          sortBy: "updated_at",
+          page: this.$route.query.page || 1,
+          descending,
+          rowsPerPage: this.authSettingPerPage
+        };
+
+        // if (!isDescendingChange) {
+        await this.callFetch();
+        // }
+      }
     }
   },
 
-  mounted() {
-    let descending = true;
+  async mounted() {
+    this.callFetch = _.debounce(this.callFetch, 300);
 
-    if (this.$route.query.hasOwnProperty("descending")) {
-      descending = this.$route.query.descending == "true";
+    if (!this.$route.query.q) {
+      let descending = true;
+
+      if (this.$route.query.hasOwnProperty("descending")) {
+        descending = this.$route.query.descending == "true";
+      }
+
+      // let isDescendingChange = descending !== this.$_paginatable_descending;
+
+      this.$_paginatable_pagination = {
+        sortBy: "updated_at",
+        page: this.$route.query.page || 1,
+        descending,
+        rowsPerPage: this.authSettingPerPage
+      };
+
+      // if (!isDescendingChange) {
+      await this.callFetch();
+      // }
     }
-
-    this.$_paginatable_pagination = {
-      sortBy: "updated_at",
-      page: this.$route.query.page || 1,
-      descending,
-      rowsPerPage: this.authSettingPerPage
-    };
   }
 };
 </script>

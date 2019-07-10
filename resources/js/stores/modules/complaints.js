@@ -33,13 +33,46 @@ const userStore = {
         async [vuex.actions.ISSUE.SEARCH](context, params = {}) {
             let response;
 
+            let {
+                filter_groups = [], global_filters = []
+            } = context.state.base;
+
+            let merged_filter_groups = [];
+
+            if (!filter_groups.length && global_filters.length) {
+                console.log(1);
+
+                merged_filter_groups = [{
+                    filters: [...global_filters]
+                }];
+            }
+
+            if (filter_groups.length && global_filters.length) {
+                console.log(2);
+
+                merged_filter_groups = filter_groups.map(({
+                    filters = [],
+                    ...props
+                }) => {
+                    return {
+                        ...props,
+                        filters: [
+                            ...filters,
+                            ...global_filters
+                        ]
+                    };
+                });
+            }
+
+            console.log(merged_filter_groups);
+
             try {
                 response = await context.dispatch(vuex.actions.REQUEST, {
                     model: 'ISSUE',
                     action: 'SEARCH',
                     params: {
                         pagination: context.state.base.pagination,
-                        filter_groups: context.state.base.filter_groups,
+                        filter_groups,
                         ...params
                     }
                 });

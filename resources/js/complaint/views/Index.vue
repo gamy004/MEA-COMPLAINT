@@ -115,7 +115,10 @@ export default {
   },
 
   watch: {
-    "$route.query": "onRouteQueryChange",
+    "$route.query": {
+      immediate: true,
+      handler: "onRouteQueryChange"
+    },
 
     tabs: {
       immediate: true,
@@ -357,30 +360,32 @@ export default {
       this.$set(this.items[0], "selected", false);
     },
 
-    onRouteQueryChange(v) {
-      console.log(v);
+    onRouteQueryChange({ type = null } = {}) {
       let global_filters = [];
 
-      switch (v) {
+      switch (type) {
         case "archive":
-            global_filters = [
-                { key: "archive", value: 1 },
-                { key: "deleted_at", value: null }
-            ];
+          global_filters = [
+            { key: "archive", value: 1 },
+            { key: "deleted_at", value: null }
+          ];
           break;
 
         case "trash":
-            global_filters = [
-                { key: "archive", value: 0 },
-                { key: "deleted_at", value: null, not: true }
-            ];
+          global_filters = [
+            { key: "archive", value: 0 },
+            { key: "deleted_at", value: null, not: true }
+          ];
           break;
       }
 
-      this.$_vuexable_setState({
-        key: "global_filters",
-        value: global_filters
-      }, vuex.modules.ISSUE);
+      this.$_vuexable_setState(
+        {
+          key: "global_filters",
+          value: global_filters
+        },
+        vuex.modules.ISSUE
+      );
     }
   },
 
