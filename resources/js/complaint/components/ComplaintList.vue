@@ -133,7 +133,6 @@ export default {
         !this.$_issue_search_mixin_searchFiltersVuex.length &&
         !this.$_issue_search_mixin_stateSearchKeyword.length
       ) {
-        console.log(22);
         await this.callFetch();
       }
     },
@@ -143,7 +142,6 @@ export default {
         !this.$_issue_search_mixin_searchFiltersVuex.length &&
         !this.$_issue_search_mixin_stateSearchKeyword.length
       ) {
-        console.log(33);
         await this.callFetch();
 
         this.$router.push({
@@ -162,7 +160,6 @@ export default {
         !this.$_issue_search_mixin_searchFiltersVuex.length &&
         !this.$_issue_search_mixin_stateSearchKeyword.length
       ) {
-        console.log(44, this.$_paginatable_descending);
         await this.callFetch();
 
         this.$router.push({
@@ -272,8 +269,6 @@ export default {
         !this.$route.query.page &&
         !this.$route.query.descending
       ) {
-        console.log(55);
-
         let descending = true;
 
         if (this.$route.query.hasOwnProperty("descending")) {
@@ -281,7 +276,6 @@ export default {
         }
 
         // let isDescendingChange = descending !== this.$_paginatable_descending;
-        console.log(descending);
 
         this.$_paginatable_pagination = {
           sortBy: "updated_at",

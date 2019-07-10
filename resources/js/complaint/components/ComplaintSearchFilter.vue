@@ -520,10 +520,10 @@ export default {
 
     async onRouteChange() {
       if (!this.$route.query.q) {
-        console.log(5566);
-
         this.onClear();
         this.$_issue_search_mixin_clearState();
+      } else {
+        this.$_issue_search_mixin_updateKeywordAndBackup();
       }
     }
   },
