@@ -13,6 +13,7 @@ export const USER = {
     STORE: 'userStore',
     EDIT: 'userEdit',
     UPDATE: 'userUpdate',
+    UPDATE_CONFIG: 'userUpdateConfig',
     DELETE: 'userDelete',
     RESTORE: 'userRestore',
 };
@@ -28,7 +29,8 @@ export const ISSUE = {
     RESTORE: 'complaintRestore',
     EXPORT: 'complaintExport',
     SEARCH: 'complaintSearch',
-    EXPORT_SEARCH: 'complaintExportSearch'
+    EXPORT_SEARCH: 'complaintExportSearch',
+    ARCHIVE: 'complaintArchive'
 };
 
 export const GROUP = {

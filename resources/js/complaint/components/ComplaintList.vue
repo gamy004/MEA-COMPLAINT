@@ -1,24 +1,38 @@
 <template>
   <v-layout class="complaint-list" :class="isMobileClasses" row wrap>
     <v-flex xs12>
-      <transition name="slide-y-transition" mode="out-in">
-        <v-progress-linear
-          v-if="$_complaint_mixin_isFetchingComplaint || $_issue_search_mixin_isSearchingComplaint"
-          key="complaintLoading"
-          :indeterminate="true"
-        ></v-progress-linear>
+      <v-progress-linear
+        v-if="$_complaint_mixin_isFetchingComplaint || $_issue_search_mixin_isSearchingComplaint"
+        key="complaintLoading"
+        color="deep-orange accent-2"
+        :indeterminate="true"
+      ></v-progress-linear>
 
-        <v-list v-else key="complaintList" :three-line="isMobile" :class="isMobileClasses">
+      <transition v-else name="slide-y-transition" mode="out-in">
+        <v-list
+          v-if="$_paginatable_currentPaginatedList.length"
+          key="complaintList"
+          :three-line="isMobile"
+          :class="isMobileClasses"
+        >
           <template v-for="(item, itemIndex) in $_paginatable_currentPaginatedList">
             <complaint-list-item
               :key="`complaint-${itemIndex}`"
               :item="item"
+              @archive="onArchiveItem(item, itemIndex)"
               @edit="onEditItem(item, itemIndex)"
               @update:status="onUpdateStatusItem"
               @delete="onDeleteItem(item, itemIndex)"
             />
           </template>
         </v-list>
+
+        <v-layout v-else column align-center mt-5>
+          <v-icon size="80" color="grey lighten-2">inbox</v-icon>
+          <v-flex shrink>
+            <div class="subheading">ไม่พบข้อร้องเรียน</div>
+          </v-flex>
+        </v-layout>
       </transition>
     </v-flex>
 
@@ -74,8 +88,21 @@ export default {
           actions: [
             {
               text: "Undo",
-              handler: ({ item, itemIndex }) => {
-                this[vuex.actions.ISSUE.RESTORE](item);
+              handler: async ({ item, itemIndex }) => {
+                await this[vuex.actions.ISSUE.RESTORE](item);
+                this.$_alertable_alert("undo");
+              }
+            }
+          ]
+        },
+        archive_success: {
+          text: "Complaint moved to Archive",
+          actions: [
+            {
+              text: "Undo",
+              handler: async ({ item, itemIndex }) => {
+                await this[vuex.actions.ISSUE.RESTORE](item);
+                this.$_alertable_alert("undo");
               }
             }
           ]
@@ -90,60 +117,62 @@ export default {
       immediate: true,
       deep: true,
       handler({ inbox_settings = null } = {}) {
-        let rowsPerPage = 10;
-
-        if (inbox_settings) {
-          inbox_settings = JSON.parse(inbox_settings);
-
-          rowsPerPage = inbox_settings.rowsPerPage;
-        }
+        const rowsPerPage = this.authSettingPerPage;
+        console.log(rowsPerPage);
 
         if (rowsPerPage === this.$_paginatable_rowsPerPage) return;
 
-        let descending = true;
-
-        if (this.$route.query.hasOwnProperty("descending")) {
-          descending = this.$route.query.descending == "true";
-        }
-
         this.$_paginatable_pagination = {
-          sortBy: "updated_at",
-          page: this.$route.query.page || 1,
-          descending,
           rowsPerPage
         };
       }
     },
 
-    $_paginatable_pagination: {
-      immediate: true,
-      deep: true,
-      async handler(v, ov) {
-        if (this.active) {
-          console.log("ComplaintList pagination changed: ", v);
-
-          // if (!this.$_vuexable_shouldUpdatePagination(v, vuex.modules.ISSUE))
-          //   return;
-
-          const { $_issue_search_mixin_searchFiltersVuex = [] } = this;
-
-          if ($_issue_search_mixin_searchFiltersVuex.length) {
-            await this.$_issue_search_mixin_searchComplaint();
-          } else {
-            await this.callFetch();
-          }
-
-          this.$router.push({
-            name: views.ISSUE.INDEX,
-            query: {
-              ...this.$route.query,
-              page: this.$_paginatable_currentPage,
-              descending: this.$_paginatable_descending
-            }
-          });
-        }
+    async $_paginatable_rowsPerPage(v) {
+      if (
+        !this.$_issue_search_mixin_searchFiltersVuex.length &&
+        !this.$_issue_search_mixin_stateSearchKeyword.length
+      ) {
+        await this.callFetch();
       }
-    }
+    },
+
+    async $_paginatable_currentPage(v) {
+      if (
+        !this.$_issue_search_mixin_searchFiltersVuex.length &&
+        !this.$_issue_search_mixin_stateSearchKeyword.length
+      ) {
+        await this.callFetch();
+
+        this.$router.push({
+          name: views.ISSUE.INDEX,
+          query: {
+            ...this.$route.query,
+            page: this.$_paginatable_currentPage
+          }
+        });
+      }
+    },
+
+    async $_paginatable_descending(v, ov) {
+      if (
+        v !== ov &&
+        !this.$_issue_search_mixin_searchFiltersVuex.length &&
+        !this.$_issue_search_mixin_stateSearchKeyword.length
+      ) {
+        await this.callFetch();
+
+        this.$router.push({
+          name: views.ISSUE.INDEX,
+          query: {
+            ...this.$route.query,
+            descending: this.$_paginatable_descending
+          }
+        });
+      }
+    },
+
+    $route: "onRouteChange"
   },
 
   computed: {
@@ -153,7 +182,20 @@ export default {
 
     ...vuex.mapState(["auth"]),
 
-    ...vuex.mapGetters(["isMobile", "isMobileClasses"])
+    ...vuex.mapGetters(["isMobile", "isMobileClasses"]),
+
+    authSettingPerPage() {
+      let { inbox_settings = null } = this.auth;
+      let rowsPerPage = 10;
+
+      if (inbox_settings) {
+        inbox_settings = JSON.parse(inbox_settings);
+
+        rowsPerPage = inbox_settings.rowsPerPage;
+      }
+
+      return rowsPerPage;
+    }
 
     // ...vuex.mapWaitingGetters({
     //   isFetchingComplaint: [vuex.actions.ISSUE.FETCH]
@@ -165,11 +207,24 @@ export default {
       // vuex.actions.ISSUE.FETCH,
       vuex.actions.ISSUE.EDIT,
       vuex.actions.ISSUE.DELETE,
-      vuex.actions.ISSUE.RESTORE
+      vuex.actions.ISSUE.RESTORE,
+      vuex.actions.ISSUE.ARCHIVE
     ]),
 
     callFetch() {
       return this[vuex.actions.ISSUE.FETCH]();
+    },
+
+    async onArchiveItem(item, itemIndex) {
+      const { id } = item;
+
+      try {
+        await this[vuex.actions.ISSUE.ARCHIVE](item);
+      } catch (error) {
+        throw error;
+      }
+
+      this.$_alertable_alert("archive_success", { item, itemIndex });
     },
 
     async onEditItem(item, itemIndex) {
@@ -206,6 +261,58 @@ export default {
 
         throw error;
       }
+    },
+
+    async onRouteChange() {
+      if (
+        !this.$route.query.q &&
+        !this.$route.query.page &&
+        !this.$route.query.descending
+      ) {
+        let descending = true;
+
+        if (this.$route.query.hasOwnProperty("descending")) {
+          descending = this.$route.query.descending == "true";
+        }
+
+        // let isDescendingChange = descending !== this.$_paginatable_descending;
+
+        this.$_paginatable_pagination = {
+          sortBy: "updated_at",
+          page: this.$route.query.page || 1,
+          descending,
+          rowsPerPage: this.authSettingPerPage
+        };
+
+        // if (!isDescendingChange) {
+        await this.callFetch();
+        // }
+      }
+    }
+  },
+
+  async mounted() {
+    this.callFetch = _.debounce(this.callFetch, 300);
+
+    if (!this.$route.query.q) {
+      let descending = true;
+
+      if (this.$route.query.hasOwnProperty("descending")) {
+        descending = this.$route.query.descending == "true";
+      }
+
+      // let isDescendingChange = descending !== this.$_paginatable_descending;
+
+      this.$_paginatable_pagination = {
+        sortBy: "updated_at",
+        page: this.$route.query.page || 1,
+        descending,
+        rowsPerPage: this.authSettingPerPage
+      };
+
+      // if (!isDescendingChange) {
+      await this.callFetch();
+      // }
     }
   }
 };
@@ -239,7 +346,7 @@ export default {
   }
 
   &__sub-title {
-    display: flex;
+    // display: flex;
 
     * {
       margin: 0 !important;

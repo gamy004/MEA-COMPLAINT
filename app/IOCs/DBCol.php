@@ -36,6 +36,7 @@ class DBCol
     const ISSUED_BY = 'issued_by';
     const REFERENCED_TO = 'referenced_to';
     const RECIPIENT_ID = 'recipient_id';
+    const ARCHIVE = 'archive';
     /**
      * ISSUE_CATEGORY
      */
@@ -49,6 +50,8 @@ class DBCol
     const UNIT = 'unit';
     const DEFAULT = 'default';
     const STATUS_UPDATED_AT = 'status_updated_at';
+    const STARTED_AT = 'started_at';
+    const ENDED_AT = 'ended_at';
     /**
      * ISSUE NOTE
      */

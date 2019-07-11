@@ -84,7 +84,7 @@ export default {
   methods: {
     ...vuex.mapWaitingActions(vuex.modules.USER, {
       updateConfigUser: {
-        action: vuex.actions.UPDATE,
+        action: vuex.actions.USER.UPDATE_CONFIG,
         loader: "updating config user"
       }
     }),

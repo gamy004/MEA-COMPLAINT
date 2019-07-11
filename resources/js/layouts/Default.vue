@@ -141,12 +141,30 @@ export default {
         {
           icon: "archive",
           text: "Archive",
-          route: { name: views.ISSUE.INDEX }
+          route: {
+            name: views.ISSUE.INDEX,
+            query: {
+              type: "archive"
+              // filters: [
+              //   { key: "archive", value: 1 },
+              //   { key: "deleted_at", value: null }
+              // ]
+            }
+          }
         },
         {
           icon: "delete",
           text: "Trash",
-          route: { name: views.ISSUE.INDEX }
+          route: {
+            name: views.ISSUE.INDEX,
+            query: {
+              type: "trash"
+              // filters: [
+              //   { key: "archive", value: 0 },
+              //   { key: "deleted_at", value: null, not: true }
+              // ]
+            }
+          }
         },
         { divider: true },
         { heading: "Admin Management" },
@@ -174,10 +192,11 @@ export default {
   },
 
   methods: {
-    gotoPage({ name, params = {} } = {}) {
+    gotoPage({ name, params = {}, query = {} } = {}) {
       this.$router.push({
         name,
-        params
+        params,
+        query
       });
     }
   }

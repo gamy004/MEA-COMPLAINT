@@ -71,7 +71,7 @@ class IssueController extends BaseApiController
      * @param  \App\Issue  $issue
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Issue $issue)
+    public function update(StoreIssueRequest $request, Issue $issue)
     {
         return $this->api->update(
             $issue,
@@ -99,6 +99,17 @@ class IssueController extends BaseApiController
     public function restore($issue)
     {
         return $this->api->restore($issue);
+    }
+
+    /**
+     * Archive the specified resource from storage.
+     *
+     * @param  \App\Issue  $issue
+     * @return \Illuminate\Http\Response
+     */
+    public function archive(Request $request, Issue $issue)
+    {
+        return $this->api->archive($issue, $request->all());
     }
 
     /**
@@ -132,5 +143,5 @@ class IssueController extends BaseApiController
     {
         return $this->api->exportSearch($request->all());
     }
-    
+
 }

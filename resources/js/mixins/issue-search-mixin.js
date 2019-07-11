@@ -47,7 +47,8 @@ export const issueSearchMixin = {
         ...vuex.mapWaitingGetters({
             $_issue_search_mixin_isFetchingFormRecipient: "issueSearchMixin@fetchRecipients",
             $_issue_search_mixin_isFetchingFormCategory: "issueSearchMixin@fetchIssueCategories",
-            $_issue_search_mixin_isSearchingComplaint: "issueSearchMixin@searchComplaint"
+            $_issue_search_mixin_isSearchingComplaint: "issueSearchMixin@searchComplaint",
+            $_issue_search_mixin_isFetchingFormStatus: "issueSearchMixin@fetchIssueStatuses"
         }),
 
         $_issue_search_mixin_storeRecipients() {
@@ -58,6 +59,24 @@ export const issueSearchMixin = {
 
             return _.map(recipients, "name");
             // return mapTextValue(recipients, "name", "id");
+        },
+
+        $_issue_search_mixin_storeStatuses() {
+            const statuses = this.$_vuexable_getter(
+                vuex.getters.SORTED_VALUES,
+                vuex.modules.ISSUE_STATUS
+            );
+
+            return _.map(statuses, "status");
+        },
+
+        $_issue_search_mixin_storeCategories() {
+            const statuses = this.$_vuexable_getter(
+                vuex.getters.SORTED_VALUES,
+                vuex.modules.ISSUE_CATEGORY
+            );
+
+            return _.map(statuses, "category");
         },
 
         $_issue_search_mixin_calendarIcon() {
@@ -87,17 +106,27 @@ export const issueSearchMixin = {
         },
 
         $_issue_search_mixin_searchFilters() {
+            const filter_groups = [];
+
             const filters = [];
 
             if (this.issue_search_mixin_form.from.length) {
                 filters.push(filterIn("issuer", this.issue_search_mixin_form.from));
             }
 
-            if (this.issue_search_mixin_form.to.length) {
-                this.issue_search_mixin_form.to.forEach(recipient => {
-                    filters.push(filterContains("recipients", recipient));
-                });
-                // filters.push(filterIn("recipients", this.issue_search_mixin_form.to));
+            // if (this.issue_search_mixin_form.to.length) {
+            //     this.issue_search_mixin_form.to.forEach(recipient => {
+            //         filters.push(filterContains("recipients", recipient));
+            //     });
+            //     // filters.push(filterIn("recipients", this.issue_search_mixin_form.to));
+            // }
+
+            if (this.issue_search_mixin_form.statuses.length) {
+                filters.push(filterIn("latest_status", this.issue_search_mixin_form.statuses));
+            }
+
+            if (this.issue_search_mixin_form.categories.length) {
+                filters.push(filterIn("category", this.issue_search_mixin_form.categories));
             }
 
             if (this.issue_search_mixin_form.subject.length) {
@@ -130,7 +159,27 @@ export const issueSearchMixin = {
                 });
             }
 
-            return filters;
+            if (this.issue_search_mixin_form.to.length) {
+                this.issue_search_mixin_form.to.forEach(recipient => {
+                    const temp = filters;
+
+                    temp.push(filterContains("recipients", recipient));
+
+                    filter_groups.push({
+                        filters: [...temp],
+                        or: true
+                    });
+                });
+                // filters.push(filterIn("recipients", this.issue_search_mixin_form.to));
+            }
+
+            if (filters.length) {
+                filter_groups.push({
+                    filters
+                });
+            }
+
+            return filter_groups;
         },
 
         $_issue_search_mixin_searchFiltersKeyword() {
@@ -176,6 +225,34 @@ export const issueSearchMixin = {
                 //         this.issue_search_mixin_form.to
                 //     )
                 // );
+            }
+
+            if (this.issue_search_mixin_form.statuses.length) {
+                keywords.push(
+                    this.$_issue_search_mixin_makeKeyword(
+                        "status",
+                        (res, word) => {
+                            res += word;
+
+                            return res;
+                        },
+                        this.issue_search_mixin_form.statuses
+                    )
+                );
+            }
+
+            if (this.issue_search_mixin_form.categories.length) {
+                keywords.push(
+                    this.$_issue_search_mixin_makeKeyword(
+                        "category",
+                        (res, word) => {
+                            res += word;
+
+                            return res;
+                        },
+                        this.issue_search_mixin_form.categories
+                    )
+                );
             }
 
             if (this.issue_search_mixin_form.subject.length) {
@@ -281,6 +358,13 @@ export const issueSearchMixin = {
             }
         }),
 
+        ...vuex.mapWaitingActions(vuex.modules.ISSUE_STATUS, {
+            $_issue_search_mixin_fetchStatuses: {
+                action: vuex.actions.ISSUE_STATUS.FETCH,
+                loader: "issueSearchMixin@fetchIssueStatuses"
+            }
+        }),
+
         ...vuex.mapWaitingActions(vuex.modules.ISSUE_CATEGORY, {
             $_issue_search_mixin_fetchIssueCategories: {
                 action: vuex.actions.ISSUE_CATEGORY.FETCH,
@@ -324,25 +408,32 @@ export const issueSearchMixin = {
             }, vuex.modules.ISSUE);
 
             this.$_vuexable_setState({
+                key: "filter_groups",
+                value: []
+            }, vuex.modules.ISSUE);
+
+            this.$_vuexable_setState({
                 key: "backupFormdata",
                 value: {}
             }, vuex.modules.ISSUE);
         },
 
-        async $_issue_search_mixin_onSearch() {
+        async $_issue_search_mixin_onSearchFilter() {
             const {
-                issue_search_mixin_searchKeyword,
                 issue_search_mixin_form,
                 $_issue_search_mixin_searchFilters = []
             } = this;
 
-            if (!$_issue_search_mixin_searchFilters.length && !issue_search_mixin_searchKeyword.length) {
+            if (!$_issue_search_mixin_searchFilters.length) {
+                this.issue_search_mixin_searchKeyword = "";
+                this.$_vuexable_setState({
+                    key: "searchKeyword",
+                    value: ""
+                }, vuex.modules.ISSUE);
                 this.$emit("alert:invalidSearchForm");
-            }
+            } else {
+                this.$_issue_search_mixin_updateSearchKeywordFromFilters();
 
-            this.$_issue_search_mixin_updateSearchKeyword();
-
-            if ($_issue_search_mixin_searchFilters.length) {
                 this.$_vuexable_updatePagination({
                     key: "search",
                     value: {
@@ -355,7 +446,70 @@ export const issueSearchMixin = {
                     key: "backupFormdata",
                     value: _.cloneDeep(issue_search_mixin_form.data)
                 }, vuex.modules.ISSUE);
+            }
+
+            this.$_vuexable_setState({
+                    key: "filter_groups",
+                    value: $_issue_search_mixin_searchFilters
+                },
+                vuex.modules.ISSUE
+            );
+
+            let response;
+
+            try {
+                response = await this.$_issue_search_mixin_searchComplaint();
+            } catch (error) {
+                this.$emit("alert:searchError");
+                throw error;
+            }
+
+            this.$_issue_search_mixin_updateRoute();
+
+            return response;
+        },
+
+        async $_issue_search_mixin_onSearchByKeyword() {
+            this.$_issue_search_mixin_clearState();
+            this.$_issue_search_mixin_extractSearchKeywordToFilters();
+
+            const {
+                issue_search_mixin_searchKeyword,
+                $_issue_search_mixin_searchFilters = []
+            } = this;
+
+            if ($_issue_search_mixin_searchFilters.length) {
+                return this.$_issue_search_mixin_onSearchFilter();
+            }
+
+            if (!issue_search_mixin_searchKeyword.length) {
+                this.$emit("alert:invalidSearchForm");
+
+                this.$_vuexable_updatePagination({
+                    key: "search",
+                    value: {
+                        keyword: "",
+                        fields: []
+                    }
+                }, vuex.modules.ISSUE)
+
+                this.$_vuexable_setState({
+                        key: "filter_groups",
+                        value: []
+                    },
+                    vuex.modules.ISSUE
+                );
+
+                this.$_vuexable_setState({
+                    key: "backupFormdata",
+                    value: {}
+                }, vuex.modules.ISSUE);
             } else {
+                this.$_vuexable_setState({
+                    key: "searchKeyword",
+                    value: issue_search_mixin_searchKeyword
+                }, vuex.modules.ISSUE);
+
                 this.$_vuexable_updatePagination({
                     key: "search",
                     value: {
@@ -364,15 +518,6 @@ export const issueSearchMixin = {
                     }
                 }, vuex.modules.ISSUE)
             }
-
-            this.$_vuexable_setState({
-                    key: "filter_groups",
-                    value: [{
-                        filters: [...$_issue_search_mixin_searchFilters]
-                    }]
-                },
-                vuex.modules.ISSUE
-            );
 
             let response;
 
@@ -412,6 +557,7 @@ export const issueSearchMixin = {
                     // const fullMatch = m[0];
                     const key = m[1];
                     const value = m[2];
+
                     // const replacedValue = value.replace(/[,\s]+/gm, " ");
                     // const splittedValue = value.split(/[,\s]+/gm);
 
@@ -423,6 +569,14 @@ export const issueSearchMixin = {
 
                         case "to":
                             this.issue_search_mixin_form.set("to", value.split(/[,\s]+/gm));
+                            break;
+
+                        case "status":
+                            this.issue_search_mixin_form.set("statuses", value.split(/[,\s]+/gm));
+                            break;
+
+                        case "category":
+                            this.issue_search_mixin_form.set("categories", value.split(/[,\s]+/gm));
                             break;
 
                         case "subject":
@@ -459,7 +613,7 @@ export const issueSearchMixin = {
             }
         },
 
-        $_issue_search_mixin_updateSearchKeyword() {
+        $_issue_search_mixin_updateSearchKeywordFromFilters() {
             const {
                 $_issue_search_mixin_searchFiltersKeyword = ""
             } = this;
@@ -478,6 +632,7 @@ export const issueSearchMixin = {
             this.issue_search_mixin_form = vuex.models.FORM.make({
                 from: [],
                 to: [],
+                latest_status: [],
                 subject: "",
                 include_words: "",
                 exclude_words: "",
@@ -493,15 +648,11 @@ export const issueSearchMixin = {
         },
 
         $_issue_search_mixin_updateRoute() {
-            const pagination = this.$_vuexable_getState("pagination", vuex.modules.ISSUE);
-
             this.$router.push({
                 name: views.ISSUE.INDEX,
                 query: {
                     ...this.$route.query,
-                    q: this.issue_search_mixin_searchKeyword,
-                    // page: pagination.page,
-                    // descending: pagination.descending
+                    q: this.issue_search_mixin_searchKeyword
                 }
             })
         },
@@ -583,12 +734,10 @@ export const issueSearchMixin = {
 
         if (this.issue_search_mixin_searchKeyword.length) {
             this.$_issue_search_mixin_extractSearchKeywordToFilters();
-            this.$_issue_search_mixin_updateSearchKeyword();
+            this.$_issue_search_mixin_updateSearchKeywordFromFilters();
             this.$_vuexable_setState({
                     key: "filter_groups",
-                    value: [{
-                        filters: [...this.$_issue_search_mixin_searchFilters]
-                    }]
+                    value: this.$_issue_search_mixin_searchFilters
                 },
                 vuex.modules.ISSUE
             );

@@ -112,7 +112,9 @@ class UsersTableSeeder extends Seeder
                                 );
 
                                 $issue->logs()->create([
-                                    IssueStatus::FK => $random_status[0]
+                                    IssueStatus::FK => $random_status[0],
+                                    DBCol::STARTED_AT => Carbon::now()->subMinutes(10),
+                                    DBCol::ENDED_AT => Carbon::now()
                                 ]);
 
                                 $issue->{DBCol::STATUS_UPDATED_AT} = Carbon::now();

@@ -203,6 +203,20 @@ class Complaint extends BaseVuexModel {
         return response;
     }
 
+    static async [actions.ISSUE.ARCHIVE](data) {
+        let response;
+
+        try {
+            response = await api.put('api:issues.archive', {
+                ...data
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
     static async [actions.ISSUE.EXPORT](data) {
         let response;
 
@@ -316,7 +330,7 @@ class Complaint extends BaseVuexModel {
     }
 
     get statusColor() {
-        let color = '#C3C3C3FF';
+        let color = '#E0E0E0FF';
 
         const {
             vuex,
@@ -332,8 +346,6 @@ class Complaint extends BaseVuexModel {
             ](issue_status_id);
 
             if (status) {
-                console.log(status);
-
                 color = status.getColorByTime(status_updated_at);
             }
         }

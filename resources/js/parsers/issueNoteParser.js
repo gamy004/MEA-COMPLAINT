@@ -128,7 +128,7 @@ function parseEdit(context, {
     ](issue_note.id) || {};
 
     const updatedNote = _.merge({
-        ...oldNote.data
+        ..._.cloneDeep(oldNote.data)
     }, issue_note);
 
     rootCommit(

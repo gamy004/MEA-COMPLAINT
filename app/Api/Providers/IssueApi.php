@@ -152,6 +152,8 @@ class IssueApi extends BaseApi implements ApiInterface
                 sprintf("%s.%s", $baseTable, DBCol::ID),
                 sprintf("%s.%s", $baseTable, DBCol::CREATED_AT),
                 sprintf("%s.%s", $baseTable, DBCol::UPDATED_AT),
+                sprintf("%s.%s", $baseTable, DBCol::DELETED_AT),
+                sprintf("%s.%s", $baseTable, DBCol::ARCHIVE),
                 sprintf("%s.%s", $baseTable, DBCol::SUBJECT),
                 sprintf("%s.%s", $baseTable, DBCol::DESCRIPTION),
                 sprintf("%s.%s", $baseTable, DBCol::ISSUED_BY),
@@ -415,6 +417,7 @@ class IssueApi extends BaseApi implements ApiInterface
         } catch (Exception $exception) {
             DB::rollback();
             Log::error($exception);
+            dd($exception);
             throw new Exception("Error Creating Issue Request", 1);
         }
     }
@@ -452,6 +455,62 @@ class IssueApi extends BaseApi implements ApiInterface
         }
     }
 
+    public function restore($id)
+    {
+        try {
+            DB::beginTransaction();
+            $originalModel = $this->getOriginalModel();
+
+            $issue = $originalModel->withTrashed()
+                ->where(DBCol::ID, $id)
+                ->first();
+
+            if (!is_null($issue->{DBCol::DELETED_AT})) {
+                $issue->restore();
+            }
+
+            if ($issue->{DBCol::ARCHIVE}) {
+                $issue->{DBCol::ARCHIVE} = 0;
+                $issue->save();
+            }
+            // $restore = $originalModel->withTrashed()
+            //     ->where(DBCol::ID, $id)
+            //     ->restore();
+
+            DB::commit();
+
+            return $this->find($id);
+        } catch (Exception $exception) {
+            DB::rollback();
+
+            Log::error($exception);
+
+            throw new Exception("Error Handle Restoring Resource Request");
+        }
+    }
+
+    public function archive(Model $issue, array $raw)
+    {
+        try {
+            DB::beginTransaction();
+
+            $issue->{DBCol::ARCHIVE} = 1;
+            $issue->save();
+
+            DB::commit();
+
+            return response()->json([
+                "message" => "archive success",
+                "id" => $issue->{DBCol::ID}
+            ]);
+
+        } catch (Exception $exception) {
+            DB::rollback();
+            Log::error($exception);
+            throw new Exception("Error Archiving issue Request", 1);
+        }
+    }
+
     private function parseGeneralFields($record, $raw)
     {
         $record = array_merge(
@@ -485,12 +544,30 @@ class IssueApi extends BaseApi implements ApiInterface
     {
         if (isset($raw[IssueStatus::FK])) {
             $issue_status_id = $raw[IssueStatus::FK];
+            $old_status_id = $issue->{IssueStatus::FK};
+            $old_status_updated_at = $issue->{DBCol::STATUS_UPDATED_AT};
 
-            $issue->{DBCol::STATUS_UPDATED_AT} = Carbon::now();
+            $current_time = Carbon::now();
+
+            $issue->{DBCol::STATUS_UPDATED_AT} = $current_time;
             $issue->{IssueStatus::FK} = $issue_status_id;
+
             $issue->save();
 
-            return $issue->logs()->create(compact('issue_status_id'));
+            if (!is_null($old_status_id)) {
+                $issue->logs()->where([
+                    [IssueStatus::FK, $old_status_id],
+                    [DBCol::STARTED_AT, $old_status_updated_at]
+                ])
+                ->update([
+                    DBCol::ENDED_AT => $current_time
+                ]);
+            }
+
+            return $issue->logs()->create([
+                IssueStatus::FK => $issue_status_id,
+                DBCol::STARTED_AT => $current_time
+            ]);
         }
 
         return false;

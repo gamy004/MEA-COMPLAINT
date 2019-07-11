@@ -100,7 +100,7 @@ mix.disableNotifications()
     .browserSync({
         open: false,
         https: false,
-        port: 3031,
+        port: 3032,
         proxy: 'mea-complaint.test',
         host: 'mea-complaint.test',
         files: [

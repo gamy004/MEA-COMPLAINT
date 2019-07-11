@@ -44,7 +44,7 @@ Route::group([
                 Route::get('/issues', 'IssueController@export')->name('issues');
                 Route::get('/search-issues', 'IssueController@exportSearch')->name('search-issues');
             });
-            
+
             /**
              * Custom route IssueController
              */
@@ -58,6 +58,7 @@ Route::group([
 
             Route::group(['as' => 'issues.', 'prefix' => 'issues/{issue}'], function () {
                 Route::post('/restore', 'IssueController@restore')->name('restore');
+                Route::put('/archive', 'IssueController@archive')->name('archive');
             });
 
             /**
@@ -79,6 +80,13 @@ Route::group([
              */
             Route::group(['as' => 'issue-statuses.', 'prefix' => 'issue-statuses/{issue_status}'], function () {
                 Route::post('/restore', 'IssueStatusController@restore')->name('restore');
+            });
+
+            /**
+             * Custom route IssueStatusController
+             */
+            Route::group(['as' => 'users.', 'prefix' => 'users/{user}'], function () {
+                Route::put('/update-config', 'UserController@updateConfig')->name('update-config');
             });
 
             Route::resources([

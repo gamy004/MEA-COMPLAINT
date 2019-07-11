@@ -28,7 +28,7 @@ export default {
 
   computed: {
     statusColor() {
-      let color = "#C3C3C3FF";
+      let color = "#E0E0E0FF";
 
       if (this.$_complaint_item_mixin_complaint) {
         color = this.$_complaint_item_mixin_complaint.statusColor;

@@ -14,6 +14,7 @@ export default {
             sortedIndex: [],
             sortedPaginateIndex: {},
             paginateIndex: {},
+            global_filters: [],
             filter_groups: [
                 // default to => { filters: [{ key: "", value: "", operator: "", not: false }], or: false }
             ],

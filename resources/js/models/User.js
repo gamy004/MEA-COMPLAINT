@@ -66,6 +66,20 @@ class User extends BaseModel {
         return response;
     }
 
+    static async [actions.USER.UPDATE_CONFIG](data) {
+        let response;
+
+        try {
+            response = await api.put('api:users.update-config', {
+                ...data,
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
     static async [actions.USER.SIGN_IN](username, password) {
         let response;
 

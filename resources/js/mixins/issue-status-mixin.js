@@ -168,7 +168,11 @@ const issueStatusMixin = {
                             await this.$_issue_status_mixin_updateComplaint({
                                 id: issue.id,
                                 issue_status_id: id,
-                                includes: [],
+                                includes: [
+                                    'logs',
+                                    'logs.status:sideload',
+                                    'logs.status.configs'
+                                ],
                                 routeParam: {
                                     issue: issue.id
                                 }

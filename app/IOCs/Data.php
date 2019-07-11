@@ -27,6 +27,7 @@ class Data
      * Issue
      */
     const ISSUER = 'issuer';
+    const RECIPIENT = 'recipient';
     const RECIPIENTS = 'recipients';
     const RECIPIENT_IDS = 'recipient_ids';
     const LATEST_STATUS = 'latest_status';

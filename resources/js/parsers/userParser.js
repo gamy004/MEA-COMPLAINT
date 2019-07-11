@@ -90,23 +90,23 @@ function parseEdit(context, {
         parsers
     } = context;
 
-    const {
-        auth
-    } = rootState;
+    // const {
+    //     auth
+    // } = rootState;
 
-    if (auth.id === user.id) {
-        const updatedAuth = _.merge({
-            ..._.cloneDeep(auth.data)
-        }, user);
+    // if (auth.id === user.id) {
+    //     const updatedAuth = _.merge({
+    //         ..._.cloneDeep(auth.data)
+    //     }, user);
 
-        rootCommit(vuex.mutations.SET_STATE, "", {
-            key: 'auth',
-            value: new models.USER({
-                ...updatedAuth,
-                context
-            })
-        });
-    }
+    //     rootCommit(vuex.mutations.SET_STATE, "", {
+    //         key: 'auth',
+    //         value: new models.USER({
+    //             ...updatedAuth,
+    //             context
+    //         })
+    //     });
+    // }
 
     const oldUser = rootGetters[
         `${vuex.modules.USER}/${vuex.getters.BY_KEY}`
@@ -133,6 +133,36 @@ function parseEdit(context, {
     );
 };
 
+function parseUpdateConfig(context, {
+    users: user
+} = {}) {
+
+    const {
+        rootState,
+        rootCommit,
+        vuex,
+        models
+    } = context;
+
+    const {
+        auth
+    } = rootState;
+
+    if (auth.id === user.id) {
+        const updatedAuth = _.merge({
+            ..._.cloneDeep(auth.data)
+        }, user);
+
+        rootCommit(vuex.mutations.SET_STATE, "", {
+            key: 'auth',
+            value: new models.USER({
+                ...updatedAuth,
+                context
+            })
+        });
+    }
+};
+
 function parseDelete(context, {
     id
 } = {}) {
@@ -155,6 +185,7 @@ export default {
     [actions.USER.STORE]: parseStore,
     [actions.USER.EDIT]: parseEdit,
     [actions.USER.UPDATE]: parseEdit,
+    [actions.USER.UPDATE_CONFIG]: parseUpdateConfig,
     [actions.USER.DELETE]: parseDelete,
     [actions.USER.RESTORE]: parseStore
 }

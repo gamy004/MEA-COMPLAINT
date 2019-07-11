@@ -81,7 +81,7 @@ function parseEdit(context, {
     ](issue_category.id) || {};
 
     const updatedCategory = _.merge({
-        ...oldCategory.data
+        ..._.cloneDeep(oldCategory.data)
     }, issue_category);
 
     rootCommit(
