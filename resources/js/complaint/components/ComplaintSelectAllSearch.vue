@@ -6,14 +6,17 @@
     class="py-2"
   >
     <transition name="slide-y-transition" mode="out-in" appear>
-      <div key="notAllSelected" v-if="!vuexSelectAll">
-        <strong>{{ totalSelectedComplaints }}</strong> complaints are selected.
-      </div>
+      <div
+        key="notAllSelected"
+        v-if="!vuexSelectAll"
+        v-html="$t('complaint.index.selectAllSearch.someSelected', { count: totalSelectedComplaints })"
+      ></div>
 
-      <div key="allSelected" v-else>
-        All
-        <strong>{{ $_paginatable_total }}</strong> complaints are selected.
-      </div>
+      <div
+        key="allSelected"
+        v-else
+        v-html="$t('complaint.index.selectAllSearch.allSelected', { count: $_paginatable_total })"
+      ></div>
     </transition>
 
     <v-btn
@@ -103,9 +106,9 @@ export default {
     },
 
     buttonText() {
-      return this.vuexSelectAll
-        ? "Clear selection"
-        : "Select all complaints that match this search";
+      const textType = this.vuexSelectAll ? "clearAll" : "selectAllBtn";
+
+      return this.$t(`complaint.index.selectAllSearch.${textType}`);
     },
 
     ...vuex.mapWaitingGetters({

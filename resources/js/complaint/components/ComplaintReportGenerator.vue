@@ -7,13 +7,17 @@
         </v-list-tile-action>
 
         <v-list-tile-content>
-          <v-list-tile-title>Pick Date</v-list-tile-title>
+          <v-list-tile-title v-t="'complaint.index.toolbar.generateReport.by.date'"></v-list-tile-title>
         </v-list-tile-content>
       </v-layout>
     </template>
 
     <v-card v-if="$_issue_report_mixin_report">
-      <v-card-title class="headline pb-0" primary-title>Generate by</v-card-title>
+      <v-card-title
+        class="headline pb-0"
+        primary-title
+        v-t="'complaint.index.toolbar.generateReport.dateheader'"
+      ></v-card-title>
 
       <v-card-text class="pt-0">
         <v-radio-group v-model="$_issue_report_mixin_reportType" row>
@@ -33,6 +37,7 @@
           full-width
           landscape
           class="mt-3"
+          :locale="$i18n.locale"
           :type="$_issue_report_mixin_reportType"
           header-color="has-gradient"
           color="deep-orange"
@@ -41,13 +46,17 @@
 
       <v-card-actions class="py-3">
         <v-spacer></v-spacer>
-        <v-btn flat @click.prevent.stop="$_issue_report_mixin_reportDialog = false">Cancel</v-btn>
+        <v-btn
+          flat
+          @click.prevent.stop="$_issue_report_mixin_reportDialog = false"
+        >{{ $t('general.cancel') }}</v-btn>
         <v-btn
           color="deep-orange"
-          dark
+          :dark="$_issue_report_mixin_reportVModel.length > 0"
           class="mr-2"
+          :disabled="!$_issue_report_mixin_reportVModel.length > 0"
           @click.prevent.stop="$_issue_report_mixin_generateReport($_issue_report_mixin_reportVModel)"
-        >Generate</v-btn>
+        >{{ $t('general.export') }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

@@ -26,7 +26,7 @@
 
           <v-divider v-else-if="item.divider" :key="i" dark class="my-3"></v-divider>
 
-          <v-list-tile v-else :key="i" @click="gotoPage(item.route)">
+          <v-list-tile v-else :key="i" @click="item.onClick(item)">
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
@@ -87,9 +87,10 @@ import ComplaintForm from "../complaint/components/ComplaintForm";
 import ComplaintSearchFilter from "../complaint/components/ComplaintSearchFilter";
 import MessageAlert from "../components/MessageAlert";
 import { views } from "../constants";
+import { issueSearchMixin } from "../mixins/issue-search-mixin";
 
 export default {
-  mixins: [alertable, layoutable, complaintMixin],
+  mixins: [alertable, layoutable, complaintMixin, issueSearchMixin],
 
   components: {
     AddComplaintBtn,
@@ -104,18 +105,21 @@ export default {
       filtered: false,
       alertable_messages: {
         invalidSearchForm: {
-          text: "Invalid search query, returning all complaints"
+          text: this.$t("alertMessages.searchComplaint.invalidQuery")
         },
         searchError: {
-          text: "Searching failed, please try again",
+          text: this.$t("alertMessages.searchComplaint.error"),
           type: "error"
         }
       },
       items: [
         {
           icon: "inbox",
-          text: "Inbox",
-          route: { name: views.ISSUE.INDEX }
+          text: this.$t("sidebar.inbox"),
+          route: { name: views.ISSUE.INDEX },
+          onClick: item => {
+            this.resetStateAndGotoRoute(item);
+          }
         },
         // {
         //   icon: "start",
@@ -128,19 +132,19 @@ export default {
         //   route: { name: views.ISSUE.INDEX }
         // },
         { divider: true },
-        {
-          icon: "send",
-          text: "Sent",
-          route: { name: views.ISSUE.INDEX }
-        },
+        // {
+        //   icon: "send",
+        //   text: "Sent",
+        //   route: { name: views.ISSUE.INDEX }
+        // },
         {
           icon: "drafts",
-          text: "Drafts",
+          text: this.$t("sidebar.draft"),
           route: { name: views.ISSUE.INDEX }
         },
         {
           icon: "archive",
-          text: "Archive",
+          text: this.$t("sidebar.archive"),
           route: {
             name: views.ISSUE.INDEX,
             query: {
@@ -154,7 +158,7 @@ export default {
         },
         {
           icon: "delete",
-          text: "Trash",
+          text: this.$t("sidebar.trash"),
           route: {
             name: views.ISSUE.INDEX,
             query: {
@@ -167,20 +171,20 @@ export default {
           }
         },
         { divider: true },
-        { heading: "Admin Management" },
+        { heading: this.$t("sidebar.adminSection") },
         {
           icon: "category",
-          text: "Categories",
+          text: this.$t("sidebar.categories"),
           route: { name: views.ISSUE_CATEGORY.INDEX }
         },
         {
           icon: "bookmarks",
-          text: "Statuses",
+          text: this.$t("sidebar.statuses"),
           route: { name: views.ISSUE_STATUS.INDEX }
         },
         {
           icon: "group",
-          text: "Users & Groups",
+          text: this.$t("sidebar.usersAndGroups"),
           route: { name: views.USER.INDEX }
         }
         //   { icon: "chat_bubble", text: "Trash" },
@@ -192,6 +196,12 @@ export default {
   },
 
   methods: {
+    resetStateAndGotoRoute(item) {
+      this.$_issue_search_mixin_clearState();
+
+      this.gotoPage(item.route);
+    },
+
     gotoPage({ name, params = {}, query = {} } = {}) {
       this.$router.push({
         name,

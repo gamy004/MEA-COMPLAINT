@@ -29,7 +29,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
 
-
 class IssueApi extends BaseApi implements ApiInterface
 {
     use HasFile;
@@ -395,7 +394,9 @@ class IssueApi extends BaseApi implements ApiInterface
 
             $raw[IssueStatus::FK] = $default_status->{DBCol::ID};
 
-            $record = [];
+            $record = [
+                DBCol::ISSUED_BY => auth()->user()->{Group::FK}
+            ];
 
             $record = $this->parseGeneralFields($record, $raw);
 

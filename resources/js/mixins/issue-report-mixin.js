@@ -236,10 +236,13 @@ const IssueReportMixin = {
         },
 
         async $_issue_report_mixin_generateReport(ranges, fileName = null) {
-            let filter_groups = [{
-                filters: ranges.map(range => filterContains("created_at", range)),
+            const filters = ranges.map(range => filterContains("created_at", range));
+
+
+            let filter_groups = filters.length ? [{
+                filters,
                 or: true
-            }];
+            }] : [];
 
             return this.$_issue_report_mixin_export(filter_groups, {
                 fileName
@@ -285,11 +288,11 @@ const IssueReportMixin = {
                     value: {
                         reportType: "date",
                         types: [{
-                                label: "Month",
+                                label: this.$t("general.month"),
                                 value: "month"
                             },
                             {
-                                label: "Date",
+                                label: this.$t("general.date"),
                                 value: "date"
                             }
                         ],

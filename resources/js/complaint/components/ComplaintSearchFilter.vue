@@ -4,7 +4,7 @@
     solo
     color="deep-orange"
     hide-details
-    label="Search complaint"
+    :label="$t('header.searchLabel')"
     prepend-inner-icon="search"
     v-model="issue_search_mixin_searchKeyword"
     @keyup.enter.stop.prevent="onSearchByKeyword"
@@ -30,7 +30,7 @@
                 <v-icon color="grey darken-2">clear</v-icon>
               </v-btn>
             </template>
-            <span>Clear search</span>
+            <span v-t="'header.searchClearAction'"></span>
           </v-tooltip>
 
           <v-tooltip bottom>
@@ -41,7 +41,7 @@
                 >mdi-filter</v-icon>
               </v-btn>
             </template>
-            <span>Show search options</span>
+            <span v-t="'header.searchTooltip'"></span>
           </v-tooltip>
         </template>
 
@@ -49,7 +49,7 @@
           <v-list class="search-filter-list">
             <v-list-tile>
               <v-list-tile-action>
-                <span class="mr-3 body-2">From</span>
+                <span class="mr-3 body-2" v-t="'header.searchForm.from'"></span>
               </v-list-tile-action>
 
               <v-autocomplete
@@ -74,14 +74,14 @@
                   <span
                     v-if="index === 3"
                     class="grey--text caption"
-                  >(+{{ issue_search_mixin_form.from.length - 3 }} others)</span>
+                  >(+{{ issue_search_mixin_form.from.length - 3 }} {{ $t('general.others') }})</span>
                 </template>
               </v-autocomplete>
             </v-list-tile>
 
             <v-list-tile>
               <v-list-tile-action>
-                <span class="mr-3 body-2">To</span>
+                <span class="mr-3 body-2" v-t="'header.searchForm.to'"></span>
               </v-list-tile-action>
 
               <v-autocomplete
@@ -106,14 +106,14 @@
                   <span
                     v-if="index === 3"
                     class="grey--text caption"
-                  >(+{{ issue_search_mixin_form.to.length - 3 }} others)</span>
+                  >(+{{ issue_search_mixin_form.to.length - 3 }} {{ $t('general.others') }})</span>
                 </template>
               </v-autocomplete>
             </v-list-tile>
 
             <v-list-tile>
               <v-list-tile-action>
-                <span class="mr-3 body-2">Status</span>
+                <span class="mr-3 body-2" v-t="'header.searchForm.status'"></span>
               </v-list-tile-action>
 
               <v-autocomplete
@@ -138,14 +138,14 @@
                   <span
                     v-if="index === 3"
                     class="grey--text caption"
-                  >(+{{ issue_search_mixin_form.statuses.length - 3 }} others)</span>
+                  >(+{{ issue_search_mixin_form.statuses.length - 3 }} {{ $t('general.others') }})</span>
                 </template>
               </v-autocomplete>
             </v-list-tile>
 
             <v-list-tile>
               <v-list-tile-action>
-                <span class="mr-3 body-2">Category</span>
+                <span class="mr-3 body-2" v-t="'header.searchForm.category'"></span>
               </v-list-tile-action>
 
               <v-autocomplete
@@ -170,14 +170,14 @@
                   <span
                     v-if="index === 3"
                     class="grey--text caption"
-                  >(+{{ issue_search_mixin_form.categories.length - 3 }} others)</span>
+                  >(+{{ issue_search_mixin_form.categories.length - 3 }} {{ $t('general.others') }})</span>
                 </template>
               </v-autocomplete>
             </v-list-tile>
 
             <v-list-tile>
               <v-list-tile-action>
-                <span class="mr-3 body-2">Subject</span>
+                <span class="mr-3 body-2" v-t="'header.searchForm.subject'"></span>
               </v-list-tile-action>
 
               <v-text-field
@@ -192,7 +192,7 @@
 
             <v-list-tile>
               <v-list-tile-action>
-                <span class="mr-3 body-2">Has the words</span>
+                <span class="mr-3 body-2" v-t="'header.searchForm.includeWords'"></span>
               </v-list-tile-action>
 
               <v-text-field
@@ -207,7 +207,7 @@
 
             <v-list-tile>
               <v-list-tile-action>
-                <span class="mr-3 body-2">Doesn't have</span>
+                <span class="mr-3 body-2" v-t="'header.searchForm.excludeWords'"></span>
               </v-list-tile-action>
 
               <v-text-field
@@ -265,6 +265,7 @@
                   :type="$_issue_report_mixin_reportType"
                   no-title
                   scrollable
+                  :locale="$i18n.locale"
                   header-color="has-gradient"
                   color="deep-orange"
                 >
@@ -273,13 +274,15 @@
                     flat
                     color="deep-orange"
                     @click="issue_search_mixin_dateMenu = false"
-                  >Cancel</v-btn>
+                    v-text="$t('general.cancel')"
+                  ></v-btn>
                   <v-btn
                     flat
                     color="deep-orange"
                     :loading="$_issue_search_mixin_isSearchingComplaint"
+                    v-text="$t('general.select')"
                     @click="$refs.dateMenu.save($_issue_report_mixin_reportVModel)"
-                  >OK</v-btn>
+                  ></v-btn>
                 </v-date-picker>
               </v-menu>
             </v-list-tile>
@@ -298,13 +301,13 @@
           <v-card-actions class="py-3">
             <v-spacer></v-spacer>
 
-            <v-btn flat @click="dialog = false">Cancel</v-btn>
+            <v-btn flat @click="dialog = false">{{ $t('general.cancel') }}</v-btn>
             <v-btn
               color="deep-orange"
               :loading="$_issue_search_mixin_isSearchingComplaint"
               flat
               @click.prevent.stop="onSearch"
-            >Search</v-btn>
+            >{{ $t('general.search') }}</v-btn>
           </v-card-actions>
         </v-card>
       </v-menu>
@@ -519,12 +522,12 @@ export default {
     },
 
     async onRouteChange() {
-      if (!this.$route.query.q) {
-        this.onClear();
-        this.$_issue_search_mixin_clearState();
-      } else {
-        this.$_issue_search_mixin_updateKeywordAndBackup();
-      }
+      // if (!this.$route.query.q) {
+      //   this.onClear();
+      //   this.$_issue_search_mixin_clearState();
+      // } else {
+      this.$_issue_search_mixin_updateKeywordAndBackup();
+      // }
     }
   },
 

@@ -107,7 +107,7 @@ export default {
       tabs: [
         {
           icon: "inbox",
-          text: "Primary",
+          text: this.$t("complaint.index.toolbar.primary"),
           type: "primary"
         }
       ]
@@ -218,7 +218,7 @@ export default {
         // },
         {
           icon: "replay",
-          text: "Refresh",
+          text: this.$t("general.refresh"),
           onClick: () => {
             const { $_issue_search_mixin_searchFiltersVuex = [] } = this;
 
@@ -242,7 +242,7 @@ export default {
           },
           menuItems: [
             {
-              text: "Newest",
+              text: this.$t("general.newest"),
               disabled: () => {
                 return this.$_paginatable_descending;
               },
@@ -251,7 +251,7 @@ export default {
               }
             },
             {
-              text: "Oldest",
+              text: this.$t("general.oldest"),
               disabled: () => {
                 return !this.$_paginatable_descending;
               },
@@ -281,7 +281,7 @@ export default {
           menu: true,
           minwidth: "250",
           icon: "mdi-export",
-          text: "Generate Report",
+          text: this.$t("complaint.index.toolbar.generateReport.tooltip"),
           // component: () => ComplaintReportGenerator,
           // componentProps: () => {
           //   return {
@@ -289,28 +289,37 @@ export default {
           //   };
           // },
           menuItems: [
-            { text: "Generate", subheading: true },
             {
-              text: "By Current Selected",
+              text: this.$t("complaint.index.toolbar.generateReport.subheader"),
+              subheading: true
+            },
+            {
+              text: this.$t(
+                "complaint.index.toolbar.generateReport.by.selected"
+              ),
               disabled: () => !this.vuexSomeSelectedValues,
               onClick: () => {
                 this.$_issue_report_mixin_generateCurrentSelected();
               }
             },
             {
-              text: "By Current Filter",
+              text: this.$t("complaint.index.toolbar.generateReport.by.filter"),
               onClick: () => {
                 this.$_issue_report_mixin_generateCurrentFilter();
               }
             },
             {
-              text: "This Week",
+              text: this.$t(
+                "complaint.index.toolbar.generateReport.by.thisWeek"
+              ),
               onClick: () => {
                 this.$_issue_report_mixin_generateThisWeekReport();
               }
             },
             {
-              text: "This Month",
+              text: this.$t(
+                "complaint.index.toolbar.generateReport.by.thisMonth"
+              ),
               onClick: () => {
                 this.$_issue_report_mixin_generateThisMonthReport();
               }
@@ -321,7 +330,7 @@ export default {
         },
         {
           icon: "settings",
-          text: "Settings",
+          text: this.$t("complaint.index.toolbar.inboxConfigs.tooltip"),
           onClick: () => {
             this.showConfig = true;
           }
