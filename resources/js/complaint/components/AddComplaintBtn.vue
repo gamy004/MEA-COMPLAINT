@@ -26,7 +26,7 @@
         @click="openComplaintDialog"
     >
         <v-icon>add_comment</v-icon>
-        <span class="subheading font-weight-medium text-capitalize mx-2">Complaint</span>
+        <span class="subheading font-weight-medium text-capitalize mx-2" v-t="complaint.addBtn"></span>
     </v-btn>
 </template>
 

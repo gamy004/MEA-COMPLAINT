@@ -7,6 +7,7 @@
 import './bootstrap';
 import router from './routes';
 import store from './store';
+import i18n from './i18n';
 import wait from './wait';
 import Vuetify from 'vuetify/lib';
 import 'vuetify/src/stylus/app.styl';
@@ -43,5 +44,6 @@ const app = new Vue({
     el: '#app',
     router,
     store,
-    wait
+    wait,
+    i18n
 });
