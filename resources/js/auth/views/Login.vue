@@ -124,10 +124,12 @@ export default {
 
     goToComplaintPage() {
       return setTimeout(() => {
-        this.$router.push({
+        const { href } = this.$router.resolve({
           name: views.ISSUE.INDEX
         });
-      }, 300);
+
+        window.location = href;
+      }, 500);
     }
   }
 };
