@@ -6,6 +6,7 @@ use App\IOCs\DBCol;
 use App\Models\Issue;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreIssueRequest;
+use App\Http\Requests\UpdateIssueRequest;
 
 class IssueController extends BaseApiController
 {
@@ -71,7 +72,7 @@ class IssueController extends BaseApiController
      * @param  \App\Issue  $issue
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreIssueRequest $request, Issue $issue)
+    public function update(UpdateIssueRequest $request, Issue $issue)
     {
         return $this->api->update(
             $issue,

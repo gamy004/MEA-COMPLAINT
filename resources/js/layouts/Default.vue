@@ -26,7 +26,7 @@
 
           <v-divider v-else-if="item.divider" :key="i" dark class="my-3"></v-divider>
 
-          <v-list-tile v-else :key="i" @click="gotoPage(item.route)">
+          <v-list-tile v-else :key="i" @click="item.onClick(item)">
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
@@ -87,9 +87,10 @@ import ComplaintForm from "../complaint/components/ComplaintForm";
 import ComplaintSearchFilter from "../complaint/components/ComplaintSearchFilter";
 import MessageAlert from "../components/MessageAlert";
 import { views } from "../constants";
+import { issueSearchMixin } from '../mixins/issue-search-mixin';
 
 export default {
-  mixins: [alertable, layoutable, complaintMixin],
+  mixins: [alertable, layoutable, complaintMixin, issueSearchMixin],
 
   components: {
     AddComplaintBtn,
@@ -115,7 +116,10 @@ export default {
         {
           icon: "inbox",
           text: "Inbox",
-          route: { name: views.ISSUE.INDEX }
+          route: { name: views.ISSUE.INDEX},
+          onClick: (item) => {
+            this.resetStateAndGotoRoute(item)
+          }
         },
         // {
         //   icon: "start",
@@ -192,6 +196,12 @@ export default {
   },
 
   methods: {
+    resetStateAndGotoRoute(item) {
+      this.$_issue_search_mixin_clearState();
+
+      this.gotoPage(item.route);
+    },
+
     gotoPage({ name, params = {}, query = {} } = {}) {
       this.$router.push({
         name,

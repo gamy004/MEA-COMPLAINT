@@ -118,7 +118,6 @@ export default {
       deep: true,
       handler({ inbox_settings = null } = {}) {
         const rowsPerPage = this.authSettingPerPage;
-        console.log(rowsPerPage);
 
         if (rowsPerPage === this.$_paginatable_rowsPerPage) return;
 

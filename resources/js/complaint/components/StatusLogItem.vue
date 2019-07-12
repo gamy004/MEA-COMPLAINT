@@ -58,7 +58,6 @@ export default {
       let time = "";
 
       const { statusConfig = null } = this;
-      console.log(statusConfig);
 
       if (statusConfig) {
         time = `เกิน ${statusConfig.duration} ${

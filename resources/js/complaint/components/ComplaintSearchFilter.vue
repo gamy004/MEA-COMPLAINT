@@ -519,12 +519,12 @@ export default {
     },
 
     async onRouteChange() {
-      if (!this.$route.query.q) {
-        this.onClear();
-        this.$_issue_search_mixin_clearState();
-      } else {
+      // if (!this.$route.query.q) {
+      //   this.onClear();
+      //   this.$_issue_search_mixin_clearState();
+      // } else {
         this.$_issue_search_mixin_updateKeywordAndBackup();
-      }
+      // }
     }
   },
 

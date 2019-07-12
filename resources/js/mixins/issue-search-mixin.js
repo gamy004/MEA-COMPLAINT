@@ -407,11 +407,20 @@ export const issueSearchMixin = {
                 value: ""
             }, vuex.modules.ISSUE);
 
+            this.$_vuexable_updatePagination({
+                key: "search",
+                value: {
+                    keyword: "",
+                    fields: []
+                }
+            }, vuex.modules.ISSUE);
+
             this.$_vuexable_setState({
                 key: "filter_groups",
                 value: []
             }, vuex.modules.ISSUE);
-
+            console.log("clear backup");
+            
             this.$_vuexable_setState({
                 key: "backupFormdata",
                 value: {}
@@ -668,14 +677,28 @@ export const issueSearchMixin = {
                 $_issue_search_mixin_stateSearchKeyword.length
             ) {
                 this.issue_search_mixin_searchKeyword = $_issue_search_mixin_stateSearchKeyword;
+            } else {
+                this.issue_search_mixin_searchKeyword = "";
             }
-
+            
             if (
                 $_issue_search_mixin_stateBackupFormdata &&
                 Object.keys($_issue_search_mixin_stateBackupFormdata).length
             ) {
                 this.issue_search_mixin_form = vuex.models.FORM.make({
                     ...$_issue_search_mixin_stateBackupFormdata
+                });
+            } else {
+                this.issue_search_mixin_form = vuex.models.FORM.make({
+                    from: [],
+                    to: [],
+                    subject: "",
+                    include_words: "",
+                    exclude_words: "",
+                    dates: [],
+                    categories: [],
+                    statuses: [],
+                    has_attachment: false
                 });
             }
         },
