@@ -52,14 +52,14 @@ class UpdateStatusRequest extends FormRequest
     }
 
     /**
- * Get the error messages for the defined validation rules.
- *
- * @return array
- */
-public function messages()
-{
-    return [
-        Data::CONFIGS.'.*.'.DBCol::DURATION.'.required' => 'A duration is required'
-    ];
-}
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            Data::CONFIGS.'.*.'.DBCol::DURATION.'.required' => 'A duration is required'
+        ];
+    }
 }

@@ -224,9 +224,27 @@ class UserApi extends BaseApi implements ApiInterface
         }
     }
 
-    public function destroy(Model $user)
+    public function restore($id)
     {
+        try {
+            DB::beginTransaction();
 
+            $restore = $this->originalModel->withTrashed()
+                ->where(DBCol::ID, $id)
+                ->restore();
+
+            DB::commit();
+
+            if ($restore) {
+                return $this->findCustom($id);
+            }
+        } catch (Exception $exception) {
+            DB::rollback();
+
+            Log::error($exception);
+
+            throw new Exception("Error Handle Restoring Resource Request");
+        }
     }
 
     private function parseGeneralFields($record, $raw)

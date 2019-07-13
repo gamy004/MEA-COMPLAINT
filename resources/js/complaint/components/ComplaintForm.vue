@@ -3,7 +3,7 @@
     <v-flex xs12>
       <v-card class="complaint-form">
         <v-toolbar card dense color="blue-grey darken-4" dark class="complaint-form__head-toolbar">
-          <v-toolbar-title>Complaint</v-toolbar-title>
+          <v-toolbar-title v-t="'complaint.index.form.title'"></v-toolbar-title>
 
           <v-spacer></v-spacer>
 
@@ -16,7 +16,7 @@
                 @click.prevent.stop="toggleFullScreen"
               >{{ fullScreenIcon }}</v-icon>
             </template>
-            <span>Full-screen</span>
+            <span v-t="'complaint.index.form.fullScreen'"></span>
           </v-tooltip>
 
           <v-tooltip bottom>
@@ -28,7 +28,7 @@
                 @click.prevent.stop="closeComplaintForm"
               >close</v-icon>
             </template>
-            <span>Save &amp; close</span>
+            <span v-t="'general.close'"></span>
           </v-tooltip>
         </v-toolbar>
 
@@ -39,7 +39,7 @@
                 class="complaint-form__input-recipient"
                 v-model="form.issue_category_id"
                 :items="storeCategories"
-                label="Category"
+                :label="$t('complaint.index.form.category')"
                 cache-items
                 :loading="isFetchingFormCategory"
                 full-width
@@ -58,7 +58,7 @@
                 v-model="form.recipients"
                 :items="storeRecipients"
                 small-chips
-                label="To"
+                :label="$t('complaint.index.form.to')"
                 cache-items
                 :loading="isFetchingFormRecipient"
                 full-width
@@ -78,7 +78,7 @@
           <v-divider></v-divider>
 
           <v-text-field
-            label="Subject"
+            :label="$t('complaint.index.form.subject')"
             v-model="form.subject"
             single-line
             full-width
@@ -100,14 +100,14 @@
             <!-- file list here -->
             <file-list
               class="editor__filelist editor__filelist--front px-2"
-              v-if="uploadable_uploader && complaintAttachments.length"
+              v-if="uploadable_uploader"
               :files="complaintAttachments"
               :uploader="uploadable_uploader"
               @remove="onFileRemoved"
             />
 
             <file-list
-              v-if="uploadable_uploader && $_uploadable_uploaderFiles.length"
+              v-if="uploadable_uploader"
               class="editor__filelist editor__filelist--back px-2"
               :files="$_uploadable_uploaderFiles"
               :uploader="uploadable_uploader"
@@ -126,7 +126,7 @@
                       @click.prevent.stop="onSubmit"
                       :loading="form.isSubmitting"
                       :disabled="uploadable_uploading"
-                    >{{ managableEdit ? "Update" : "Send" }}</v-btn>
+                    >{{ $t(`general.${managableEdit ? "update" : "send"}`) }}</v-btn>
 
                     <v-tooltip top>
                       <template v-slot:activator="{ on }">
@@ -137,7 +137,7 @@
                           @click.prevent.stop="toggleshowFormatting"
                         >text_format</v-icon>
                       </template>
-                      <span>Formatting options</span>
+                      <span v-t="'general.formatOptions'"></span>
                     </v-tooltip>
 
                     <uploader
@@ -157,7 +157,7 @@
                           <template v-slot:activator="{ on }">
                             <v-icon v-on="on">attach_file</v-icon>
                           </template>
-                          <span>Upload files</span>
+                          <span v-t="'general.uploadFile'"></span>
                         </v-tooltip>
                       </template>
                     </uploader>
@@ -168,7 +168,7 @@
                       <template v-slot:activator="{ on }">
                         <v-icon v-on="on" class="clickable">delete</v-icon>
                       </template>
-                      <span>Discard draft</span>
+                      <span v-t="'general.discard'"></span>
                     </v-tooltip>
                   </template>
                 </custom-toolbar>
@@ -180,20 +180,28 @@
     </v-flex>
 
     <warning-dialog :dialogable-visible.sync="warning" @click:accept="onDiscard">
-      <template v-slot:header>Discard draft?</template>
+      <template v-slot:header>
+        <span v-t="'complaint.index.form.warningDiscard.title'"></span>
+      </template>
 
-      <template v-slot:message>Your draft will be permanently deleted.</template>
+      <template v-slot:message>
+        <span v-t="'complaint.index.form.warningDiscard.desc'"></span>
+      </template>
     </warning-dialog>
 
     <warning-dialog
       :dialogable-visible.sync="warningSubmit"
       @click:accept="submitComplaintForm"
-      cancel-text="No"
-      accept-text="Yes"
+      :cancel-text="$t('general.no')"
+      :accept-text="$t('general.yes')"
     >
-      <template v-slot:header>Submit without subject and description?</template>
+      <template v-slot:header>
+        <span v-t="'complaint.index.form.warningSubmit.title'"></span>
+      </template>
 
-      <template v-slot:message>You want to create complaint without subject and description.</template>
+      <template v-slot:message>
+        <span v-t="'complaint.index.form.warningSubmit.desc'"></span>
+      </template>
     </warning-dialog>
 
     <message-alert
@@ -257,30 +265,30 @@ export default {
       warning: false,
       warningSubmit: false,
       alertable_messages: {
-        error: "Cannot create complaint, please check error message",
+        undo: this.$t("alertMessages.undo"),
+        error: this.$t("alertMessages.complaintForm.submit_error"),
         add_success: {
-          text: "Complaint was created successfully",
+          text: this.$t("alertMessages.complaintForm.create_success"),
           type: "success"
         },
         edit_success: {
-          text: "Complaint was updated successfully",
+          text: this.$t("alertMessages.complaintForm.update_success"),
           type: "success"
         },
         delete_file_success: {
-          text: "Attachment was deleted successfully",
-          type: "success",
-          color: "white",
+          text: this.$t("alertMessages.file.delete_success"),
           actions: [
             {
-              text: "Undo",
+              text: this.$t("general.undo"),
               handler: async ({ file }) => {
-                this.onFileRestore(file);
+                await this.onFileRestore(file);
+                this.$_alertable_alert("undo");
               }
             }
           ]
         },
         delete_uploadfile_success: {
-          text: "Uploaded file was deleted successfully",
+          text: this.$t("alertMessages.uploadFile.delete_success"),
           type: "success"
         }
       }
@@ -298,8 +306,6 @@ export default {
       immediate: true,
       handler(v) {
         if (this.fullScreenable) {
-          console.log(v);
-
           this.fullScreen = v;
         }
       }
@@ -434,7 +440,7 @@ export default {
     },
 
     closeComplaintForm() {
-      if (this.form.id && this.form.isChanged) {
+      if (!this.form.id && this.form.isChanged) {
         this.warning = true;
 
         return;
@@ -524,7 +530,9 @@ export default {
 
       this.$_alertable_alert(`${this.$_managable_action}_success`);
 
-      this.dialog = false;
+      setTimeout(() => {
+        this.dialog = false;
+      }, 1000);
 
       return this.resetComplaintForm();
     },
@@ -572,6 +580,8 @@ export default {
             "attachments",
             "includes"
           ]);
+
+          console.log(file);
 
           this.$_alertable_alert("delete_file_success", { file });
         } catch (error) {

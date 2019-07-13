@@ -21,7 +21,8 @@
               :item="item"
               @archive="onArchiveItem(item, itemIndex)"
               @edit="onEditItem(item, itemIndex)"
-              @update:status="onUpdateStatusItem"
+              @update:status-success="onUpdateStatusItemSuccess"
+              @update:status-error="onUpdateStatusItemError"
               @delete="onDeleteItem(item, itemIndex)"
             />
           </template>
@@ -78,16 +79,20 @@ export default {
       vuex,
       warningDelete: false,
       alertable_messages: {
-        error: "Cannot delete complaint, please try again.",
+        error: this.$t("alertMessages.complaintForm.delete_error"),
         update_status_success: {
-          text: "Complaint Status was updated successfully",
+          text: this.$t("alertMessages.complaintStatus.update_success"),
           type: "success"
         },
+        update_status_error: {
+          text: this.$t("alertMessages.complaintStatus.update_error"),
+          type: "error"
+        },
         remove: {
-          text: "Complaint moved to Trash",
+          text: this.$t("alertMessages.complaintForm.delete_success"),
           actions: [
             {
-              text: "Undo",
+              text: this.$t("general.undo"),
               handler: async ({ item, itemIndex }) => {
                 await this[vuex.actions.ISSUE.RESTORE](item);
                 this.$_alertable_alert("undo");
@@ -96,7 +101,7 @@ export default {
           ]
         },
         archive_success: {
-          text: "Complaint moved to Archive",
+          text: this.$t("alertMessages.complaintForm.archive_success"),
           actions: [
             {
               text: "Undo",
@@ -107,7 +112,7 @@ export default {
             }
           ]
         },
-        undo: "Action undone"
+        undo: this.$t("alertMessages.undo")
       }
     };
   },
@@ -246,8 +251,12 @@ export default {
       this.$_vuexable_setEdit(id, vuex.modules.ISSUE);
     },
 
-    async onUpdateStatusItem() {
+    onUpdateStatusItemSuccess() {
       this.$_alertable_alert("update_status_success");
+    },
+
+    onUpdateStatusItemError() {
+      this.$_alertable_alert("update_status_error");
     },
 
     async onDeleteItem(item, itemIndex) {

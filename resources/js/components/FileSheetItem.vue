@@ -2,12 +2,12 @@
   <v-hover>
     <v-sheet class="file-sheet" elevation="2" width="180" height="120" slot-scope="{ hover }">
       <v-layout v-if="!hover" justify-center fill-height>
-        <file-icon :mime="$fileitem_mixin_fileExtension" class="mr-1 mb-3"/>
+        <file-icon :mime="$fileitem_mixin_fileExtension" class="mr-1 mb-3" />
       </v-layout>
 
       <v-sheet v-if="hover" class="d-flex justify-start file-sheet__overlay fill-height py-2 px-2">
         <v-layout align-start>
-          <file-icon :mime="$fileitem_mixin_fileExtension" class="mr-1"/>
+          <file-icon :mime="$fileitem_mixin_fileExtension" class="mr-1" />
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-layout column nowrap v-on="on">
@@ -26,7 +26,7 @@
                 <v-icon color="blue-grey darken-2">cloud_download</v-icon>
               </v-btn>
             </template>
-            <span>Download</span>
+            <span v-t="'general.download'"></span>
           </v-tooltip>
         </v-layout>
       </v-sheet>

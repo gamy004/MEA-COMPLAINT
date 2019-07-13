@@ -2,12 +2,18 @@
   <v-timeline-item fill-dot small :color="statusColor">
     <v-layout pt-3>
       <v-flex xs3>
-        <strong>{{ item.ended_at !== null ? shortEndedTime : "ปัจจุบัน" }}</strong>
+        <strong>{{ item.ended_at !== null ? shortStartedTime : $t('general.present') }}</strong>
       </v-flex>
       <v-flex class="ml-1">
         <strong>{{ logStatus.status }}</strong>
-        <div v-if="item.started_at !== null" class="caption">เริ่ม: {{ startedTime }}</div>
-        <div v-if="item.ended_at !== null" class="caption">สิ้นสุด: {{ longEndedTime }}</div>
+        <div
+          v-if="item.started_at !== null"
+          class="caption"
+        >{{ $t('general.start') }}: {{ startedTime }}</div>
+        <div
+          v-if="item.ended_at !== null"
+          class="caption"
+        >{{ $t('general.end') }}: {{ longEndedTime }}</div>
         <div v-if="statusExceedTime" class="caption">{{ statusExceedTime }}</div>
       </v-flex>
     </v-layout>
@@ -19,14 +25,14 @@ import complaintItemMixin from "../../mixins/complaint-item-mixin";
 import { vuex, vuexable } from "../../mixins/vuexable";
 import { formatShortDateTime, formatLongDateTime } from "../../helpers";
 
-const timeMapping = {
-  minutes: "นาที",
-  hours: "ชั่วโมง",
-  days: "วัน",
-  weeks: "สัปดาห์",
-  months: "เดือน",
-  years: "ปี"
-};
+// const timeMapping = {
+//   minutes: "นาที",
+//   hours: "ชั่วโมง",
+//   days: "วัน",
+//   weeks: "สัปดาห์",
+//   months: "เดือน",
+//   years: "ปี"
+// };
 
 export default {
   props: ["item"],
@@ -60,9 +66,9 @@ export default {
       const { statusConfig = null } = this;
 
       if (statusConfig) {
-        time = `เกิน ${statusConfig.duration} ${
-          timeMapping[statusConfig.unit]
-        }`;
+        const unit = this.$t(`time.${statusConfig.unit}`);
+
+        time = `${this.$t("general.exceed")} ${statusConfig.duration} ${unit}`;
       }
 
       return time;
@@ -70,6 +76,10 @@ export default {
 
     startedTime() {
       return formatLongDateTime(this.item.started_at);
+    },
+
+    shortStartedTime() {
+      return formatShortDateTime(this.item.started_at);
     },
 
     shortEndedTime() {

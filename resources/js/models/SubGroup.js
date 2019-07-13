@@ -35,7 +35,7 @@ class SubGroup extends BaseVuexModel {
         return response;
     }
 
-    static async [actions.UPDATE](data) {
+    static async [actions.SUB_GROUP.UPDATE](data) {
         let response;
 
         try {

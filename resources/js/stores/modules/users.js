@@ -106,6 +106,42 @@ const userStore = {
                 throw error;
             }
         },
+
+        async [vuex.actions.USER.DELETE](context, {
+            id: user
+        } = {}) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'USER',
+                    action: 'DELETE',
+                    params: {
+                        routeParam: {
+                            user
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        async [vuex.actions.USER.RESTORE](context, {
+            id: user
+        } = {}) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'USER',
+                    action: 'RESTORE',
+                    params: {
+                        routeParam: {
+                            user
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
     },
 
     mutations: {

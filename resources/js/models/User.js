@@ -80,6 +80,38 @@ class User extends BaseModel {
         return response;
     }
 
+    static async [actions.USER.DELETE](data) {
+        let response;
+
+        try {
+            response = await api.delete('api:users.destroy', {
+                ...data
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
+    static async [actions.USER.RESTORE](data) {
+        let response;
+
+        try {
+            response = await api.post('api:users.restore', {
+                ...data,
+                includes: [
+                    'roles:sideload',
+                    'avatar'
+                ],
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
     static async [actions.USER.SIGN_IN](username, password) {
         let response;
 

@@ -273,7 +273,7 @@ const tableable = {
             this.$emit("update:pagination", v);
         },
         emitAction(action, ...v) {
-            this.$emit(`action:${_.camelCase(action)}`, ...v);
+            this.$emit(`action:${_.camelCase(action.action)}`, ...v);
         },
 
         onClickRow(event, props) {

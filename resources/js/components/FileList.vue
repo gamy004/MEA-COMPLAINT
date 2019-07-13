@@ -2,7 +2,7 @@
   <v-layout row wrap class="filelist">
     <template v-for="(file, index) in files">
       <v-flex xs12 :key="`${$_filemixin_getDisplayName(file)}-${index}`">
-        <file-list-item :file="file" @remove="removeFile(file, index)"/>
+        <file-list-item :file="file" @remove="removeFile(file, index)" />
       </v-flex>
     </template>
 
@@ -44,7 +44,7 @@ export default {
     return {
       alertable_messages: {
         delete_fail: {
-          text: "Cannot delete file, please try again",
+          text: this.$t("alertMessages.file.delete_error"),
           type: "error"
         }
       }

@@ -75,7 +75,7 @@ import ButtonCreateCategory from "../components/ButtonCreateCategory";
 import DialogCreateUpdateCategory from "../components/DialogCreateUpdateCategory";
 import { views } from "../../constants";
 import alertable from "../../mixins/alertable";
-import SearchCategoryInput from '../components/SearchCategoryInput';
+import SearchCategoryInput from "../components/SearchCategoryInput";
 
 export default {
   mixins: [alertable, issueCategoryMixin],
@@ -94,7 +94,7 @@ export default {
       selected: [],
       headers: [
         {
-          text: "Category",
+          text: this.$t("issueCategory.index.header.category"),
           align: "left",
           sortable: true,
           value: "category"
@@ -102,15 +102,19 @@ export default {
       ],
       alertable_messages: {
         create_success: {
-          text: "Category was created successfully",
+          text: this.$t("alertMessages.issueCategory.create_success"),
           type: "success"
         },
+        edit_error: {
+          text: this.$t("alertMessages.issueCategory.edit_error"),
+          type: "error"
+        },
         update_success: {
-          text: "Category was updated successfully",
+          text: this.$t("alertMessages.issueCategory.update_success"),
           type: "success"
         },
         delete_success: {
-          text: "Category was deleted successfully",
+          text: this.$t("alertMessages.issueCategory.delete_success"),
           actions: [
             {
               text: "Undo",
@@ -122,8 +126,12 @@ export default {
             }
           ]
         },
+        delete_error: {
+          text: this.$t("alertMessages.issueCategory.delete_error"),
+          type: "error"
+        },
         restore_success: {
-          text: "Action undone"
+          text: this.$t("alertMessages.undo")
         }
       }
     };
@@ -132,7 +140,10 @@ export default {
   computed: {
     toolbars() {
       return [
-        { text: "Categories", classes: { title: true } },
+        {
+          text: this.$t("issueCategory.index.title"),
+          classes: { title: true }
+        },
         { spacer: true },
         { component: () => SearchCategoryInput },
         { component: () => ButtonCreateCategory }
@@ -141,7 +152,10 @@ export default {
 
     actions() {
       return this.$_vuexable_auth && this.$_vuexable_auth.isAdmin
-        ? ["edit", "delete"]
+        ? [
+            { action: "edit", text: this.$t("general.edit") },
+            { action: "delete", text: this.$t("general.delete") }
+          ]
         : [];
     },
 
@@ -188,6 +202,7 @@ export default {
       try {
         await this.$_issue_category_mixin_onEditCategory(item);
       } catch (error) {
+        this.$_alertable_alert("edit_error");
         throw error;
       }
 
@@ -198,6 +213,7 @@ export default {
       try {
         await this.$_issue_category_mixin_deleteCategory(item);
       } catch (error) {
+        this.$_alertable_alert("delete_error");
         throw error;
       }
 

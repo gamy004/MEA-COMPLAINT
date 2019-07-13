@@ -1,11 +1,6 @@
 <template>
   <v-hover>
-    <v-avatar
-      slot-scope="{ hover }"
-      :size="130"
-      color="elevation-3"
-      class="overflow-hidden"
-    >
+    <v-avatar slot-scope="{ hover }" :size="130" color="elevation-3" class="overflow-hidden">
       <transition name="fade-transition">
         <div v-show="hover && !uploadable_uploading" class="camera-overlay overlay--dark">
           <v-flex shrink>
@@ -25,7 +20,7 @@
                   <template v-slot:activator="{ on }">
                     <v-icon dark v-on="on">camera</v-icon>
                   </template>
-                  <span>Upload files</span>
+                  <span v-t="'general.uploadFile'"></span>
                 </v-tooltip>
               </template>
             </uploader>
@@ -51,7 +46,7 @@
           :indeterminate="$_uploadable_isIndeterminate"
           v-bind="$_uploadable_progressAdditionalProps"
           color="accent"
-        ></v-progress-circular> -->
+        ></v-progress-circular>-->
 
         <img v-if="!uploadable_uploading && uploadableAvatar.length" :src="`${uploadableAvatar}`" />
       </transition>

@@ -84,7 +84,7 @@ import DialogCreateUpdateStatus from "../components/DialogCreateUpdateStatus";
 import { vuex } from "../../mixins/vuexable";
 import { views } from "../../constants";
 import alertable from "../../mixins/alertable";
-import SearchStatusInput from '../components/SearchStatusInput';
+import SearchStatusInput from "../components/SearchStatusInput";
 
 export default {
   mixins: [alertable, issueStatusMixin],
@@ -103,7 +103,7 @@ export default {
       selected: [],
       headers: [
         {
-          text: "Status",
+          text: this.$t("issueStatus.index.header.status"),
           align: "left",
           sortable: true,
           value: "status"
@@ -111,18 +111,22 @@ export default {
       ],
       alertable_messages: {
         create_success: {
-          text: "Status was created successfully",
+          text: this.$t("alertMessages.issueStatus.create_success"),
           type: "success"
         },
+        edit_error: {
+          text: this.$t("alertMessages.issueStatus.edit_error"),
+          type: "error"
+        },
         update_success: {
-          text: "Status was updated successfully",
+          text: this.$t("alertMessages.issueStatus.update_success"),
           type: "success"
         },
         delete_success: {
-          text: "Status was deleted successfully",
+          text: this.$t("alertMessages.issueStatus.delete_success"),
           actions: [
             {
-              text: "Undo",
+              text: this.$t("general.undo"),
               handler: async ({ item }) => {
                 await this.$_issue_status_mixin_restoreStatus(item);
 
@@ -131,8 +135,12 @@ export default {
             }
           ]
         },
+        delete_error: {
+          text: this.$t("alertMessages.issueStatus.delete_error"),
+          type: "error"
+        },
         restore_success: {
-          text: "Action undone"
+          text: this.$t("alertMessages.undo")
         }
       }
     };
@@ -156,7 +164,7 @@ export default {
   computed: {
     toolbars() {
       return [
-        { text: "Statuses", classes: { title: true } },
+        { text: this.$t("issueStatus.index.title"), classes: { title: true } },
         { spacer: true },
         { component: () => SearchStatusInput },
         { component: () => ButtonCreateStatus }
@@ -165,7 +173,10 @@ export default {
 
     actions() {
       return this.$_vuexable_auth && this.$_vuexable_auth.isAdmin
-        ? ["edit", "delete"]
+        ? [
+            { action: "edit", text: this.$t("general.edit") },
+            { action: "delete", text: this.$t("general.delete") }
+          ]
         : [];
     },
 
@@ -212,6 +223,7 @@ export default {
       try {
         await this.$_issue_status_mixin_onEditStatus(item);
       } catch (error) {
+        this.$_alertable_alert("edit_error");
         throw error;
       }
 
@@ -222,6 +234,7 @@ export default {
       try {
         await this.$_issue_status_mixin_deleteStatus(item);
       } catch (error) {
+        this.$_alertable_alert("delete_error");
         throw error;
       }
 

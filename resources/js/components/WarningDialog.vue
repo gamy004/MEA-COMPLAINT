@@ -11,8 +11,16 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="deep-orange darken-1" flat @click.stop.prevent="cancel">{{ cancelText }}</v-btn>
-        <v-btn color="deep-orange darken-1" flat @click.stop.prevent="discard">{{ acceptText }}</v-btn>
+        <v-btn
+          color="deep-orange darken-1"
+          flat
+          @click.stop.prevent="cancel"
+        >{{ warningCancelText }}</v-btn>
+        <v-btn
+          color="deep-orange darken-1"
+          flat
+          @click.stop.prevent="discard"
+        >{{ warningAcceptText }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -27,12 +35,26 @@ export default {
   props: {
     cancelText: {
       type: String,
-      default: "Cancel"
+      default: ""
     },
 
     acceptText: {
       type: String,
-      default: "Discard"
+      default: ""
+    }
+  },
+
+  computed: {
+    warningCancelText() {
+      return this.cancelText.length
+        ? this.cancelText
+        : this.$t("general.cancel");
+    },
+
+    warningAcceptText() {
+      return this.acceptText.length
+        ? this.acceptText
+        : this.$t("general.discard");
     }
   },
 

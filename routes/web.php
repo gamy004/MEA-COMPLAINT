@@ -87,6 +87,7 @@ Route::group([
              */
             Route::group(['as' => 'users.', 'prefix' => 'users/{user}'], function () {
                 Route::put('/update-config', 'UserController@updateConfig')->name('update-config');
+                Route::post('/restore', 'UserController@restore')->name('restore');
             });
 
             Route::resources([

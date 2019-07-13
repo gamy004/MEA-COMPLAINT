@@ -143,7 +143,7 @@ const issueStatusMixin = {
             return response;
         },
 
-        $_issue_status_mixin_makeStatusMenuItems(issue, cb = () => {}) {
+        $_issue_status_mixin_makeStatusMenuItems(issue, cb = () => {}, errCb = () => {}) {
             let tempIssue = {
                 ...issue
             };
@@ -178,6 +178,8 @@ const issueStatusMixin = {
                                 }
                             });
                         } catch (error) {
+                            errCb(tempIssue, error);
+
                             throw error;
                         }
 

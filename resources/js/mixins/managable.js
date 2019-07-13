@@ -41,7 +41,9 @@ const managable = {
         },
 
         $_managable_actionButton() {
-            return this.managableEdit ? 'update' : 'create';
+            const action = this.managableEdit ? 'update' : 'create';
+
+            return this.$t(`general.${action}`);
         }
     },
 
@@ -87,7 +89,10 @@ const managable = {
             }
 
             this.$emit('form:submitted', form);
-            this.$emit(`form:${this.$_managable_actionButton}`, form);
+
+            const action = this.managableEdit ? 'update' : 'create';
+
+            this.$emit(`form:${action}`, form);
 
             return form;
         }

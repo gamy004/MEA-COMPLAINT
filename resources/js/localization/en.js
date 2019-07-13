@@ -11,12 +11,43 @@ export const en = {
         newest: "Newest",
         oldest: "Oldest",
         export: "Export",
-        save: "Save"
+        save: "Save",
+        archive: "Archive",
+        changeStatus: "Change status",
+        create: "Create",
+        edit: "Edit",
+        update: "Update",
+        delete: "Delete",
+        uploadFile: "Upload files",
+        formatOptions: "Formatting options",
+        discard: "Discard",
+        discardDraft: "Discard draft",
+        close: "Close",
+        send: "Send",
+        saveAndClose: "Save & close",
+        undo: "Undo",
+        yes: "Yes",
+        no: "No",
+        admin: "Admin",
+        Anonymous: "-",
+        download: "Download",
+        present: "Present",
+        start: "Start",
+        end: "End",
+        exceed: "Late",
+        duration: "Duration",
+        unit: "Unit"
     },
-
+    time: {
+        minutes: "minute",
+        hours: "hour",
+        days: "day",
+        weeks: "week",
+        months: "month",
+        years: "year"
+    },
     complaint: {
         addBtn: "Complaint",
-
         index: {
             toolbar: {
                 generateReport: {
@@ -29,26 +60,122 @@ export const en = {
                         thisWeek: "This week",
                         thisMonth: "This month",
                         date: "Pick date"
-                    }
+                    },
+                    watingTerm: "Generating report, please stand by"
                 },
-
                 inboxConfigs: {
                     tooltip: "Show Inbox Configuration",
                     header: "Inbox Configuration",
                     maxPage: "Maximum page size"
                 },
-
                 primary: "Primary"
             },
-
             selectAllSearch: {
                 someSelected: "<strong>1</strong> complaint is selected | <strong>{count}</strong> complaints are selected",
                 allSelected: "All <strong>1</strong> complaint is selected | All <strong>{count}</strong> complaints are selected",
-                selectAllBtn: "Select all complaints that match this search"
+                selectAllBtn: "Select all complaints that match this search",
+                clearAll: "Clear search"
+            },
+            form: {
+                title: "Complaint",
+                category: "Category",
+                to: "To",
+                subject: "Subject",
+                fullScreen: "Full-screen",
+                warningDiscard: {
+                    title: "Discard complaint?",
+                    desc: "Your complaint will be permanently deleted."
+                },
+                warningSubmit: {
+                    title: "Submit without subject and description?",
+                    desc: "You want to create complaint without subject and description."
+                }
+            }
+        },
+        show: {
+            toolbar: {
+                back: "Back to inbox",
+                showStatusHistory: "Show status history"
+            },
+            statusHistory: {
+                title: "Status History"
+            },
+            complaintNote: {
+                remarkBy: "Remark by",
+                to: "To"
             }
         }
     },
-
+    issueCategory: {
+        index: {
+            title: "Categories",
+            searchLabel: "Search category",
+            createBtn: "New category",
+            header: {
+                category: "Category"
+            },
+            form: {
+                title: {
+                    new: "New category",
+                    update: "Update category"
+                },
+                name: "Category name"
+            }
+        }
+    },
+    issueStatus: {
+        index: {
+            title: "Statuses",
+            searchLabel: "Search status",
+            createBtn: "New status",
+            header: {
+                status: "Status"
+            },
+            form: {
+                title: {
+                    new: "New status",
+                    update: "Update status"
+                },
+                name: "Status name",
+                pickColor: "Pick status color",
+                trackStatus: "Track status",
+                subPickColor: "Pick Status Color for Time No.{n}",
+                addTracking: "Add Tracking"
+            }
+        }
+    },
+    userGroup: {
+        index: {
+            title: "Users & Groups",
+            searchLabel: "Search user or group/subgroup",
+            createBtn: "New User",
+            header: {
+                user: "User",
+                role: "Role",
+                group: "Group",
+                subGroup: "Sub Group"
+            },
+            form: {
+                title: {
+                    new: "New User",
+                    update: "Update User"
+                },
+                credential: "User's Credential",
+                username: "Username (required)",
+                updatePassword: "Update Password",
+                password: "Password (required)",
+                passwordConfirm: "Password Confirmation (required)",
+                generalInformation: "General Information",
+                name: "name (required)",
+                email: "Email",
+                phone: "Phone",
+                role: "Role",
+                group: "Group",
+                subGroup: "Sub Group",
+                groupAndSubGroup: "Group & Sub Group"
+            }
+        }
+    },
     sidebar: {
         inbox: "Inbox",
         draft: "Drafts",
@@ -59,7 +186,6 @@ export const en = {
         statuses: "Statuses",
         usersAndGroups: "Users & Groups",
     },
-
     header: {
         searchLabel: "Search complaint",
         searchTooltip: "Show search options",
@@ -78,11 +204,66 @@ export const en = {
             }
         }
     },
-
     alertMessages: {
+        undo: "Action undone",
         searchComplaint: {
             invalidQuery: "Invalid search query, returning all complaints",
             error: "Searching failed, please try again"
-        }
+        },
+        file: {
+            delete_success: "Attachment was deleted successfully",
+            delete_error: "Cannot delete file, please try again"
+        },
+        uploadFile: {
+            delete_success: "Uploaded file was deleted successfully"
+        },
+        complaintForm: {
+            submit_error: "Cannot submit complaint, please check error message",
+            delete_error: "Cannot delete complaint, please try again",
+            archive_error: "Cannot archive complaint, please try again",
+            create_success: "Complaint was created successfully",
+            update_success: "Complaint was updated successfully",
+            delete_success: "Complaint moved to Trash",
+            archive_success: "Complaint moved to Archive"
+        },
+        complaintStatus: {
+            update_success: "Complaint Status was updated successfully",
+            update_error: "Cannot update complaint status, please try again",
+        },
+        complaintNote: {
+            submit_error: "Cannot submit note, please check error message",
+            delete_error: "Cannot delete note, please try again",
+            create_success: "Note was created successfully",
+            update_success: "Note was updated successfully",
+            delete_success: "Note was deleted successfully"
+        },
+        issueCategory: {
+            submit_error: "Cannot submit category, please check error message",
+            edit_error: "Cannot load category data, please try again",
+            delete_error: "Cannot delete category, please try again",
+            create_success: "Category was created successfully",
+            update_success: "Category was updated successfully",
+            delete_success: "Category was deleted successfully"
+        },
+        issueStatus: {
+            submit_error: "Cannot submit status, please check error message",
+            edit_error: "Cannot load status data, please try again",
+            delete_error: "Cannot delete status, please try again",
+            create_success: "Status was created successfully",
+            update_success: "Status was updated successfully",
+            delete_success: "Status was deleted successfully"
+        },
+        userGroup: {
+            submit_error: "Cannot submit user, please check error message",
+            edit_error: "Cannot load user data, please try again",
+            delete_error: "Cannot delete user, please try again",
+            create_success: "User was created successfully",
+            update_success: "User was updated successfully",
+            delete_success: "User was deleted successfully"
+        },
+    },
+    table: {
+        noData: "No matching records found",
+        noResult: "No matching result found"
     }
 };

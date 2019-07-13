@@ -54,7 +54,7 @@
     >
       <v-card color="deep-orange" dark>
         <v-card-text>
-          Generating report, please stand by
+          <span v-t="'complaint.index.toolbar.generateReport.watingTerm'"></span>
           <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
         </v-card-text>
       </v-card>

@@ -1,7 +1,9 @@
 <template>
   <v-dialog v-model="dialog" persistent max-width="500">
     <v-card>
-      <v-card-title class="headline">{{ managableEdit ? "Update" : "New" }} Status</v-card-title>
+      <v-card-title
+        class="headline"
+      >{{ $t(`issueStatus.index.form.title.${$_issue_status_mixin_edit ? "update" : "new" }`) }}</v-card-title>
 
       <v-card-text>
         <v-form>
@@ -23,7 +25,7 @@
                       class="clickable elevation-2 ml-1 mt-2 mr-3"
                     ></v-avatar>
                   </template>
-                  <span>Pick Status Color</span>
+                  <span>{{ $t('issueStatus.index.form.pickColor') }}</span>
                 </v-tooltip>
               </template>
               <chrome-picker :value="form.color" @input="updateColorValue" />
@@ -31,7 +33,7 @@
 
             <v-text-field
               v-model="form.status"
-              label="Status"
+              :label="$t('issueStatus.index.form.name')"
               color="deep-orange"
               outline
               single-line
@@ -50,7 +52,7 @@
             <v-switch
               v-model="track_status"
               color="indigo accent-2"
-              label="ติดตามสถานะ"
+              :label="$t('issueStatus.index.form.trackStatus')"
               class="ml-1 mr-1"
             ></v-switch>
 
@@ -76,10 +78,10 @@
                             v-on="{ ...tooltip, ...menu }"
                             :color="form.configs[configIndex].color"
                             size="34"
-                            class="clickable elevation-2"
+                            class="clickable elevation-2 mb-2"
                           ></v-avatar>
                         </template>
-                        <span>Pick Status Color for Time No.{{ configIndex + 1 }}</span>
+                        <span>{{ $t('issueStatus.index.form.subPickColor', { n: configIndex + 1 }) }}</span>
                       </v-tooltip>
                     </template>
                     <chrome-picker
@@ -97,7 +99,7 @@
                         v-model="form.configs[configIndex].duration"
                         type="number"
                         :min="1"
-                        label="Duration"
+                        :label="$t('general.duration')"
                         placeholder="3"
                         color="deep-orange"
                         :error="form.errors.has(`configs.${configIndex}.duration`)"
@@ -108,6 +110,7 @@
 
                     <v-flex xs4>
                       <v-select
+                        :label="$t('general.unit')"
                         v-model="form.configs[configIndex].unit"
                         :items="timeItems"
                         color="deep-orange"
@@ -142,14 +145,14 @@
               @click="addConfig"
             >
               <v-icon>add</v-icon>
-              <span>Add Timing</span>
+              <span v-t="'issueStatus.index.form.addTracking'"></span>
             </v-btn>
           </v-layout>
         </v-form>
       </v-card-text>
       <v-card-actions class="pb-3">
         <v-spacer></v-spacer>
-        <v-btn flat @click="onCancel">Cancel</v-btn>
+        <v-btn flat @click="onCancel" v-t="'general.cancel'"></v-btn>
         <v-btn
           color="deep-orange"
           depressed
@@ -197,12 +200,12 @@ export default {
       }),
 
       timeItems: [
-        { text: "minute", value: "minutes" },
-        { text: "hour", value: "hours" },
-        { text: "day", value: "days" },
-        { text: "week", value: "weeks" },
-        { text: "month", value: "months" },
-        { text: "year", value: "years" } // values are moment.js key!!
+        { text: this.$t("time.minutes"), value: "minutes" },
+        { text: this.$t("time.hours"), value: "hours" },
+        { text: this.$t("time.days"), value: "days" },
+        { text: this.$t("time.weeks"), value: "weeks" },
+        { text: this.$t("time.months"), value: "months" },
+        { text: this.$t("time.years"), value: "years" } // values are moment.js key!!
       ]
     };
   },

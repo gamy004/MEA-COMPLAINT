@@ -13,6 +13,8 @@
       :hide-headers="hideHeaders"
       :hide-actions="hideActions"
       :expand="expand"
+      :no-data-text="$t('table.noData')"
+      :no-results-text="$t('table.noResult')"
     >
       <v-progress-linear slot="progress" height="3" color="primary" indeterminate></v-progress-linear>
 
@@ -102,8 +104,8 @@ export default {
   mixins: [tableable],
 
   methods: {
-    getTitle(action) {
-      return _.capitalize(action);
+    getTitle({ text = "" } = {}) {
+      return _.capitalize(text);
     },
 
     formatValue(value) {

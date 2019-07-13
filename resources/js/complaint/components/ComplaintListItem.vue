@@ -112,7 +112,7 @@
               <v-icon color="grey darken-1">archive</v-icon>
             </v-btn>
           </template>
-          <span>Archive</span>
+          <span v-t="'general.archive'"></span>
         </v-tooltip>
 
         <v-menu
@@ -134,7 +134,7 @@
                   <v-icon color="grey darken-1">mdi-update</v-icon>
                 </v-btn>
               </template>
-              <span>Change Status</span>
+              <span v-t="'general.changeStatus'"></span>
             </v-tooltip>
           </template>
           <v-list>
@@ -172,7 +172,7 @@
               <v-icon color="grey darken-1">edit</v-icon>
             </v-btn>
           </template>
-          <span>Edit</span>
+          <span v-t="'general.edit'"></span>
         </v-tooltip>
 
         <v-tooltip bottom>
@@ -181,7 +181,7 @@
               <v-icon color="grey darken-1">delete</v-icon>
             </v-btn>
           </template>
-          <span>Delete</span>
+          <span v-t="'general.delete'"></span>
         </v-tooltip>
       </v-list-tile-action>
 
@@ -253,11 +253,13 @@ export default {
     },
 
     issuerName() {
-      return this.issuer ? this.issuer.name : "แอดมิน";
+      return this.issuer ? this.issuer.name : this.$t("general.admin");
     },
 
     categoryName() {
-      return this.category ? this.category.category : "ไม่ระบุ";
+      return this.category
+        ? this.category.category
+        : this.$t("general.anonymous");
     },
 
     itemSelected: {
@@ -291,7 +293,14 @@ export default {
         this.item,
         (issue, status) => {
           this.selectingStatus = false;
-          this.$emit("update:status", this.item);
+          this.$emit("update:status-success", this.item);
+          // this.itemStatusColor = this.item.statusColor;
+          // this.statusStyles = {
+          //   color: getCorrectTextColor(this.itemStatusColor)
+          // };
+        },
+        (issue, error) => {
+          this.$emit("update:status-error", this.item);
           // this.itemStatusColor = this.item.statusColor;
           // this.statusStyles = {
           //   color: getCorrectTextColor(this.itemStatusColor)

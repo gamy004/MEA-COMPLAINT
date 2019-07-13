@@ -8,23 +8,26 @@
         <v-toolbar-title>{{ dialogTitle }}</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
-          <v-btn dark flat @click="onSubmit">Save</v-btn>
+          <v-btn dark flat :loading="form.isSubmitting" @click="onSubmit">{{ $t('general.save') }}</v-btn>
         </v-toolbar-items>
       </v-toolbar>
       <v-card-text>
         <v-container grid-list-md>
           <v-layout justify-space-around row wrap :reverse="isMobile">
             <v-flex class="mt-5" shrink>
-              <avatar-uploader @fileUploaded="onAvatarUploaded" :uploadable-avatar.sync="mockAvatar" />
+              <avatar-uploader
+                @fileUploaded="onAvatarUploaded"
+                :uploadable-avatar.sync="mockAvatar"
+              />
             </v-flex>
 
             <v-flex xs12 sm8 md6>
               <v-form lazy-validation>
-                <v-subheader class="px-0">Credential</v-subheader>
+                <v-subheader class="px-0" v-t="'userGroup.index.form.credential'"></v-subheader>
                 <v-layout wrap>
                   <v-flex xs12>
                     <v-text-field
-                      label="Username (required)"
+                      :label="$t('userGroup.index.form.username')"
                       v-model="form.username"
                       color="indigo accent-2"
                       :error="form.errors.has('username')"
@@ -38,12 +41,12 @@
                       v-if="$_user_mixin_edit"
                       color="indigo accent-2"
                       v-model="updatePassword"
-                      label="Update Password"
+                      :label="$t('userGroup.index.form.updatePassword')"
                     ></v-switch>
 
                     <v-text-field
                       v-if="!$_user_mixin_edit || updatePassword"
-                      label="Password (required)"
+                      :label="$t('userGroup.index.form.password')"
                       v-model="form.password"
                       color="indigo accent-2"
                       autocomplete="new-password"
@@ -59,7 +62,7 @@
                   <v-flex xs12>
                     <v-text-field
                       v-if="!$_user_mixin_edit || updatePassword"
-                      label="Password Confirmation (required)"
+                      :label="$t('userGroup.index.form.passwordConfirm')"
                       v-model="form.password_confirmation"
                       color="indigo accent-2"
                       autocomplete="new-password"
@@ -72,11 +75,11 @@
                     ></v-text-field>
                   </v-flex>
 
-                  <v-subheader class="px-0">General Information</v-subheader>
+                  <v-subheader class="px-0" v-t="'userGroup.index.form.generalInformation'"></v-subheader>
 
                   <v-flex xs12>
                     <v-text-field
-                      label="Name (required)"
+                      :label="$t('userGroup.index.form.name')"
                       v-model="form.name"
                       color="indigo accent-2"
                       :error="form.errors.has('name')"
@@ -86,7 +89,7 @@
                   </v-flex>
                   <v-flex xs12>
                     <v-text-field
-                      label="Email"
+                      :label="$t('userGroup.index.form.email')"
                       v-model="form.email"
                       color="indigo accent-2"
                       :error="form.errors.has('email')"
@@ -96,7 +99,7 @@
                   </v-flex>
                   <v-flex xs12 sm6>
                     <v-text-field
-                      label="Phone"
+                      :label="$t('userGroup.index.form.phone')"
                       mask="phone"
                       v-model="form.phone"
                       color="indigo accent-2"
@@ -105,7 +108,7 @@
                   <v-flex xs12 sm6>
                     <v-autocomplete
                       :items="$_user_mixin_availableRoles"
-                      label="Role"
+                      :label="$t('userGroup.index.form.role')"
                       v-model="form.role"
                       color="indigo accent-2"
                       hide-no-data
@@ -119,12 +122,12 @@
 
                 <transition name="slide-y-reverse-transition" appear mode="out-in">
                   <v-layout row wrap v-if="showGroupSelector">
-                    <v-subheader class="px-0 mt-3">Group</v-subheader>
+                    <v-subheader class="px-0 mt-3" v-t="'userGroup.index.form.groupAndSubGroup'"></v-subheader>
 
                     <v-flex xs12>
                       <v-combobox
                         :items="$_user_mixin_fetchingGroup ? [] : $_user_mixin_availableGroups"
-                        label="Group"
+                        :label="$t('userGroup.index.form.group')"
                         :value="groupInput"
                         color="indigo accent-2"
                         hide-no-data
@@ -155,7 +158,7 @@
                     <v-flex xs12>
                       <v-combobox
                         :items="$_user_mixin_fetchingSubGroup ? [] : availableSubGroups"
-                        label="Sub Group"
+                        :label="$t('userGroup.index.form.subGroup')"
                         :value="subGroupInput"
                         color="indigo accent-2"
                         hide-no-data
@@ -372,7 +375,9 @@ export default {
     ...vuex.mapGetters(["isMobile", "isMobileClasses"]),
 
     dialogTitle() {
-      return _.capitalize(`${this.$_managable_actionButton} User`);
+      return _.capitalize(
+        `${this.$_managable_actionButton} ${this.$t("userGroup.index.title")}`
+      );
     },
 
     selectedRoleAdmin() {
@@ -408,9 +413,7 @@ export default {
   },
 
   methods: {
-    ...vuex.mapWaitingActions(vuex.modules.FILE, [
-      vuex.actions.FILE.DELETE
-    ]),
+    ...vuex.mapWaitingActions(vuex.modules.FILE, [vuex.actions.FILE.DELETE]),
 
     async fetchRole() {
       let response;
@@ -438,7 +441,6 @@ export default {
 
     async fetchSubGroup({ text, value }) {
       let response;
-      console.log(this.groupInput, text, value);
 
       if (this.groupInput !== text) {
         this.onFormGroupChange();
@@ -482,8 +484,6 @@ export default {
 
     onFocusSubGroupInput() {
       const { selectedGroup } = this;
-      console.log(selectedGroup);
-
       if (selectedGroup) {
         this.fetchSubGroup(selectedGroup);
       }
@@ -491,19 +491,14 @@ export default {
 
     updateGroupInput(value) {
       const oldSelectedGroup = this.selectedGroup;
-      console.log(value, oldSelectedGroup);
 
       this.groupInput = value;
 
       if (!this.groupInput) {
-        console.log("subGroupInput was cleared due to empty groupInput");
-
         this.subGroupInput = null;
       }
 
       if (oldSelectedGroup && this.groupInput !== oldSelectedGroup.text) {
-        console.log("subGroupInput was cleared due to changed selected group");
-
         this.subGroupInput = null;
       }
     },

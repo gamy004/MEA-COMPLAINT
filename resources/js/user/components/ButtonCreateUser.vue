@@ -1,7 +1,7 @@
 <template>
   <v-btn color="deep-orange" flat dark small @click="$_user_mixin_dialog = true">
     <v-icon class="mr-1">add</v-icon>
-    <span>New User</span>
+    <span v-t="'userGroup.index.createBtn'"></span>
   </v-btn>
 </template>
 

@@ -19,6 +19,7 @@
             <v-flex :class="item.route ? 'xs6' : 'xs12'">
               <v-subheader v-if="item.heading">{{ item.heading }}</v-subheader>
             </v-flex>
+
             <v-flex v-if="item.route" xs6 class="text-xs-right">
               <v-btn small flat @click="gotoPage(item.route)">edit</v-btn>
             </v-flex>
@@ -26,7 +27,11 @@
 
           <v-divider v-else-if="item.divider" :key="i" dark class="my-3"></v-divider>
 
-          <v-list-tile v-else :key="i" @click="item.onClick(item)">
+          <v-list-tile
+            v-else
+            :key="i"
+            @click="item.onClick ? item.onClick(item) : gotoPage(item.route)"
+          >
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>

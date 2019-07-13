@@ -15,7 +15,7 @@
               <span
                 v-if="displayInformation"
                 class="body-2"
-              >Remark by: {{ $_issue_note_item_mixin_noteCreator ? $_issue_note_item_mixin_noteCreator.name : "Admin" }}</span>
+              >{{ $t('complaint.show.complaintNote.remarkBy') }}: {{ $_issue_note_item_mixin_noteCreator ? $_issue_note_item_mixin_noteCreator.name : $t('general.admin') }}</span>
 
               <v-btn
                 icon
@@ -29,7 +29,7 @@
               <span
                 v-if="!displayInformation"
                 class="body-2"
-              >To: {{ $_issue_note_item_mixin_complaintIssuer ? $_issue_note_item_mixin_complaintIssuer.name : "Admin" }}</span>
+              >{{ $t('complaint.show.complaintNote.to') }}: {{ $_issue_note_item_mixin_complaintIssuer ? $_issue_note_item_mixin_complaintIssuer.name : $t('general.admin') }}</span>
 
               <!-- <v-btn
                 icon
@@ -107,7 +107,7 @@
             <!-- file list here -->
             <file-list
               class="editor__filelist editor__filelist--front px-2"
-              v-if="uploadable_uploader && noteAttachments.length"
+              v-if="uploadable_uploader"
               :files="noteAttachments"
               :uploader="uploadable_uploader"
               @remove="onFileRemoved"
@@ -115,7 +115,7 @@
 
             <file-list
               class="editor__filelist editor__filelist--back px-2"
-              v-if="uploadable_uploader && $_uploadable_uploaderFiles.length"
+              v-if="uploadable_uploader"
               :files="$_uploadable_uploaderFiles"
               :uploader="uploadable_uploader"
             />
@@ -131,7 +131,7 @@
                   @click.prevent.stop="onSubmit"
                   :loading="form.isSubmitting"
                   :disabled="uploadable_uploading || !canSubmitNote || !form.isChanged"
-                >{{ managableEdit ? "Update" : "Send" }}</v-btn>
+                >{{ $t(`general.${managableEdit ? "update" : "send"}`) }}</v-btn>
 
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
@@ -142,7 +142,7 @@
                       @click.prevent.stop="showFormatting = !showFormatting"
                     >text_format</v-icon>
                   </template>
-                  <span>Formatting options</span>
+                  <span v-t="'general.formatOptions'"></span>
                 </v-tooltip>
 
                 <uploader
@@ -162,7 +162,7 @@
                       <template v-slot:activator="{ on }">
                         <v-icon v-on="on">attach_file</v-icon>
                       </template>
-                      <span>Upload files</span>
+                      <span v-t="'general.uploadFile'"></span>
                     </v-tooltip>
                   </template>
                 </uploader>
@@ -175,7 +175,7 @@
                       <v-icon>delete</v-icon>
                     </v-btn>
                   </template>
-                  <span>Discard draft</span>
+                  <span v-t="'general.discard'"></span>
                 </v-tooltip>
               </template>
             </custom-toolbar>
@@ -241,15 +241,15 @@ export default {
       }),
       showFormatting: false,
       alertable_messages: {
-        error: "Cannot create note, please try again",
+        error: this.$t("alertMessages.complaintNote.submit_error"),
 
         delete_file_success: {
-          text: "Attachment was deleted successfully",
+          text: this.$t("alertMessages.file.delete_success"),
           type: "success",
           color: "white",
           actions: [
             {
-              text: "Undo",
+              text: this.$t("general.undo"),
               handler: async ({ file }) => {
                 this.onFileRestore(file);
               }
@@ -257,16 +257,19 @@ export default {
           ]
         },
         delete_uploadfile_success: {
-          text: "Uploaded file was deleted successfully",
+          text: this.$t("alertMessages.uploadFile.delete_success"),
           type: "success"
         },
         action_done: {
-          text: "Action undone"
+          text: this.$t("alertMessages.undo")
         }
       },
       menuItems: [
-        { action: "Edit", handler: item => this.onEdit(item) },
-        { action: "Delete", handler: item => this.onDelete(item) }
+        { action: this.$t("general.edit"), handler: item => this.onEdit(item) },
+        {
+          action: this.$t("general.delete"),
+          handler: item => this.onDelete(item)
+        }
       ]
     };
   },

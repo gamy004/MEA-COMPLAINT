@@ -116,7 +116,7 @@
       :width="375"
     >
       <v-list dense>
-        <v-subheader>ประวัติการเปลี่ยนแปลงสถานะ</v-subheader>
+        <v-subheader v-t="'complaint.show.statusHistory.title'"></v-subheader>
 
         <!-- <template v-for="(item, i) in items"> -->
         <!-- <v-layout v-if="item.heading" :key="i" row align-center>
@@ -209,49 +209,71 @@ export default {
       showStatusLogs: false,
       alertable_messages: {
         update_status_success: {
-          text: "Complaint Status was updated successfully",
+          text: this.$t("alertMessages.complaintStatus.update_success"),
           type: "success"
         },
+        update_status_error: {
+          text: this.$t("alertMessages.complaintStatus.update_error"),
+          type: "error"
+        },
         add_note_success: {
-          text: "Note was created successfully",
+          text: this.$t("alertMessages.complaintNote.create_success"),
           type: "success"
         },
         edit_note_success: {
-          text: "Note was updated successfully",
+          text: this.$t("alertMessages.complaintNote.update_success"),
           type: "success"
         },
         edit_complaint_success: {
-          text: "Complaint was updated successfully",
+          text: this.$t("alertMessages.complaintForm.update_success"),
           type: "success"
         },
-        remove_complaint_fail: "Cannot delete complaint, please try again",
+        remove_complaint_fail: this.$t(
+          "alertMessages.complaintForm.delete_error"
+        ),
         remove_complaint_success: {
-          text: "Complaint moved to Trash",
+          text: this.$t("alertMessages.complaintForm.delete_success"),
           actions: [
             {
-              text: "Undo",
+              text: this.$t("general.undo"),
               handler: async ({ id }) => {
-                this.gobackTimer = null;
-                this.$_complaint_item_mixin_restoreComplaint({ id });
+                clearTimeout(this.gobackTimer);
+                await this.$_complaint_item_mixin_restoreComplaint({ id });
+                this.$_alertable_alert("action_done");
+              }
+            }
+          ]
+        },
+        archive_complaint_fail: this.$t(
+          "alertMessages.complaintForm.archive_error"
+        ),
+        archive_complaint_success: {
+          text: this.$t("alertMessages.complaintForm.archive_success"),
+          actions: [
+            {
+              text: this.$t("general.undo"),
+              handler: async ({ id }) => {
+                clearTimeout(this.gobackTimer);
+                await this.$_complaint_item_mixin_restoreComplaint({ id });
                 this.$_alertable_alert("action_done");
               }
             }
           ]
         },
         delete_note_success: {
-          text: "Remark was deleted successfully",
+          text: this.$t("alertMessages.complaintNote.delete_success"),
           actions: [
             {
-              text: "Undo",
+              text: this.$t("general.undo"),
               handler: async ({ id }) => {
-                this.$_issue_note_item_mixin_restoreIssueNote({ id });
+                await this.$_issue_note_item_mixin_restoreIssueNote({ id });
                 this.$_alertable_alert("action_done");
               }
             }
           ]
         },
-        delete_note_fail: "Cannot delete note, please try again",
-        action_done: "Action undone"
+        delete_note_fail: this.$t("alertMessages.complaintNote.delete_error"),
+        action_done: this.$t("alertMessages.undo")
       }
     };
   },
@@ -278,23 +300,40 @@ export default {
       return [
         {
           icon: "arrow_back",
-          text: "Back to Inbox",
+          text: this.$t("complaint.show.toolbar.back"),
           onClick: () => {
             this.$router.go(-1);
           }
         },
         {
           icon: "archive",
-          text: "Archive",
+          text: this.$t("general.archive"),
           onClick: async () => {
             // archive complaint
             // go back
-            this.$router.go(-1);
+
+            try {
+              const { id } = this.$_complaint_item_mixin_complaint;
+
+              this.$_complaint_item_mixin_onArchiveComplaint(
+                this.$_complaint_item_mixin_complaint
+              );
+
+              this.$_alertable_alert("archive_complaint_success", {
+                id
+              });
+            } catch (error) {
+              this.$_alertable_alert("archive_complaint_fail");
+            }
+
+            this.gobackTimer = setTimeout(() => {
+              this.$router.go(-1);
+            }, 5000);
           }
         },
         {
           icon: "edit",
-          text: "Edit",
+          text: this.$t("general.edit"),
           onClick: async () => {
             // delete complaint
             // go back
@@ -305,7 +344,7 @@ export default {
         },
         {
           icon: "delete",
-          text: "Delete",
+          text: this.$t("general.delete"),
           onClick: async () => {
             // delete complaint
             try {
@@ -364,7 +403,7 @@ export default {
         // { icon: "settings", text: "Settings" }
         {
           icon: "history",
-          text: "ดูประวัติการเปลี่ยนแปลงสถานะ",
+          text: this.$t("complaint.show.toolbar.showStatusHistory"),
           disabled: () => {
             const { logs = [] } = this.$_complaint_item_mixin_complaint;
             return !logs.length;
@@ -381,6 +420,9 @@ export default {
         this.activeComplaint,
         (issue, status) => {
           this.$_alertable_alert("update_status_success");
+        },
+        (issue, error) => {
+          this.$_alertable_alert("update_status_error");
         }
       );
     }

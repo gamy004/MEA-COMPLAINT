@@ -156,6 +156,9 @@ class Complaint extends BaseVuexModel {
                     'status:sideload',
                     'attachments:sideload',
                     'category:sideload',
+                    'logs',
+                    'logs.status:sideload',
+                    'logs.status.configs'
                     // 'notes:ids'
                 ],
                 ...data,
@@ -193,7 +196,10 @@ class Complaint extends BaseVuexModel {
                     'status:sideload',
                     'attachments:sideload',
                     'category:sideload',
-                    'notes:ids'
+                    'notes:ids',
+                    'logs',
+                    'logs.status:sideload',
+                    'logs.status.configs'
                 ]
             });
         } catch (error) {

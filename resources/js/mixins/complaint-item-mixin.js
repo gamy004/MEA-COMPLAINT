@@ -58,7 +58,9 @@ const complaintItemMixin = {
             let result = [];
 
             if (this.$_complaint_item_mixin_complaint) {
-                const { logs = [] } = this.$_complaint_item_mixin_complaint;
+                const {
+                    logs = []
+                } = this.$_complaint_item_mixin_complaint;
 
                 result = logs;
             }
@@ -84,6 +86,10 @@ const complaintItemMixin = {
             $_complaint_item_mixin_restoreComplaint: {
                 action: vuex.actions.ISSUE.RESTORE,
                 loader: 'restoring complaint'
+            },
+            $_complaint_item_mixin_archiveComplaint: {
+                action: vuex.actions.ISSUE.ARCHIVE,
+                loader: 'archiving complaint'
             }
         }),
 
@@ -111,6 +117,14 @@ const complaintItemMixin = {
         async $_complaint_item_mixin_onDeleteComplaint(item) {
             try {
                 return await this.$_complaint_item_mixin_deleteComplaint(item);
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        async $_complaint_item_mixin_onArchiveComplaint(item) {
+            try {
+                return await this.$_complaint_item_mixin_archiveComplaint(item);
             } catch (error) {
                 throw error;
             }

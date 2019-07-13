@@ -1,13 +1,15 @@
 <template>
   <v-dialog v-model="dialog" persistent max-width="500">
     <v-card>
-      <v-card-title class="headline">New Category</v-card-title>
+      <v-card-title class="headline">
+        <span>{{ $t(`issueCategory.index.form.title.${$_issue_category_mixin_edit ? "update" : "new" }`) }}</span>
+      </v-card-title>
 
       <v-card-text>
         <v-form>
           <v-text-field
             v-model="form.category"
-            label="Category"
+            :label="$t('issueCategory.index.form.name')"
             color="deep-orange"
             outline
             single-line
@@ -19,7 +21,7 @@
       </v-card-text>
       <v-card-actions class="pb-3">
         <v-spacer></v-spacer>
-        <v-btn flat @click="closeForm">Cancel</v-btn>
+        <v-btn flat @click="closeForm">{{ $t('general.cancel') }}</v-btn>
         <v-btn
           color="deep-orange"
           depressed

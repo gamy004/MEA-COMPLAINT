@@ -14,8 +14,6 @@ window.$paramSerializer = param;
 import Api from './models/Api';
 
 window.api = new Api;
-
-moment.locale('th');
 // try {
 //     window.Popper = require('popper.js').default;
 //     window.$ = window.jQuery = require('jquery');

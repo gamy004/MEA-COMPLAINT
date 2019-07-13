@@ -79,6 +79,7 @@
       :managable-module="vuex.modules.USER"
       :managable-route-param="routeParam"
       :managable-edit="$_user_mixin_isEditing"
+      @form:error="$_alertable_alert('error')"
       @form:create="$_alertable_alert('create_success')"
       @form:update="$_alertable_alert('update_success')"
       @form:submitted="onFormSubmitted"
@@ -128,44 +129,53 @@ export default {
       selected: [],
       headers: [
         {
-          text: "Name",
+          text: this.$t("userGroup.index.header.user"),
           align: "left",
           sortable: true,
           value: "name"
         },
         {
-          text: "Role",
+          text: this.$t("userGroup.index.header.role"),
           align: "left",
           sortable: true,
           value: "role"
         },
         {
-          text: "Group",
+          text: this.$t("userGroup.index.header.group"),
           align: "left",
           sortable: true,
           value: "group_name"
         },
         {
-          text: "Sub Group",
+          text: this.$t("userGroup.index.header.subGroup"),
           align: "left",
           sortable: true,
           value: "sub_group_name"
         }
       ],
       alertable_messages: {
+        error: this.$t("alertMessages.userGroup.submit_error"),
+
         create_success: {
-          text: "User was created successfully",
+          text: this.$t("alertMessages.userGroup.create_success"),
           type: "success"
         },
+
+        edit_error: {
+          text: this.$t("alertMessages.userGroup.edit_error"),
+          type: "error"
+        },
+
         update_success: {
-          text: "User was updated successfully",
+          text: this.$t("alertMessages.userGroup.update_success"),
           type: "success"
         },
+
         delete_success: {
-          text: "User was deleted successfully",
+          text: this.$t("alertMessages.userGroup.delete_success"),
           actions: [
             {
-              text: "Undo",
+              text: this.$t("general.undo"),
               handler: async ({ item }) => {
                 await this.$_user_mixin_restoreUser(item);
 
@@ -174,8 +184,14 @@ export default {
             }
           ]
         },
+
+        delete_error: {
+          text: this.$t("alertMessages.userGroup.delete_error"),
+          type: "error"
+        },
+
         restore_success: {
-          text: "Action undone"
+          text: this.$t("alertMessages.undo")
         }
       }
     };
@@ -199,7 +215,7 @@ export default {
   computed: {
     toolbars() {
       return [
-        { text: "Users & Groups", classes: { title: true } },
+        { text: this.$t("userGroup.index.title"), classes: { title: true } },
         { spacer: true },
         { component: () => SearchUserInput },
         { component: () => ButtonCreateUser }
@@ -208,7 +224,10 @@ export default {
 
     actions() {
       return this.$_vuexable_auth && this.$_vuexable_auth.isAdmin
-        ? ["edit", "delete"]
+        ? [
+            { action: "edit", text: this.$t("general.edit") },
+            { action: "delete", text: this.$t("general.delete") }
+          ]
         : [];
     },
 
@@ -261,6 +280,7 @@ export default {
       try {
         await this.$_user_mixin_onEditUser(item);
       } catch (error) {
+        this.$_alertable_alert("edit_error");
         throw error;
       }
 
@@ -271,6 +291,7 @@ export default {
       try {
         await this.$_user_mixin_deleteUser(item);
       } catch (error) {
+        this.$_alertable_alert("delete_error");
         throw error;
       }
 
