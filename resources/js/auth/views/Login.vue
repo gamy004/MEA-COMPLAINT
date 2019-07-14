@@ -5,23 +5,26 @@
         <v-layout column justify-end fill-height id="loginLeftColumnInner" class="white--text">
           <div class="overlay-text"></div>
           <div class="content">
-            <div class="display-3 font-weight-bold mb-4">MEA ISSUE</div>
-            <div class="headline">Welcome back</div>
+            <div class="display-3 mb-4">
+              <span class="font-weight-bold">MEA</span>
+              <span class="font-weight-light">Complaint</span>
+            </div>
+            <div class="headline" v-t="'login.term1'"></div>
           </div>
         </v-layout>
       </v-flex>
       <v-flex xs6 id="loginFormContainer">
         <v-layout align-center justify-center fill-height>
           <v-flex xs8 md6>
-            <div class="display-3">Sign in</div>
-            <div class="subheading">with your MEA provided account</div>
+            <div class="display-2 mb-3" v-t="'login.signIn'"></div>
+            <div class="subheading" v-t="'login.signInTerm'"></div>
 
             <v-form ref="form" v-model="form.valid" lazy-validation class="mt-4">
               <v-text-field
                 v-model="form.username"
                 type="text"
                 name="username"
-                label="Username"
+                :label="$t('login.form.username')"
                 outline
                 :error="form.errors.has('username')"
                 :error-messages="form.errors.getError('username')"
@@ -34,7 +37,7 @@
                 :append-icon="form.showPassword ? 'visibility' : 'visibility_off'"
                 :type="form.showPassword ? 'text' : 'password'"
                 name="password"
-                label="Password"
+                :label="$t('login.form.password')"
                 autocomplete="new-password"
                 outline
                 :error="form.errors.has('password')"
@@ -52,10 +55,10 @@
                   round
                   class="has-gradient white--text btn__sign-in"
                   @click="signIn"
-                >Sign in</v-btn>
+                >{{ $t('login.signIn') }}</v-btn>
 
                 <transition name="slide-x-transition" appear>
-                  <div v-show="form.success" class="subheading">Sign in success</div>
+                  <div v-show="form.success" class="subheading" v-t="'login.signin_success'"></div>
                 </transition>
               </v-layout>
             </v-form>
@@ -156,7 +159,7 @@ export default {
 
 .overlay-text {
   @include overlay;
-  height: 40%;
+  height: 60%;
   top: 60%;
   background-image: linear-gradient(
     to top,

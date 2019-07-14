@@ -107,6 +107,21 @@ class Status extends BaseVuexModel {
         return response;
     }
 
+    static async [actions.ISSUE_STATUS.UPDATE_DEFAULT](data) {
+        let response;
+
+        try {
+            response = await api.put("api:issue-statuses.update-default", {
+                includes: ["configs"],
+                ...data
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
     $updateGroupConfig() {
         let {
             configs = []

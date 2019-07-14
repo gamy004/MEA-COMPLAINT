@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\IOCs\DBCol;
 use App\Models\Issue;
 use Illuminate\Http\Request;
+use App\Http\Requests\ShowIssueRequest;
 use App\Http\Requests\StoreIssueRequest;
 use App\Http\Requests\UpdateIssueRequest;
 
@@ -49,9 +50,9 @@ class IssueController extends BaseApiController
      * @param  \App\Issue  $issue
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(ShowIssueRequest $request, Issue $issue)
     {
-        return $this->api->show($id);
+        return $this->api->show($issue);
     }
 
     /**

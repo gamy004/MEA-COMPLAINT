@@ -41,6 +41,17 @@ const userStore = {
             return authUser;
         },
 
+        async [vuex.actions.USER.SIGN_OUT]({
+            state,
+            commit
+        }) {
+            try {
+                return await User[vuex.actions.USER.SIGN_OUT]();
+            } catch (error) {
+                throw error;
+            }
+        },
+
         async [vuex.actions.USER.FETCH](context, params = {}) {
             try {
                 return await context.dispatch(vuex.actions.REQUEST, {

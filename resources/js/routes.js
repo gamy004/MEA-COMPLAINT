@@ -8,6 +8,7 @@ Vue.use(VueRouter);
 
 const routes = [{
         path: '/login',
+        name: constants.views.USER.LOGIN,
         component: views.auth.login
     },
     {
@@ -15,29 +16,51 @@ const routes = [{
         beforeEnter: multiguard([checkAuth]),
         component: views.auth.index,
         children: [{
+                path: '',
+                name: constants.views.ISSUE.INDEX,
+                component: views.complaint.index,
+                meta: {
+                    route: constants.views.ISSUE.INDEX
+                }
+            }, {
                 path: 'complaints',
                 name: constants.views.ISSUE.INDEX,
-                component: views.complaint.index
+                component: views.complaint.index,
+                meta: {
+                    route: constants.views.ISSUE.INDEX
+                }
             },
             {
                 path: 'complaints/:issue',
                 name: constants.views.ISSUE.SHOW,
-                component: views.complaint.show
+                component: views.complaint.show,
+                meta: {
+                    route: constants.views.ISSUE.INDEX
+                }
             },
             {
                 path: 'categories',
                 name: constants.views.ISSUE_CATEGORY.INDEX,
-                component: views.issueCategory.index
+                component: views.issueCategory.index,
+                meta: {
+                    route: constants.views.ISSUE_CATEGORY.INDEX
+                }
             },
             {
                 path: 'statuses',
                 name: constants.views.ISSUE_STATUS.INDEX,
-                component: views.issueStatus.index
+                component: views.issueStatus.index,
+                meta: {
+                    route: constants.views.ISSUE_STATUS.INDEX
+                }
             },
             {
                 path: 'users',
                 name: constants.views.USER.INDEX,
-                component: views.user.index
+                component: views.user.index,
+                meta: {
+                    route: constants.views.USER.INDEX
+                }
             },
         ]
     },

@@ -90,7 +90,7 @@
             class="mt-3 btn-add-remark"
           >
             <v-icon class="mr-1">reply</v-icon>
-            <span>Remark</span>
+            <span v-t="'complaint.show.remarkBtn'"></span>
           </v-btn>
           <!-- </transition-group> -->
         </v-flex>
@@ -236,9 +236,17 @@ export default {
           actions: [
             {
               text: this.$t("general.undo"),
-              handler: async ({ id }) => {
+              handler: async ({ id, archive = 0, deleted_at = null } = {}) => {
                 clearTimeout(this.gobackTimer);
                 await this.$_complaint_item_mixin_restoreComplaint({ id });
+                // if (archive) {
+                //   await this.$_complaint_item_mixin_onArchiveComplaint({ id });
+                // } else if (deleted_at !== null) {
+                //   await this.$_complaint_item_mixin_onDeleteComplaint({ id });
+                // } else {
+                //   await this.$_complaint_item_mixin_restoreComplaint({ id });
+                // }
+
                 this.$_alertable_alert("action_done");
               }
             }

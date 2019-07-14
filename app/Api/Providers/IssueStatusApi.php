@@ -68,8 +68,38 @@ class IssueStatusApi extends BaseApi implements ApiInterface
         } catch (Exception $exception) {
             DB::rollback();
             Log::error($exception);
-            dd($exception);
             throw new Exception("Error Updating IssueStatus Request", 1);
+        }
+    }
+
+    public function updateDefault(Model $issue_status, array $raw)
+    {
+        try {
+            DB::beginTransaction();
+
+            $record = [];
+            $defaultStatus = IssueStatus::default();
+
+            if ($defaultStatus->exists()) {
+                $defaultStatus->each(
+                    function($s) {
+                        $s->{DBCol::DEFAULT} = 0;
+                        $s->save();
+                    }
+                );
+            }
+
+            $issue_status->{DBCol::DEFAULT} = 1;
+            $issue_status->save();
+
+            DB::commit();
+
+            return $this->find($issue_status->{DBCol::ID});
+            
+        } catch (Exception $exception) {
+            DB::rollback();
+            Log::error($exception);
+            throw new Exception("Error Updating Default IssueStatus Request", 1);
         }
     }
 

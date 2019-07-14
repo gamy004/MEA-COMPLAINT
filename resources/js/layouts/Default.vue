@@ -30,13 +30,15 @@
           <v-list-tile
             v-else
             :key="i"
+            :value="isActive(item)"
+            active-class="deep-orange--text"
             @click="item.onClick ? item.onClick(item) : gotoPage(item.route)"
           >
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
             <v-list-tile-content>
-              <v-list-tile-title class="grey--text">{{ item.text }}</v-list-tile-title>
+              <v-list-tile-title>{{ item.text }}</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
         </template>
@@ -58,6 +60,15 @@
       />
 
       <v-spacer></v-spacer>
+
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" icon large :loading="isSigningOut" @click.prevent.stop="signOut">
+            <v-icon>mdi-logout</v-icon>
+          </v-btn>
+        </template>
+        <span v-t="'general.logout'"></span>
+      </v-tooltip>
     </v-toolbar>
 
     <v-content>
@@ -69,6 +80,8 @@
           :managable-module="vuex.modules.ISSUE"
           :managable-route-param="{}"
           :managable-edit="false"
+          @saveDraft="$_alertable_alert('save_draft_success')"
+          @addSuccess="$_alertable_alert('add_success')"
         />
       </v-container>
 
@@ -116,6 +129,13 @@ export default {
         searchError: {
           text: this.$t("alertMessages.searchComplaint.error"),
           type: "error"
+        },
+        save_draft_success: this.$t(
+          "alertMessages.complaintForm.save_draft_success"
+        ),
+        add_success: {
+          text: this.$t("alertMessages.complaintForm.create_success"),
+          type: "success"
         }
       }
     };
@@ -123,6 +143,10 @@ export default {
 
   computed: {
     ...vuex.mapState(["auth"]),
+
+    ...vuex.mapWaitingGetters({
+      isSigningOut: vuex.actions.USER.SIGN_OUT
+    }),
 
     defaultItems() {
       const baseItems = [
@@ -196,10 +220,18 @@ export default {
         : [];
 
       return [...baseItems, ...adminItems];
+    },
+
+    matchedRoute() {
+      const { matched = [] } = ({} = this.$route);
+
+      return matched;
     }
   },
 
   methods: {
+    ...vuex.mapWaitingActions(vuex.modules.USER, [vuex.actions.USER.SIGN_OUT]),
+
     resetStateAndGotoRoute(item) {
       this.$_issue_search_mixin_clearState();
 
@@ -212,6 +244,26 @@ export default {
         params,
         query
       });
+    },
+
+    isActive({ route, text }) {
+      return this.matchedRoute.some(({ meta }) => {
+        const { query = {} } = route;
+
+        const { type = undefined } = query;
+
+        return route.name === meta.route && type === this.$route.query.type;
+      });
+    },
+
+    async signOut() {
+      await this[vuex.actions.USER.SIGN_OUT]();
+
+      const { href } = this.$router.resolve({
+        name: views.USER.LOGIN
+      });
+
+      window.location = href;
     }
   }
 };
@@ -232,6 +284,10 @@ export default {
   #toolbarLayoutDefault {
     .title + * {
       margin-left: 4rem;
+    }
+
+    .v-toolbar__content {
+      padding-right: 0.25rem;
     }
   }
 

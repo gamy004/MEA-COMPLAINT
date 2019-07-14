@@ -119,6 +119,7 @@ export default {
     [actions.ISSUE_STATUS.FETCH]: parseFetch,
     [actions.ISSUE_STATUS.STORE]: parseStore,
     [actions.ISSUE_STATUS.UPDATE]: parseEdit,
+    [actions.ISSUE_STATUS.UPDATE_STATUS]: parseEdit,
     [actions.ISSUE_STATUS.DELETE]: parseDelete,
     [actions.ISSUE_STATUS.RESTORE]: parseStore
 }

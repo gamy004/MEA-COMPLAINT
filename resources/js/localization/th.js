@@ -25,7 +25,7 @@ export const th = {
         uploadFile: "อัพโหลดไฟล์",
         formatOptions: "แสดงตัวเลือกการจัดรูปแบบข้อความ",
         discard: "ทิ้ง",
-        discardDraft: "ทิ้งการร่าง",
+        discardDraft: "ทิ้งร่างข้อร้องเรียน",
         close: "ปิด",
         send: "ส่ง",
         saveAndClose: "บันทึก & ปิด",
@@ -34,6 +34,7 @@ export const th = {
         no: "ไม่ใช่",
         admin: "ผู้ดูแลระบบ",
         anonymous: "ไม่ระบุ",
+        anonymousRecipient: "ไม่ระบุผู้รับข้อร้องเรียน",
         anonymousStatus: "ไม่ระบุสถานะ",
         download: "ดาวน์โหลด",
         present: "ปัจจุบัน",
@@ -41,7 +42,8 @@ export const th = {
         end: "สิ้นสุด",
         exceed: "เกิน",
         duration: "ระยะเวลา",
-        unit: "หน่วย"
+        unit: "หน่วย",
+        logout: "ออกจากระบบ"
     },
     time: {
         minutes: "นาที",
@@ -112,7 +114,8 @@ export const th = {
             complaintNote: {
                 remarkBy: "ให้ความเห็นโดย",
                 to: "ถึง"
-            }
+            },
+            remarkBtn: "เพิ่มความเห็น"
         }
     },
     issueCategory: {
@@ -190,7 +193,7 @@ export const th = {
     },
     sidebar: {
         inbox: "กล่องข้อร้องเรียน",
-        draft: "กำลังร่าง",
+        draft: "ร่างข้อร้องเรียน",
         archive: "จัดเก็บ",
         trash: "ลบทิ้ง",
         adminSection: "ส่วนจัดการสำหรับผู้ดูแลระบบ",
@@ -216,6 +219,16 @@ export const th = {
             }
         }
     },
+    login: {
+        term1: "ยินดีต้อนรับ",
+        signIn: "เข้าสู่ระบบ",
+        signInTerm: "ด้วยบัญชีผู้ใช้งานจาก MEA",
+        form: {
+            username: "บัญชีผู้ใช้งาน",
+            password: "รหัสผ่าน"
+        },
+        signin_success: "เข้าสู่ระบบสำเร็จ"
+    },
     alertMessages: {
         undo: "คืนค่าเรียบร้อยแล้ว",
         undo_error: "คืนค่าไม่สำเร็จ",
@@ -238,6 +251,7 @@ export const th = {
             submit_error: "บันทึกข้อมูลข้อร้องเรียนไม่สำเร็จ โปรดตรวจสอบข้อผิดพลาด",
             delete_error: "ลบข้อร้องเรียนไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
             archive_error: "จัดเก็บข้อร้องเรียนไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
+            save_draft_success: "บันทึกร่างข้อร้องเรียนเรียบร้อยแล้ว",
             create_success: "สร้างข้อร้องเรียนเรียบร้อยแล้ว",
             update_success: "แก้ไขข้อร้องเรียนเรียบร้อยแล้ว",
             delete_success: "ข้อร้องเรียนถูกย้ายไปหน้าลบทิ้งเรียบร้อยแล้ว",
@@ -270,7 +284,9 @@ export const th = {
             delete_error: "ลบข้อมูลสถานะข้อร้องเรียนไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
             create_success: "สร้างสถานะข้อร้องเรียนเรียบร้อยแล้ว",
             update_success: "แก้ไขสถานะข้อร้องเรียนเรียบร้อยแล้ว",
-            delete_success: "ลบสถานะข้อร้องเรียนเรียบร้อยแล้ว"
+            delete_success: "ลบสถานะข้อร้องเรียนเรียบร้อยแล้ว",
+            update_default_success: "เปลี่ยนสถานะเริ่มต้นเรียบร้อยแล้ว",
+            update_default_error: "เปลี่ยนสถานะเริ่มต้นไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
         },
         userGroup: {
             submit_error: "บันทึกข้อมูลผู้ใช้งานไม่สำเร็จ โปรดตรวจสอบข้อผิดพลาด",

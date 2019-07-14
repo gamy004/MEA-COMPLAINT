@@ -10,7 +10,7 @@
         <v-avatar color="indigo accent-3" size="10" class="status-indicator"></v-avatar>
       </v-list-tile-action>-->
 
-      <v-list-tile-action class="complaint-list__action" :class="isMobileClasses">
+      <v-list-tile-action v-if="!cannotSee" class="complaint-list__action" :class="isMobileClasses">
         <!-- action selected -->
         <div @click.prevent.stop>
           <v-checkbox v-model="itemSelected" color="deep-orange" hide-details></v-checkbox>
@@ -259,7 +259,10 @@ export default {
     ...vuex.mapGetters(["isMobile", "isMobileClasses"]),
 
     title() {
-      return this.item.joinedRecipientName;
+      const { joinedRecipientName = "" } = this.item;
+      return joinedRecipientName.length
+        ? joinedRecipientName
+        : this.$t("general.anonymousRecipient");
     },
 
     issuer() {
@@ -353,6 +356,10 @@ export default {
           // };
         }
       );
+    },
+
+    cannotSee() {
+      return this.item.draft || this.item.deleted_at !== null;
     }
 
     // statusStyles() {
@@ -390,7 +397,7 @@ export default {
     },
 
     onClick() {
-      if (this.item.draft) return;
+      if (this.cannotSee) return;
 
       this.$router.push({
         name: views.ISSUE.SHOW,

@@ -12,6 +12,58 @@ body,
   height: 100%;
 }
 
+html span,
+html div,
+html p,
+html .application,
+html .display-4,
+html .display-3,
+html .display-2,
+html .display-1,
+html .headline,
+html .title,
+html .subheading,
+html .body-2,
+html .body-1,
+html .caption,
+body span,
+body div,
+body p,
+body .application,
+body .display-4,
+body .display-3,
+body .display-2,
+body .display-1,
+body .headline,
+body .title,
+body .subheading,
+body .body-2,
+body .body-1,
+body .caption,
+#app span,
+#app div,
+#app p,
+#app .application,
+#app .display-4,
+#app .display-3,
+#app .display-2,
+#app .display-1,
+#app .headline,
+#app .title,
+#app .subheading,
+#app .body-2,
+#app .body-1,
+#app .caption {
+  font-family: "Sarabun", "Roboto", sans-serif !important;
+}
+
+html .v-input .v-label,
+body .v-input .v-label,
+#app .v-input .v-label {
+  height: 24px;
+  line-height: 24px;
+}
+
 .has-gradient {
   background: #f7700f 6.4%;
   /* fallback for old browsers */

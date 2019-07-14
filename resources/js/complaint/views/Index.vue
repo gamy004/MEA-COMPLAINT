@@ -44,6 +44,9 @@
       :managable-module="vuex.modules.ISSUE"
       :managable-route-param="hasEdittedComplaint ? { issue: editingComplaintId } : {}"
       :managable-edit="hasEdittedComplaint"
+      @saveDraft="$_alertable_alert('save_draft_success')"
+      @submitDraft="$_alertable_alert('add_success')"
+      @editSuccess="$_alertable_alert('edit_success')"
     />
 
     <v-dialog
@@ -54,13 +57,21 @@
     >
       <v-card color="deep-orange" dark>
         <v-card-text>
-          <span v-t="'complaint.index.toolbar.generateReport.watingTerm'"></span>
+          <span class="body-2" v-t="'complaint.index.toolbar.generateReport.watingTerm'"></span>
           <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
         </v-card-text>
       </v-card>
     </v-dialog>
 
     <dialog-inbox-config :dialogable-visible.sync="showConfig" />
+
+    <message-alert
+      key="alertComplaintIndex"
+      :alertable-visible.sync="alertable_alert"
+      :alertable-type="alertable_type"
+      :alertable-messages="alertable_messages"
+      :alertable-props="alertable_props"
+    ></message-alert>
   </v-layout>
 </template>
 
@@ -68,6 +79,7 @@
 import ComplaintList from "../components/ComplaintList";
 import ComplaintReportGenerator from "../components/ComplaintReportGenerator";
 import CustomToolbar from "../../components/CustomToolbar";
+import MessageAlert from "../../components/MessageAlert";
 import ComplaintForm from "../components/ComplaintForm";
 import ComplaintSelectAllSearch from "../components/ComplaintSelectAllSearch";
 import DialogInboxConfig from "../components/DialogInboxConfig";
@@ -77,12 +89,14 @@ import issueStatusMixin from "../../mixins/issue-status-mixin";
 import issueReportMixin from "../../mixins/issue-report-mixin";
 import { vuex, vuexable } from "../../mixins/vuexable";
 import { issueSearchMixin } from "../../mixins/issue-search-mixin";
+import alertable from "../../mixins/alertable";
 // import complaintModule from "../../stores/modules/complaints";
 // import groupModule from "../../stores/modules/groups";
 // import statusModule from "../../stores/modules/statuses";
 // import issueCategoryModule from "../../stores/modules/issue-categories";
 export default {
   mixins: [
+    alertable,
     complaintMixin,
     issueStatusMixin,
     issueSearchMixin,
@@ -96,7 +110,8 @@ export default {
     CustomToolbar,
     ComplaintForm,
     ComplaintSelectAllSearch,
-    DialogInboxConfig
+    DialogInboxConfig,
+    MessageAlert
   },
 
   data() {
@@ -110,7 +125,21 @@ export default {
           text: this.$t("complaint.index.toolbar.primary"),
           type: "primary"
         }
-      ]
+      ],
+
+      alertable_messages: {
+        add_success: {
+          text: this.$t("alertMessages.complaintForm.create_success"),
+          type: "success"
+        },
+        save_draft_success: this.$t(
+          "alertMessages.complaintForm.save_draft_success"
+        ),
+        edit_success: {
+          text: this.$t("alertMessages.complaintForm.update_success"),
+          type: "success"
+        }
+      }
     };
   },
 
@@ -149,58 +178,49 @@ export default {
   },
 
   computed: {
+    checkBoxItem() {
+      return !this.$route.query.type
+        ? {
+            select: true,
+            selected: false,
+            color: "deep-orange",
+            indeterminate: item => {
+              return (
+                this.$_paginatable_someSelected &&
+                !this.$_paginatable_isSelectedAll
+              );
+            },
+
+            onChange: value => {
+              this.$_paginatable_selectAll(value);
+
+              const { $_paginatable_currentPaginatedList = [] } = this;
+
+              const selectedIds = _.map(
+                $_paginatable_currentPaginatedList,
+                "id"
+              );
+
+              this.$_paginatable_syncSelected(selectedIds, value);
+            },
+
+            onPaginatedListChange: (value, item, indexes) => {
+              const itemIndex = indexes[0]; // get checkbox item
+
+              this.$_paginatable_updatedSelected();
+
+              this.$set(
+                this.items[itemIndex],
+                "selected",
+                this.$_paginatable_someSelected
+              );
+            }
+          }
+        : {};
+    },
     items() {
       return [
-        {
-          select: true,
-          selected: false,
-          color: "deep-orange",
-          indeterminate: item => {
-            return (
-              this.$_paginatable_someSelected &&
-              !this.$_paginatable_isSelectedAll
-            );
-          },
-
-          onChange: value => {
-            this.$_paginatable_selectAll(value);
-
-            const { $_paginatable_currentPaginatedList = [] } = this;
-
-            const selectedIds = _.map($_paginatable_currentPaginatedList, "id");
-
-            this.$_paginatable_syncSelected(selectedIds, value);
-            // if (value) {
-            //   this.$_paginatable_attachSelected(selectedIds);
-            // } else {
-            //   this.$_paginatable_detachSelected(selectedIds);
-            // }
-          },
-
-          onPaginatedListChange: (value, item, indexes) => {
-            const itemIndex = indexes[0]; // get checkbox item
-
-            this.$_paginatable_updatedSelected();
-
-            this.$set(
-              this.items[itemIndex],
-              "selected",
-              this.$_paginatable_someSelected
-            );
-          }
-
-          // onPageChange: (page, item, indexes) => {
-          //   const itemIndex = indexes[0];
-
-          //   this.items[itemIndex].updateSeleted(itemIndex);
-          // },
-
-          // onDescendingChange: (page, item, indexes) => {
-          //   const itemIndex = indexes[0];
-
-          //   this.items[itemIndex].updateSeleted(itemIndex);
-          // }
-        },
+        this.checkBoxItem,
         // {
         //   menu: true,
         //   icon: "arrow_drop_down",
@@ -280,7 +300,7 @@ export default {
         {
           menu: true,
           minwidth: "250",
-          icon: "mdi-export",
+          icon: "mdi-application-export",
           text: this.$t("complaint.index.toolbar.generateReport.tooltip"),
           // component: () => ComplaintReportGenerator,
           // componentProps: () => {

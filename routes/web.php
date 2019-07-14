@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('layouts.app');
 });
 
 Auth::routes();
@@ -80,6 +80,7 @@ Route::group([
              * Custom route IssueStatusController
              */
             Route::group(['as' => 'issue-statuses.', 'prefix' => 'issue-statuses/{issue_status}'], function () {
+                Route::put('/update-default', 'IssueStatusController@updateDefault')->name('update-default');
                 Route::post('/restore', 'IssueStatusController@restore')->name('restore');
             });
 

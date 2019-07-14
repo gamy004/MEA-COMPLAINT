@@ -134,6 +134,18 @@ class User extends BaseModel {
         });
     }
 
+    static async [actions.USER.SIGN_OUT]() {
+        let response;
+
+        try {
+            response = await api.post('logout');
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
     static async [actions.USER.GET_AUTH]() {
         let response;
 

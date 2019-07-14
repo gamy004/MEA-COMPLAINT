@@ -168,14 +168,14 @@
 
                     <v-spacer></v-spacer>
 
-                    <v-tooltip top v-if="form.id && form.draft">
+                    <!-- <v-tooltip top v-if="form.id && form.draft">
                       <template v-slot:activator="{ on }">
                         <v-btn icon>
                           <v-icon v-on="on" class="clickable">delete</v-icon>
                         </v-btn>
                       </template>
                       <span v-t="'general.discardDraft'"></span>
-                    </v-tooltip>
+                    </v-tooltip>-->
                   </template>
                 </custom-toolbar>
               </v-layout>
@@ -185,7 +185,7 @@
       </v-card>
     </v-flex>
 
-    <warning-dialog :dialogable-visible.sync="warning" @click:accept="onDiscard">
+    <!-- <warning-dialog :dialogable-visible.sync="warning" @click:accept="onDiscard">
       <template v-slot:header>
         <span v-t="'complaint.index.form.warningDiscard.title'"></span>
       </template>
@@ -193,11 +193,11 @@
       <template v-slot:message>
         <span v-t="'complaint.index.form.warningDiscard.desc'"></span>
       </template>
-    </warning-dialog>
+    </warning-dialog>-->
 
     <warning-dialog
       :dialogable-visible.sync="warningSubmit"
-      @click:accept="submitComplaintForm"
+      @click:accept="onSubmit(true)"
       :cancel-text="$t('general.no')"
       :accept-text="$t('general.yes')"
     >
@@ -279,14 +279,7 @@ export default {
           type: "error"
         },
         error: this.$t("alertMessages.complaintForm.submit_error"),
-        add_success: {
-          text: this.$t("alertMessages.complaintForm.create_success"),
-          type: "success"
-        },
-        edit_success: {
-          text: this.$t("alertMessages.complaintForm.update_success"),
-          type: "success"
-        },
+
         delete_file_success: {
           text: this.$t("alertMessages.file.delete_success"),
           actions: [
@@ -471,14 +464,11 @@ export default {
       if ((!this.form.id && this.form.isChanged) || this.form.draft) {
         await this.saveDraft();
 
-        const { type = null } = this.$route.query;
-
-        if (type !== "draft") {
-          await this[vuex.actions.ISSUE.FETCH]();
-        }
+        // await this[vuex.actions.ISSUE.FETCH]();
       }
 
       this.dialog = false;
+
       this.form = null;
 
       // if (!this.form.id && this.form.isChanged) {
@@ -520,13 +510,17 @@ export default {
     },
 
     onChange() {
+      if (!this.form || !this.form.draft) return;
+
       window.onbeforeunload = () => {
         return "to remind that you made some change";
       };
     },
 
     clearOnChange() {
-      window.onbeforeunload = null;
+      if (window.onbeforeunload) {
+        window.onbeforeunload = null;
+      }
     },
 
     async saveDraft() {
@@ -546,11 +540,11 @@ export default {
           this.savingDraft = false;
         }
 
+        this.$emit("saveDraft");
+
         const { issues: issue } = response.data;
 
         this.$_vuexable_setEdit(issue.id, vuex.modules.ISSUE);
-
-        this.clearOnChange();
 
         return response;
       }
@@ -571,22 +565,26 @@ export default {
       } catch (error) {}
     },
 
-    async onSubmit() {
-      if (this.validateSubjectAndDescription()) {
+    async onSubmit(force = false) {
+      if (force || this.validateSubjectAndDescription()) {
+        const isSavedFromDraft = this.form.draft;
+
         this.form.set("draft", 0);
 
         await this.submitComplaintForm();
 
-        this.$_alertable_alert(`${this.$_managable_action}_success`);
+        if (isSavedFromDraft) {
+          this.$emit("submitDraft");
 
-        this.$emit("updated");
+          // await this[vuex.actions.ISSUE.FETCH]();
+        } else {
+          this.$emit(`${this.$_managable_action}Success`);
+        }
 
-        this.clearOnChange();
+        this.dialog = false;
+        // this.$_alertable_alert(`${this.$_managable_action}_success`);
 
-        setTimeout(() => {
-          this.dialog = false;
-          this.resetComplaintForm();
-        }, 1000);
+        // this.$emit("updated");
       }
     },
 
@@ -617,6 +615,8 @@ export default {
       }
 
       this.$_uploadable_reset();
+      this.clearOnChange();
+      this.resetComplaintForm();
 
       return v;
     },

@@ -106,6 +106,24 @@ const StatusStore = {
             }
         },
 
+        async [vuex.actions.ISSUE_STATUS.UPDATE_DEFAULT](context, {
+            id: issue_status
+        }) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'ISSUE_STATUS',
+                    action: 'UPDATE_DEFAULT',
+                    params: {
+                        routeParam: {
+                            issue_status
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
         // async [vuex.actions.STORE]({
         //     commit,
         //     dispatch

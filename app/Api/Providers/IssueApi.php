@@ -42,8 +42,6 @@ class IssueApi extends BaseApi implements ApiInterface
     {
         $modifiedOriginalModel = $this->getOriginalModel()->withTrashed();
         $auth = auth()->user();
-        $request = request();
-        $type = $request->has(Data::TYPE) ? $request->{Data::TYPE} : "inbox";
 
         if (!$auth->isAdmin() || !is_null($auth->{Group::FK})) {
             $modifiedOriginalModel = $modifiedOriginalModel->where(
@@ -51,6 +49,14 @@ class IssueApi extends BaseApi implements ApiInterface
                 $auth->{Group::FK}
             );
         }
+        $this->setOriginalModel($modifiedOriginalModel);
+    }
+
+    private function parseType()
+    {
+        $modifiedOriginalModel = $this->getOriginalModel()->withTrashed();
+        $request = request();
+        $type = $request->has(Data::TYPE) ? $request->{Data::TYPE} : "inbox";
 
         switch ($type) {
             case Data::ARCHIVE:
@@ -82,15 +88,13 @@ class IssueApi extends BaseApi implements ApiInterface
                 ->whereNull(DBCol::DELETED_AT);
                 break;
         }
-
-        // dd(!$auth->isAdmin() || !is_null($auth->{Group::FK}), $modifiedOriginalModel->toSql());
-        $this->setOriginalModel($modifiedOriginalModel);
     }
 
     public function index()
     {
         try {
             $this->parseAuth();
+            $this->parseType();
             $data = $this->get();
         } catch (Exception $e) {
             throw $e;
@@ -99,11 +103,11 @@ class IssueApi extends BaseApi implements ApiInterface
         return $data;
     }
 
-    public function show($id)
+    public function show(Model $issue)
     {
         try {
             $this->parseAuth();
-            $data = $this->find($id);
+            $data = $this->find($issue->{DBCol::ID});
         } catch (Exception $e) {
             throw $e;
         }
@@ -529,7 +533,9 @@ class IssueApi extends BaseApi implements ApiInterface
 
             $default_status = IssueStatus::default()->select([DBCol::ID])->first();
 
-            if (!is_null($default_status)) {
+            $isDraft = isset($raw[DBCol::DRAFT]) && $raw[DBCol::DRAFT];
+
+            if (!is_null($default_status) && !$isDraft) {
                 $raw[IssueStatus::FK] = $default_status->{DBCol::ID};
             }
 
@@ -565,6 +571,12 @@ class IssueApi extends BaseApi implements ApiInterface
     {
         try {
             DB::beginTransaction();
+            
+            $default_status = IssueStatus::default()->select([DBCol::ID])->first();
+
+            if (!is_null($default_status) && is_null($issue->{IssueStatus::FK})) {
+                $raw[IssueStatus::FK] = $default_status->{DBCol::ID};
+            }
 
             $record = [];
 

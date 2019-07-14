@@ -66,6 +66,18 @@ class IssueStatusController extends BaseApiController
     }
 
     /**
+     * Update default the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\IssueStatus  $issue_status
+     * @return \Illuminate\Http\Response
+     */
+    public function updateDefault(Request $request, IssueStatus $issue_status)
+    {
+        return $this->api->updateDefault($issue_status, $request->all());
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\IssueStatus  $issue_status

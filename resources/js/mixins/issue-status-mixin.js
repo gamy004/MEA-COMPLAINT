@@ -12,7 +12,8 @@ const issueStatusMixin = {
             $_issue_status_mixin_fetching: "issueCategoryMixin fetch action",
             $_issue_status_mixin_editing: "issueCategoryMixin edit action",
             $_issue_status_mixin_deleting: "issueCategoryMixin delete action",
-            $_issue_status_mixin_restoring: "issueCategoryMixin restore action"
+            $_issue_status_mixin_restoring: "issueCategoryMixin restore action",
+            $_issue_status_mixin_updating_default: "issueStatusMixin update default action"
         }),
 
         $_issue_status_mixin_statuses() {
@@ -108,7 +109,11 @@ const issueStatusMixin = {
             $_issue_status_mixin_restoreStatus: {
                 action: vuex.actions.ISSUE_STATUS.RESTORE,
                 loader: "issueStatusMixin restore action"
-            }
+            },
+            $_issue_status_mixin_updateDefault: {
+                action: vuex.actions.ISSUE_STATUS.UPDATE_DEFAULT,
+                loader: "issueStatusMixin update default action"
+            },
         }),
 
         $_issue_status_mixin_findStatus(statusId) {

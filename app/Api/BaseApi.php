@@ -243,7 +243,7 @@ abstract class BaseApi
     protected function processData($fn, ...$args)
     {
         $builder = $this->getBaseBuilder();
-        
+
         $this->data = call_user_func_array(
             [$builder, $fn],
             $args

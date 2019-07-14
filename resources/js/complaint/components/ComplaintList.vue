@@ -236,23 +236,23 @@ export default {
         ({ archive = 0, draft = 0, deleted_at = null } = {}) => {
           let cond = true;
 
-          // if (type === "archive") {
-          //   cond = cond && archive === 1;
-          // } else {
-          //   cond = cond && archive === 0;
-          // }
+          if (type === "archive") {
+            cond = cond && archive === 1;
+          } else {
+            cond = cond && archive === 0;
+          }
 
-          // if (type === "draft") {
-          //   cond = cond && draft === 1;
-          // } else {
-          //   cond = cond && draft === 0;
-          // }
+          if (type === "draft") {
+            cond = cond && draft === 1;
+          } else {
+            cond = cond && draft === 0;
+          }
 
-          // if (type === "trash") {
-          //   cond = cond && deleted_at !== null;
-          // } else {
-          //   cond = cond && deleted_at === null;
-          // }
+          if (type === "trash") {
+            cond = cond && deleted_at !== null;
+          } else {
+            cond = cond && deleted_at === null;
+          }
 
           return cond;
         }

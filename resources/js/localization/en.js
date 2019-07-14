@@ -34,6 +34,7 @@ export const en = {
         no: "No",
         admin: "Admin",
         anonymous: "unknown",
+        anonymousRecipient: "Unknown recipient",
         anonymousStatus: "Unknown status",
         download: "Download",
         present: "Present",
@@ -41,7 +42,8 @@ export const en = {
         end: "End",
         exceed: "Late",
         duration: "Duration",
-        unit: "Unit"
+        unit: "Unit",
+        logout: "Sign out"
     },
     time: {
         minutes: "minute",
@@ -112,7 +114,8 @@ export const en = {
             complaintNote: {
                 remarkBy: "Remark by",
                 to: "To"
-            }
+            },
+            remarkBtn: "Remark"
         }
     },
     issueCategory: {
@@ -216,6 +219,16 @@ export const en = {
             }
         }
     },
+    login: {
+        term1: "Welcome back",
+        signIn: "Sign in",
+        signInTerm: "with your MEA provided account",
+        form: {
+            username: "Username",
+            password: "Password"
+        },
+        signin_success: "Sign in successfully"
+    },
     alertMessages: {
         undo: "Action undone",
         undo_error: "Action cannot undone",
@@ -238,6 +251,7 @@ export const en = {
             submit_error: "Cannot submit complaint, please check error message",
             delete_error: "Cannot delete complaint, please try again",
             archive_error: "Cannot archive complaint, please try again",
+            save_draft_success: "Draft complaint was saved successfully",
             create_success: "Complaint was created successfully",
             update_success: "Complaint was updated successfully",
             delete_success: "Complaint moved to Trash",
@@ -270,7 +284,9 @@ export const en = {
             delete_error: "Cannot delete status, please try again",
             create_success: "Status was created successfully",
             update_success: "Status was updated successfully",
-            delete_success: "Status was deleted successfully"
+            delete_success: "Status was deleted successfully",
+            update_default_success: "Default status was updated successfully",
+            update_default_error: "Cannot update default status, please try again",
         },
         userGroup: {
             submit_error: "Cannot submit user, please check error message",

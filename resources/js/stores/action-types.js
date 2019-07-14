@@ -8,6 +8,7 @@ export const DELETE = 'delete';
 
 export const USER = {
     SIGN_IN: 'userSignIn',
+    SIGN_OUT: 'userSignOut',
     GET_AUTH: 'userGetAuth',
     FETCH: 'userFetch',
     STORE: 'userStore',
@@ -65,7 +66,8 @@ export const ISSUE_STATUS = {
     STORE: 'issueStatusStore',
     UPDATE: 'issueStatusUpdate',
     DELETE: 'issueStatusDelete',
-    RESTORE: 'issueStatusRestore'
+    RESTORE: 'issueStatusRestore',
+    UPDATE_DEFAULT: 'issueStatusUpdateDefault'
 };
 
 export const ISSUE_CATEGORY = {

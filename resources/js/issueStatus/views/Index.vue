@@ -25,6 +25,12 @@
           >
             <template slot="items" slot-scope="{ item }">
               <td :key="`statusName-${item.id}`">
+                <v-btn class="ml-0" icon @click.prevent.stop="updateDefault(item)">
+                  <v-icon
+                    :color="item.default ? 'deep-orange lighten-1' : 'grey lignten-2'"
+                  >{{ item.default ? 'star' : 'star_border' }}</v-icon>
+                </v-btn>
+
                 <v-avatar :color="item.color" size="10" class="status-indicator mr-1"></v-avatar>
 
                 <span>{{ item.status }}</span>
@@ -124,6 +130,14 @@ export default {
           text: this.$t("alertMessages.issueStatus.update_success"),
           type: "success"
         },
+        update_default_success: {
+          text: this.$t("alertMessages.issueStatus.update_default_success"),
+          type: "success"
+        },
+        update_default_error: {
+          text: this.$t("alertMessages.issueStatus.update_default_error"),
+          type: "error"
+        },
         delete_success: {
           text: this.$t("alertMessages.issueStatus.delete_success"),
           actions: [
@@ -221,11 +235,28 @@ export default {
       }
     },
 
+    async updateDefault(item) {
+      if (item.default) return;
+
+      try {
+        await this.$_issue_status_mixin_updateDefault(item);
+      } catch (error) {
+        this.$_alertable_alert("update_default_error");
+        throw error;
+      }
+
+      this.$_alertable_alert("update_default_success");
+
+      await this.$_issue_status_mixin_fetchStatus({
+        pagination: this.$_issue_status_mixin_pagination
+      });
+    },
+
     async onItemEdit(item) {
       try {
         await this.$_issue_status_mixin_onEditStatus(item);
       } catch (error) {
-        this.$_alertable_alert("edit_error");
+        // this.$_alertable_alert("edit_error");
         throw error;
       }
 

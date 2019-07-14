@@ -21,6 +21,82 @@ html,
 body,
 #app {
     height: 100%;
+
+    span,
+    div,
+    p,
+    .application,
+    .display-4,
+    .display-3,
+    .display-2,
+    .display-1,
+    .headline,
+    .title,
+    .subheading,
+    .body-2,
+    .body-1,
+    .caption {
+        font-family: 'Sarabun', 'Roboto', sans-serif !important;
+    }
+
+    .v-input .v-label {
+        height: 24px;
+        line-height: 24px;
+    }
+
+    // &.app__th {
+    //     .subheading {
+    //         font-size: 22px !important;
+    //     }
+
+    //     .headline {
+    //         font-size: 30px !important;
+    //     }
+
+    //     .v-chip {
+    //         font-size: 14px !important;
+    //     }
+
+    //     .v-tooltip__content {
+    //         font-size: 16px !important;
+    //     }
+
+    //     .body-2,
+    //     .v-btn,
+    //     .v-label,
+    //     .v-tabs__div,
+    //     .v-list--dense .v-list__tile {
+    //         font-size: 20px !important;
+    //     }
+
+    //     .v-input .v-label {
+    //         height: 24px !important;
+    //         line-height: 20px !important;
+    //     }
+
+    //     .v-btn--large {
+    //         font-size: 22px !important;
+    //         line-height: 1.2 !important;
+    //     }
+
+    //     .v-btn--small {
+    //         height: 32px !important;
+    //     }
+    // }
+
+    // .application,
+    // .display-4,
+    // .display-3,
+    // .display-2,
+    // .display-1,
+    // .headline,
+    // .title,
+    // .subheading,
+    // .body-2,
+    // .body-1,
+    // .caption {
+    //     font-family: 'Roboto', 'Cordia New', sans-serif !important;
+    // }
 }
 
 .has-gradient {

@@ -12,5 +12,6 @@ export const ISSUE_STATUS = {
 }
 
 export const USER = {
-    INDEX: 'userIndex'
+    INDEX: 'userIndex',
+    LOGIN: 'userLogin'
 }
