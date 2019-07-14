@@ -224,6 +224,17 @@ export default {
           text: this.$t("alertMessages.complaintNote.update_success"),
           type: "success"
         },
+
+        restore_success: {
+          text: this.$t("alertMessages.complaintForm.restore_success"),
+          type: "success"
+        },
+
+        restore_error: {
+          text: this.$t("alertMessages.complaintForm.restore_error"),
+          type: "error"
+        },
+
         edit_complaint_success: {
           text: this.$t("alertMessages.complaintForm.update_success"),
           type: "success"
@@ -316,6 +327,7 @@ export default {
         {
           icon: "archive",
           text: this.$t("general.archive"),
+          disabled: () => this.$_complaint_item_mixin_complaint.archive == 1,
           onClick: async () => {
             // archive complaint
             // go back
@@ -323,7 +335,7 @@ export default {
             try {
               const { id } = this.$_complaint_item_mixin_complaint;
 
-              this.$_complaint_item_mixin_onArchiveComplaint(
+              await this.$_complaint_item_mixin_onArchiveComplaint(
                 this.$_complaint_item_mixin_complaint
               );
 
@@ -337,6 +349,33 @@ export default {
             this.gobackTimer = setTimeout(() => {
               this.$router.go(-1);
             }, 5000);
+          }
+        },
+        {
+          icon: "restore",
+          text: this.$t("general.restore"),
+          disabled: () => this.$_complaint_item_mixin_complaint.archive == 0,
+          onClick: async () => {
+            // archive complaint
+            // go back
+
+            try {
+              const { id } = this.$_complaint_item_mixin_complaint;
+
+              await this.$_complaint_item_mixin_restoreComplaint(
+                this.$_complaint_item_mixin_complaint
+              );
+
+              this.$_alertable_alert("restore_success", {
+                id
+              });
+            } catch (error) {
+              this.$_alertable_alert("restore_fail");
+            }
+
+            // this.gobackTimer = setTimeout(() => {
+            //   this.$router.go(-1);
+            // }, 5000);
           }
         },
         {
@@ -470,6 +509,12 @@ export default {
 
   created() {
     this.$_issue_status_mixin_fetchStatuses();
+  },
+
+  beforeDestroy() {
+    if (this.gobackTimer) {
+      clearTimeout(this.gobackTimer);
+    }
   }
 };
 </script>

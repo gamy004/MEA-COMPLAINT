@@ -257,6 +257,7 @@ export const en = {
             delete_success: "Complaint moved to Trash",
             archive_success: "Complaint moved to Archive",
             restore_success: "Complaint was restored successfully",
+            restore_error: "Cannot restore complaint, please try again",
             force_delete_success: "Complaint was deleted successfully"
         },
         complaintStatus: {
