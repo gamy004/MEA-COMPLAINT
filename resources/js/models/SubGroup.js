@@ -65,6 +65,20 @@ class SubGroup extends BaseVuexModel {
 
         return response;
     }
+
+    static async [actions.SUB_GROUP.RESTORE](data) {
+        let response;
+
+        try {
+            response = await api.post("api:groups.restore", {
+                ...data
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
 }
 
 export default SubGroup;

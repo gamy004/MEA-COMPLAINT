@@ -5,7 +5,7 @@
         <strong>{{ item.ended_at !== null ? shortStartedTime : $t('general.present') }}</strong>
       </v-flex>
       <v-flex class="ml-1">
-        <strong>{{ logStatus.status }}</strong>
+        <strong>{{ statusText }}</strong>
         <div
           v-if="item.started_at !== null"
           class="caption"
@@ -56,8 +56,28 @@ export default {
         : null;
     },
 
+    statusText() {
+      let text = this.$t("general.anonymousStatus");
+
+      if (this.logStatus) {
+        text = this.logStatus.status;
+      }
+
+      return text;
+    },
+
     statusColor() {
-      return this.statusConfig ? this.statusConfig.color : "#E0E0E0FF";
+      let color = "#E0E0E0FF";
+
+      if (this.logStatus) {
+        color = this.logStatus.color;
+      }
+
+      if (this.statusConfig) {
+        color = this.statusConfig.color;
+      }
+
+      return color;
     },
 
     statusExceedTime() {

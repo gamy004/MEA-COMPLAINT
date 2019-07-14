@@ -58,7 +58,25 @@ const GroupStore = {
             } catch (error) {
                 throw error;
             }
-        }
+        },
+
+        async [vuex.actions.GROUP.RESTORE](context, {
+            id: group
+        }) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'GROUP',
+                    action: 'RESTORE',
+                    params: {
+                        routeParam: {
+                            group
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
         // async [vuex.actions.ISSUE.FETCH]({
         //     state,
         //     commit

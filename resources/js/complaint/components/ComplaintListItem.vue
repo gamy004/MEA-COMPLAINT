@@ -26,7 +26,7 @@
       </v-list-tile-action>-->
 
       <v-list-tile-content class="complaint-list__content" :class="isMobileClasses">
-        <v-tooltip top>
+        <v-tooltip top v-if="auth.isAdmin">
           <template v-slot:activator="{ on }">
             <v-list-tile-sub-title
               v-on="on"
@@ -55,12 +55,11 @@
         </v-chip>
 
         <v-chip
-          v-if="!isMobile"
+          v-if="!isMobile && status"
           class="complaint-list__status"
           small
           :color="itemStatusColor"
           :style="statusStyles"
-          dark
         >{{ item.currentStatus }}</v-chip>
 
         <v-layout v-if="isMobile">
@@ -69,6 +68,7 @@
           </v-chip>
 
           <v-chip
+            v-if="status"
             class="complaint-list__status"
             small
             :color="itemStatusColor"
@@ -106,7 +106,16 @@
         class="complaint-list__action-right complaint-list__action-right--hover"
         :class="isMobileClasses"
       >
-        <v-tooltip bottom>
+        <v-tooltip v-if="archived || trashed" bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" icon @click.prevent.stop="onRestoreItem" class="mr-2">
+              <v-icon color="grey darken-1">history</v-icon>
+            </v-btn>
+          </template>
+          <span v-t="'general.restore'"></span>
+        </v-tooltip>
+
+        <v-tooltip v-if="!drafted && !archived" bottom>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon @click.prevent.stop="onArchiveItem" class="mr-2">
               <v-icon color="grey darken-1">archive</v-icon>
@@ -116,6 +125,7 @@
         </v-tooltip>
 
         <v-menu
+          v-if="!drafted && !archived && !trashed"
           :min-width="200"
           offset-y
           origin="top right"
@@ -166,7 +176,7 @@
           <span>Change Status</span>
         </v-tooltip>-->
 
-        <v-tooltip bottom>
+        <v-tooltip v-if="!archived && !trashed" bottom>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon @click.prevent.stop="onEditItem" class="mr-2">
               <v-icon color="grey darken-1">edit</v-icon>
@@ -175,13 +185,22 @@
           <span v-t="'general.edit'"></span>
         </v-tooltip>
 
-        <v-tooltip bottom>
+        <v-tooltip v-if="!trashed && !drafted" bottom>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon @click.prevent.stop="onDeleteItem">
               <v-icon color="grey darken-1">delete</v-icon>
             </v-btn>
           </template>
           <span v-t="'general.delete'"></span>
+        </v-tooltip>
+
+        <v-tooltip v-if="trashed || drafted" bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" icon @click.prevent.stop="onForceDeleteItem">
+              <v-icon color="grey darken-1">delete</v-icon>
+            </v-btn>
+          </template>
+          <span v-t="'general.forceDelete'"></span>
         </v-tooltip>
       </v-list-tile-action>
 
@@ -235,6 +254,8 @@ export default {
   },
 
   computed: {
+    ...vuex.mapState(["auth"]),
+
     ...vuex.mapGetters(["isMobile", "isMobileClasses"]),
 
     title() {
@@ -245,10 +266,35 @@ export default {
       return this.$_vuexable_getByKey(this.item.issued_by, vuex.modules.GROUP);
     },
 
+    drafted() {
+      const { draft = 1 } = this.item;
+
+      return draft !== 0;
+    },
+
+    archived() {
+      const { archive = 0 } = this.item;
+
+      return archive !== 0;
+    },
+
+    trashed() {
+      const { deleted_at = null } = this.item;
+
+      return deleted_at !== null;
+    },
+
     category() {
       return this.$_vuexable_getByKey(
         this.item.issue_category_id,
         vuex.modules.ISSUE_CATEGORY
+      );
+    },
+
+    status() {
+      return this.$_vuexable_getByKey(
+        this.item.issue_status_id,
+        vuex.modules.ISSUE_STATUS
       );
     },
 
@@ -323,6 +369,10 @@ export default {
       };
     },
 
+    onRestoreItem() {
+      this.$emit("restore", this.item);
+    },
+
     onArchiveItem() {
       this.$emit("archive", this.item);
     },
@@ -335,7 +385,13 @@ export default {
       this.$emit("delete", this.item);
     },
 
+    onForceDeleteItem() {
+      this.$emit("forceDelete", this.item);
+    },
+
     onClick() {
+      if (this.item.draft) return;
+
       this.$router.push({
         name: views.ISSUE.SHOW,
         params: {

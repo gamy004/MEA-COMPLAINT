@@ -39,6 +39,37 @@ function parseFetch(context, {
     // }
 };
 
+function parseStore(context, {
+    groups: group
+} = {}) {
+    console.log('111');
+
+    const {
+        vuex,
+        rootGetters
+    } = context;
+
+    const oldGroup = rootGetters[
+        `${vuex.modules.GROUP}/${vuex.getters.BY_KEY}`
+    ](group.id) || null;
+
+    if (oldGroup) {
+        parseEdit(context, {
+            groups: group
+        });
+    } else {
+        const groups = [group];
+
+        parseFetch(context, {
+            groups,
+            total: rootGetters[
+                `${vuex.modules.GROUP}/${vuex.getters.GET_STATE}`
+            ]('totalItems') + groups.length,
+            strategy: 'merge'
+        });
+    }
+};
+
 function parseEdit(context, {
     groups: group
 } = {}) {
@@ -92,4 +123,5 @@ export default {
     [actions.GROUP.FETCH]: parseFetch,
     [actions.GROUP.UPDATE]: parseEdit,
     [actions.GROUP.DELETE]: parseDelete,
+    [actions.GROUP.RESTORE]: parseStore
 }

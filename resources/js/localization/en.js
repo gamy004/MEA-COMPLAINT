@@ -7,17 +7,21 @@ export const en = {
         month: "Month",
         select: "Select",
         refresh: "Refresh",
+        restore: "Restore",
         settings: "Settings",
         newest: "Newest",
         oldest: "Oldest",
         export: "Export",
         save: "Save",
+        savingDraft: "Saving draft",
         archive: "Archive",
         changeStatus: "Change status",
         create: "Create",
         edit: "Edit",
         update: "Update",
         delete: "Delete",
+        forceDelete: "Delete from system",
+        moveToTrash: "Move to Trash",
         uploadFile: "Upload files",
         formatOptions: "Formatting options",
         discard: "Discard",
@@ -29,7 +33,8 @@ export const en = {
         yes: "Yes",
         no: "No",
         admin: "Admin",
-        Anonymous: "-",
+        anonymous: "unknown",
+        anonymousStatus: "Unknown status",
         download: "Download",
         present: "Present",
         start: "Start",
@@ -89,6 +94,10 @@ export const en = {
                 warningSubmit: {
                     title: "Submit without subject and description?",
                     desc: "You want to create complaint without subject and description."
+                },
+                warningForceDelete: {
+                    title: "Delete complaint?",
+                    desc: "Your complaint will be permanently deleted."
                 }
             }
         },
@@ -173,6 +182,9 @@ export const en = {
                 group: "Group",
                 subGroup: "Sub Group",
                 groupAndSubGroup: "Group & Sub Group"
+            },
+            warningGroupItem: {
+                term: "{item} will be permanently deleted. All users beneath {item} will lost their group."
             }
         }
     },
@@ -206,6 +218,11 @@ export const en = {
     },
     alertMessages: {
         undo: "Action undone",
+        undo_error: "Action cannot undone",
+        update_success: "Update successfully",
+        delete_error: "Cannot update, pelase try again",
+        delete_success: "Delete successfully",
+        delete_error: "Cannot delete, pelase try again",
         searchComplaint: {
             invalidQuery: "Invalid search query, returning all complaints",
             error: "Searching failed, please try again"
@@ -224,7 +241,9 @@ export const en = {
             create_success: "Complaint was created successfully",
             update_success: "Complaint was updated successfully",
             delete_success: "Complaint moved to Trash",
-            archive_success: "Complaint moved to Archive"
+            archive_success: "Complaint moved to Archive",
+            restore_success: "Complaint was restored successfully",
+            force_delete_success: "Complaint was deleted successfully"
         },
         complaintStatus: {
             update_success: "Complaint Status was updated successfully",
@@ -261,6 +280,18 @@ export const en = {
             update_success: "User was updated successfully",
             delete_success: "User was deleted successfully"
         },
+        group: {
+            update_success: "Update group successfully",
+            delete_error: "Cannot update group, pelase try again",
+            delete_success: "Delete group successfully",
+            delete_error: "Cannot delete group, pelase try again",
+        },
+        subgroup: {
+            update_success: "Update sub-group successfully",
+            delete_error: "Cannot update sub-group, pelase try again",
+            delete_success: "Delete sub-group successfully",
+            delete_error: "Cannot delete sub-group, pelase try again",
+        }
     },
     table: {
         noData: "No matching records found",

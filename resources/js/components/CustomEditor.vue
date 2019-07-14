@@ -16,6 +16,7 @@
       @onDrop.stop.prevent="onDrop"
       @onDragOver.stop.prevent="onDrageOver"
       @onInit="onInit"
+      @input="onInput"
     >hello</editor>
 
     <slot></slot>
@@ -127,6 +128,10 @@ export default {
   methods: {
     onInit(event) {
       this.isInit = true;
+    },
+
+    onInput(input) {
+      this.$emit("editor:input", input);
     },
 
     onDrop(event) {

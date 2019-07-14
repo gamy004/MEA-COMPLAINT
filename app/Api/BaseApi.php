@@ -177,13 +177,35 @@ abstract class BaseApi
         }
     }
 
+    public function forceDelete($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $this->originalModel->withTrashed()
+                ->findOrFail($id)
+                ->forceDelete();
+
+            DB::commit();
+
+            return response()->json([
+                "message" => "force destroy success",
+                "id" => $id
+            ]);
+        } catch (Exception $exception) {
+            DB::rollback();
+            Log::error($exception);
+            throw new Exception("Error Handle Force Deleting Resource Request");
+        }
+    }
+
     public function restore($id)
     {
         try {
             DB::beginTransaction();
 
             $restore = $this->originalModel->withTrashed()
-                ->where(DBCol::ID, $id)
+                ->findOrFail($id)
                 ->restore();
 
             DB::commit();
@@ -971,7 +993,7 @@ abstract class BaseApi
         return $this->originalModel;
     }
 
-    public function setOriginalModel(Model $originalModel)
+    public function setOriginalModel($originalModel)
     {
         $this->originalModel = $originalModel;
     }

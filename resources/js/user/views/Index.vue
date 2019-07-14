@@ -82,7 +82,8 @@
       @form:error="$_alertable_alert('error')"
       @form:create="$_alertable_alert('create_success')"
       @form:update="$_alertable_alert('update_success')"
-      @form:submitted="onFormSubmitted"
+      @group:deleted="onGroupDeleted"
+      @sub-group:deleted="onSubGroupDeleted"
     />
 
     <message-alert
@@ -188,6 +189,34 @@ export default {
         delete_error: {
           text: this.$t("alertMessages.userGroup.delete_error"),
           type: "error"
+        },
+
+        delete_group_success: {
+          text: this.$t("alertMessages.group.delete_success"),
+          actions: [
+            {
+              text: this.$t("general.undo"),
+              handler: async ({ item }) => {
+                await this.$_user_mixin_restoreGroup(item);
+
+                this.$_alertable_alert("restore_success");
+              }
+            }
+          ]
+        },
+
+        delete_subgroup_success: {
+          text: this.$t("alertMessages.subgroup.delete_success"),
+          actions: [
+            {
+              text: this.$t("general.undo"),
+              handler: async ({ item }) => {
+                await this.$_user_mixin_restoreSubGroup(item);
+
+                this.$_alertable_alert("restore_success");
+              }
+            }
+          ]
         },
 
         restore_success: {
@@ -296,6 +325,20 @@ export default {
       }
 
       this.$_alertable_alert("delete_success", { item });
+    },
+
+    async onGroupDeleted(item) {
+      this.$_alertable_alert("delete_group_success", { item });
+      return await this.$_user_mixin_fetchUser({
+        pagination: this.$_user_mixin_pagination
+      });
+    },
+
+    async onSubGroupDeleted(item) {
+      this.$_alertable_alert("delete_subgroup_success", { item });
+      return await this.$_user_mixin_fetchUser({
+        pagination: this.$_user_mixin_pagination
+      });
     }
   },
 

@@ -390,6 +390,14 @@ export default {
 
       this.$_vuexable_setState(
         {
+          key: "type",
+          value: type
+        },
+        vuex.modules.ISSUE
+      );
+
+      this.$_vuexable_setState(
+        {
           key: "global_filters",
           value: global_filters
         },

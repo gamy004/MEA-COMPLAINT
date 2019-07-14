@@ -10,20 +10,22 @@
 
       <transition v-else name="slide-y-transition" mode="out-in">
         <v-list
-          v-if="$_paginatable_currentPaginatedList.length"
+          v-if="complaintItems.length"
           key="complaintList"
           :three-line="isMobile"
           :class="isMobileClasses"
         >
-          <template v-for="(item, itemIndex) in $_paginatable_currentPaginatedList">
+          <template v-for="(item, itemIndex) in complaintItems">
             <complaint-list-item
               :key="`complaint-${itemIndex}`"
               :item="item"
+              @restore="onRestoreItem(item, itemIndex)"
               @archive="onArchiveItem(item, itemIndex)"
               @edit="onEditItem(item, itemIndex)"
               @update:status-success="onUpdateStatusItemSuccess"
               @update:status-error="onUpdateStatusItemError"
               @delete="onDeleteItem(item, itemIndex)"
+              @forceDelete="warnForceDelete(item, itemIndex)"
             />
           </template>
         </v-list>
@@ -36,6 +38,20 @@
         </v-layout>
       </transition>
     </v-flex>
+
+    <warning-dialog
+      :dialogable-visible.sync="warningForceDelete"
+      :accept-text="$t('general.delete')"
+      @click:accept="callWarnForceDelete"
+    >
+      <template v-slot:header>
+        <span v-t="'complaint.index.form.warningForceDelete.title'"></span>
+      </template>
+
+      <template v-slot:message>
+        <span v-t="'complaint.index.form.warningForceDelete.desc'"></span>
+      </template>
+    </warning-dialog>
 
     <message-alert
       key="alertComplaintList"
@@ -54,6 +70,7 @@ import paginatable from "../../mixins/paginatable";
 import { vuex, vuexable } from "../../mixins/vuexable";
 import ComplaintListItem from "./ComplaintListItem";
 import MessageAlert from "../../components/MessageAlert";
+import WarningDialog from "../../components/WarningDialog";
 import { issueSearchMixin } from "../../mixins/issue-search-mixin";
 import { views } from "../../constants";
 import complaintMixin from "../../mixins/complaint-mixin";
@@ -71,13 +88,15 @@ export default {
 
   components: {
     ComplaintListItem,
-    MessageAlert
+    MessageAlert,
+    WarningDialog
   },
 
   data() {
     return {
       vuex,
-      warningDelete: false,
+      warningForceDelete: false,
+      warningForceDeleteCb: null,
       alertable_messages: {
         error: this.$t("alertMessages.complaintForm.delete_error"),
         update_status_success: {
@@ -94,23 +113,32 @@ export default {
             {
               text: this.$t("general.undo"),
               handler: async ({ item, itemIndex }) => {
-                await this[vuex.actions.ISSUE.RESTORE](item);
-                this.$_alertable_alert("undo");
+                this.onRestoreAlert(item);
+                // await this[vuex.actions.ISSUE.RESTORE](item);
+                // this.$_alertable_alert("undo");
               }
             }
           ]
         },
+        force_delete: this.$t(
+          "alertMessages.complaintForm.force_delete_success"
+        ),
         archive_success: {
           text: this.$t("alertMessages.complaintForm.archive_success"),
           actions: [
             {
               text: "Undo",
               handler: async ({ item, itemIndex }) => {
-                await this[vuex.actions.ISSUE.RESTORE](item);
-                this.$_alertable_alert("undo");
+                this.onRestoreAlert(item);
+                // await this[vuex.actions.ISSUE.RESTORE](item);
+                // this.$_alertable_alert("undo");
               }
             }
           ]
+        },
+        restore_success: {
+          text: this.$t("alertMessages.complaintForm.restore_success"),
+          type: "success"
         },
         undo: this.$t("alertMessages.undo")
       }
@@ -199,6 +227,36 @@ export default {
       }
 
       return rowsPerPage;
+    },
+
+    complaintItems() {
+      const { type = null } = this.$route.query;
+
+      return this.$_paginatable_getCurrentPaginatedList(
+        ({ archive = 0, draft = 0, deleted_at = null } = {}) => {
+          let cond = true;
+
+          // if (type === "archive") {
+          //   cond = cond && archive === 1;
+          // } else {
+          //   cond = cond && archive === 0;
+          // }
+
+          // if (type === "draft") {
+          //   cond = cond && draft === 1;
+          // } else {
+          //   cond = cond && draft === 0;
+          // }
+
+          // if (type === "trash") {
+          //   cond = cond && deleted_at !== null;
+          // } else {
+          //   cond = cond && deleted_at === null;
+          // }
+
+          return cond;
+        }
+      );
     }
 
     // ...vuex.mapWaitingGetters({
@@ -212,7 +270,9 @@ export default {
       vuex.actions.ISSUE.EDIT,
       vuex.actions.ISSUE.DELETE,
       vuex.actions.ISSUE.RESTORE,
-      vuex.actions.ISSUE.ARCHIVE
+      vuex.actions.ISSUE.ARCHIVE,
+      vuex.actions.ISSUE.RESTORE,
+      vuex.actions.ISSUE.FORCE_DELETE
     ]),
 
     callFetch() {
@@ -229,6 +289,22 @@ export default {
       }
 
       this.$_alertable_alert("archive_success", { item, itemIndex });
+
+      this.clearEditState(item);
+    },
+
+    async onRestoreItem(item, itemIndex) {
+      const { id } = item;
+
+      try {
+        await this[vuex.actions.ISSUE.RESTORE](item);
+      } catch (error) {
+        throw error;
+      }
+
+      this.$_alertable_alert("restore_success");
+
+      return this.callFetch();
     },
 
     async onEditItem(item, itemIndex) {
@@ -268,6 +344,68 @@ export default {
         this.$_alertable_alert("error");
 
         throw error;
+      }
+
+      this.clearEditState(item);
+    },
+
+    warnForceDelete(item, itemIndex) {
+      this.warningForceDelete = true;
+
+      this.warningForceDeleteCb = () => this.onForceDeleteItem(item, itemIndex);
+    },
+
+    async callWarnForceDelete() {
+      this.warningForceDelete = false;
+
+      if (this.warningForceDeleteCb) {
+        await this.warningForceDeleteCb();
+
+        this.warningForceDeleteCb = null;
+      }
+    },
+
+    async onForceDeleteItem(item, itemIndex) {
+      try {
+        await this[vuex.actions.ISSUE.FORCE_DELETE](item);
+
+        this.$_alertable_alert("force_delete");
+      } catch (error) {
+        this.$_alertable_alert("error");
+
+        throw error;
+      }
+
+      this.clearEditState(item);
+    },
+
+    async onRestoreAlert(item) {
+      const { archive = 0, deleted_at = null } = item;
+
+      if (archive) {
+        await this[vuex.actions.ISSUE.ARCHIVE](item);
+        await this.callFetch();
+      } else if (deleted_at !== null) {
+        await this[vuex.actions.ISSUE.DELETE](item);
+        await this.callFetch();
+      } else {
+        await this[vuex.actions.ISSUE.RESTORE](item);
+      }
+
+      this.$_alertable_alert("undo");
+    },
+
+    clearEditState({ id = null } = {}) {
+      if (id === this.editingComplaintId) {
+        this.$_vuexable_setState(
+          {
+            key: "dialog",
+            value: false
+          },
+          vuex.modules.ISSUE
+        );
+
+        this.$_vuexable_setEdit(null, vuex.modules.ISSUE);
       }
     },
 

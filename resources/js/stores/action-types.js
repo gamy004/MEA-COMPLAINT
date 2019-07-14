@@ -26,6 +26,7 @@ export const ISSUE = {
     EDIT: 'complaintEdit',
     UPDATE: 'complaintUpdate',
     DELETE: 'complaintDelete',
+    FORCE_DELETE: 'complaintForceDelete',
     RESTORE: 'complaintRestore',
     EXPORT: 'complaintExport',
     SEARCH: 'complaintSearch',
@@ -37,12 +38,14 @@ export const GROUP = {
     FETCH: 'groupFetch',
     UPDATE: 'groupUpdate',
     DELETE: 'groupDelete',
+    RESTORE: 'groupRestore',
 };
 
 export const SUB_GROUP = {
     FETCH: 'subGroupFetch',
     UPDATE: 'subGroupUpdate',
     DELETE: 'subGroupDelete',
+    RESTORE: 'subGroupRestore',
 };
 
 export const ROLE = {

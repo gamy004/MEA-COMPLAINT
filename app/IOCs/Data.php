@@ -32,7 +32,11 @@ class Data
     const RECIPIENT_IDS = 'recipient_ids';
     const LATEST_STATUS = 'latest_status';
     const ATTACHMENTS = 'attachments';
-
+    const TYPE = 'type';
+    const INBOX = 'inbox';
+    const DRAFT = 'draft';
+    const ARCHIVE = 'archive';
+    const TRASH = 'trash';
     /**
      * IssueStatus
      */

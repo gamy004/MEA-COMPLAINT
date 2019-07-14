@@ -6,6 +6,7 @@ use Exception;
 use App\IOCs\Data;
 use App\IOCs\DBCol;
 use App\Api\BaseApi;
+use App\Models\Group;
 use App\Models\Issue;
 use App\Traits\HasFile;
 use App\Models\IssueNote;
@@ -29,7 +30,9 @@ class IssueNoteApi extends BaseApi implements ApiInterface
         try {
             DB::beginTransaction();
 
-            $record = [];
+            $record = [
+                DBCol::CREATED_BY => auth()->user()->{Group::FK}
+            ];
             
             $record = $this->parseGeneralFields($record, $raw);
             
@@ -48,6 +51,7 @@ class IssueNoteApi extends BaseApi implements ApiInterface
         } catch (Exception $exception) {
             DB::rollback();
             Log::error($exception);
+            dd($exception);
             throw new Exception("Error creating issue note request", 1);
         }
     }
@@ -91,11 +95,16 @@ class IssueNoteApi extends BaseApi implements ApiInterface
                 $raw,
                 [
                     DBCol::DESCRIPTION,
-                    Issue::FK,
-                    DBCol::CREATED_BY
+                    Issue::FK
                 ]
             )
         );
+
+        if (!isset($record[DBCol::DESCRIPTION])
+            || !strlen($record[DBCol::DESCRIPTION])
+        ) {
+            $record[DBCol::DESCRIPTION] = "<p></p>";
+        }
 
         return $record;
     }

@@ -1,5 +1,11 @@
 <template>
-  <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+  <v-dialog
+    v-model="dialog"
+    fullscreen
+    hide-overlay
+    persistent
+    transition="dialog-bottom-transition"
+  >
     <v-card>
       <v-toolbar dark color="deep-orange">
         <v-btn icon dark @click="dialog = false">
@@ -145,6 +151,7 @@
                             managable-edit
                             :managable-module="vuex.modules.GROUP"
                             :managable-route-param="{ group: item.value }"
+                            @deleted="onGroupItemDeleted"
                             v-model="groupInput"
                           />
                         </template>
@@ -162,7 +169,7 @@
                         :value="subGroupInput"
                         color="indigo accent-2"
                         hide-no-data
-                        :loading="$_user_mixin_fetchingSubGroup"
+                        :loading="$_user_mixin_fetchingGroup || $_user_mixin_fetchingSubGroup"
                         :error="form.errors.has('sub_group')"
                         :error-messages="form.errors.getError('sub_group')"
                         @input="form.errors.clear('sub_group')"
@@ -176,6 +183,7 @@
                             managable-edit
                             :managable-module="vuex.modules.SUB_GROUP"
                             :managable-route-param="{ group: item.value }"
+                            @deleted="onSubGroupItemDeleted"
                             v-model="subGroupInput"
                           />
                         </template>
@@ -564,6 +572,16 @@ export default {
       }
 
       this.closeForm();
+    },
+
+    onGroupItemDeleted(data) {
+      // this.groupInput = null;
+      this.$emit("group:deleted", data);
+    },
+
+    onSubGroupItemDeleted(data) {
+      // this.subGroupInput = null;
+      this.$emit("sub-group:deleted", data);
     },
 
     closeForm() {

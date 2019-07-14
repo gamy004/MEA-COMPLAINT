@@ -69,12 +69,14 @@ const managable = {
         },
 
         async $_managable_submitForm(form, params = []) {
+            let response;
+
             const {
                 managableRouteParam: routeParam
             } = this;
 
             try {
-                await form.persist(
+                response = await form.persist(
                     this.$_vuexable_dispatch, {
                         params,
                         routeParam
@@ -94,7 +96,10 @@ const managable = {
 
             this.$emit(`form:${action}`, form);
 
-            return form;
+            return {
+                form,
+                response
+            };
         }
     }
 }

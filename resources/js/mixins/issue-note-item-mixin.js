@@ -25,7 +25,8 @@ const issueNoteItemMixin = {
 
     computed: {
         ...vuex.mapWaitingGetters({
-            $_issue_note_item_mixin_isFetchingEditIssueNote: 'editing note'
+            $_issue_note_item_mixin_isFetchingEditIssueNote: 'editing note',
+            $_issue_note_item_mixin_isRestoringFile: 'restoring note file'
         }),
 
         $_issue_note_item_mixin_complaintId() {
@@ -95,6 +96,13 @@ const issueNoteItemMixin = {
             $_issue_note_item_mixin_restoreIssueNote: {
                 action: vuex.actions.ISSUE_NOTE.RESTORE,
                 loader: 'restoring note'
+            }
+        }),
+
+        ...vuex.mapWaitingActions(vuex.modules.FILE, {
+            $_issue_note_item_mixin_restoreFile: {
+                action: vuex.actions.FILE.RESTORE,
+                loader: 'restoring note file'
             }
         }),
 

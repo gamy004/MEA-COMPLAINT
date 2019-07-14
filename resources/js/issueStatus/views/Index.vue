@@ -59,6 +59,7 @@
       :managable-module="vuex.modules.ISSUE_STATUS"
       :managable-route-param="routeParam"
       :managable-edit="$_issue_status_mixin_isEditing"
+      @form:error="$_alertable_alert('error')"
       @form:create="$_alertable_alert('create_success')"
       @form:update="$_alertable_alert('update_success')"
     />
@@ -110,6 +111,7 @@ export default {
         }
       ],
       alertable_messages: {
+        error: this.$t("alertMessages.issueStatus.submit_error"),
         create_success: {
           text: this.$t("alertMessages.issueStatus.create_success"),
           type: "success"

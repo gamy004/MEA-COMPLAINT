@@ -17,6 +17,7 @@ class CreateIssuesTable extends Migration
             $table->bigIncrements('id');
             $table->string('subject')->nullable();
             $table->text('description')->nullable();
+            $table->boolean('draft')->default(1);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -104,7 +104,9 @@ class UsersTableSeeder extends Seeder
                                         'issue_category_id'
                                     )
                                 );
-
+                            
+                            $issue->{DBCol::DRAFT} = 0;
+                            
                             for ($x=0; $x < 3; $x++) {
                                 $random_status = Arr::random(
                                     $issue_status_ids,

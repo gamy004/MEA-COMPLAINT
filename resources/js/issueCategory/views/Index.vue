@@ -51,6 +51,7 @@
       :managable-module="vuex.modules.ISSUE_CATEGORY"
       :managable-route-param="routeParam"
       :managable-edit="$_issue_category_mixin_isEditing"
+      @form:error="$_alertable_alert('error')"
       @form:create="$_alertable_alert('create_success')"
       @form:update="$_alertable_alert('update_success')"
     />
@@ -101,6 +102,7 @@ export default {
         }
       ],
       alertable_messages: {
+        error: this.$t("alertMessages.issueCategory.submit_error"),
         create_success: {
           text: this.$t("alertMessages.issueCategory.create_success"),
           type: "success"

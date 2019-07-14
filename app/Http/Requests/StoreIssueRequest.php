@@ -32,7 +32,7 @@ class StoreIssueRequest extends FormRequest
         return array_merge(
             [
                 DBCol::SUBJECT => 'max:255',
-                Data::RECIPIENTS => 'required|array|min:1',
+                Data::RECIPIENTS => 'array',
                 Data::RECIPIENTS.'.*' => 'required|numeric|exists:groups,id',
                 IssueCategory::FK => 'nullable|exists:issue_categories,id'
             ],

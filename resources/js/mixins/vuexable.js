@@ -159,11 +159,12 @@ export const vuexable = {
             return this;
         },
 
-        $_vuexable_getPaginatedValues(page = null, module = '') {
+        $_vuexable_getPaginatedValues(page = null, module = '', filters = null) {
             return this.$_vuexable_getter(
                 getters.PAGINATED_VALUES,
                 module,
-                page
+                page,
+                filters
             );
         },
 

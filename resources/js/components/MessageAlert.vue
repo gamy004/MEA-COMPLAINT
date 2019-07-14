@@ -6,6 +6,7 @@
       :type="$_alertable_context"
       :color="$_alertable_color"
       class="elevation-5"
+      min-width="300"
       @mouseover="onMouseOver"
       @mouseleave="onMouseLeave"
     >
@@ -64,7 +65,7 @@ export default {
 .message-alert {
   &__wrapper {
     position: fixed;
-    z-index: 3;
+    z-index: 203;
 
     .v-alert {
       border-radius: 5px;

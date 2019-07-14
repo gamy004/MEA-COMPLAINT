@@ -34,7 +34,7 @@ class UpdateIssueRequest extends FormRequest
         return array_merge(
             [
                 DBCol::SUBJECT => 'max:255',
-                Data::RECIPIENTS => 'sometimes|required|array|min:1',
+                Data::RECIPIENTS => 'sometimes|array',
                 Data::RECIPIENTS.'.*' => 'required|numeric|exists:groups,id',
                 IssueCategory::FK => 'nullable|exists:issue_categories,id',
                 IssueStatus::FK => 'sometimes|exists:issue_statuses,id', 

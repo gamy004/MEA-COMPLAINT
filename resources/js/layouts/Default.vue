@@ -14,7 +14,7 @@
       <v-list dense class="grey lighten-4">
         <add-complaint-btn v-if="!isMobile" class="add-complaint__button--main" />
 
-        <template v-for="(item, i) in items">
+        <template v-for="(item, i) in defaultItems">
           <v-layout v-if="item.heading" :key="i" row align-center>
             <v-flex :class="item.route ? 'xs6' : 'xs12'">
               <v-subheader v-if="item.heading">{{ item.heading }}</v-subheader>
@@ -93,6 +93,7 @@ import ComplaintSearchFilter from "../complaint/components/ComplaintSearchFilter
 import MessageAlert from "../components/MessageAlert";
 import { views } from "../constants";
 import { issueSearchMixin } from "../mixins/issue-search-mixin";
+import { vuex } from "../mixins/vuexable";
 
 export default {
   mixins: [alertable, layoutable, complaintMixin, issueSearchMixin],
@@ -116,8 +117,15 @@ export default {
           text: this.$t("alertMessages.searchComplaint.error"),
           type: "error"
         }
-      },
-      items: [
+      }
+    };
+  },
+
+  computed: {
+    ...vuex.mapState(["auth"]),
+
+    defaultItems() {
+      const baseItems = [
         {
           icon: "inbox",
           text: this.$t("sidebar.inbox"),
@@ -126,26 +134,16 @@ export default {
             this.resetStateAndGotoRoute(item);
           }
         },
-        // {
-        //   icon: "start",
-        //   text: "Starred",
-        //   route: { name: views.ISSUE.INDEX }
-        // },
-        // {
-        //   icon: "lightbulb_outline",
-        //   text: "Notes",
-        //   route: { name: views.ISSUE.INDEX }
-        // },
         { divider: true },
-        // {
-        //   icon: "send",
-        //   text: "Sent",
-        //   route: { name: views.ISSUE.INDEX }
-        // },
         {
           icon: "drafts",
           text: this.$t("sidebar.draft"),
-          route: { name: views.ISSUE.INDEX }
+          route: {
+            name: views.ISSUE.INDEX,
+            query: {
+              type: "draft"
+            }
+          }
         },
         {
           icon: "archive",
@@ -154,11 +152,10 @@ export default {
             name: views.ISSUE.INDEX,
             query: {
               type: "archive"
-              // filters: [
-              //   { key: "archive", value: 1 },
-              //   { key: "deleted_at", value: null }
-              // ]
             }
+          },
+          onClick: item => {
+            this.resetStateAndGotoRoute(item);
           }
         },
         {
@@ -168,36 +165,38 @@ export default {
             name: views.ISSUE.INDEX,
             query: {
               type: "trash"
-              // filters: [
-              //   { key: "archive", value: 0 },
-              //   { key: "deleted_at", value: null, not: true }
-              // ]
             }
+          },
+          onClick: item => {
+            this.resetStateAndGotoRoute(item);
           }
-        },
-        { divider: true },
-        { heading: this.$t("sidebar.adminSection") },
-        {
-          icon: "category",
-          text: this.$t("sidebar.categories"),
-          route: { name: views.ISSUE_CATEGORY.INDEX }
-        },
-        {
-          icon: "bookmarks",
-          text: this.$t("sidebar.statuses"),
-          route: { name: views.ISSUE_STATUS.INDEX }
-        },
-        {
-          icon: "group",
-          text: this.$t("sidebar.usersAndGroups"),
-          route: { name: views.USER.INDEX }
         }
-        //   { icon: "chat_bubble", text: "Trash" },
-        //   { icon: "help", text: "Help" },
-        //   { icon: "phonelink", text: "App downloads" },
-        //   { icon: "keyboard", text: "Keyboard shortcuts" }
-      ]
-    };
+      ];
+
+      const adminItems = this.auth.isAdmin
+        ? [
+            { divider: true },
+            { heading: this.$t("sidebar.adminSection") },
+            {
+              icon: "category",
+              text: this.$t("sidebar.categories"),
+              route: { name: views.ISSUE_CATEGORY.INDEX }
+            },
+            {
+              icon: "bookmarks",
+              text: this.$t("sidebar.statuses"),
+              route: { name: views.ISSUE_STATUS.INDEX }
+            },
+            {
+              icon: "group",
+              text: this.$t("sidebar.usersAndGroups"),
+              route: { name: views.USER.INDEX }
+            }
+          ]
+        : [];
+
+      return [...baseItems, ...adminItems];
+    }
   },
 
   methods: {

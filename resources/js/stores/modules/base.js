@@ -28,6 +28,7 @@ export default {
                 page: 1,
                 sortBy: "id"
             },
+            type: null,
             totalItems: 0,
             active: null,
             edit: null,
@@ -107,7 +108,7 @@ export default {
 
             return sortedIndex.map(key => getters[vuex.getters.BY_KEY](key));
         },
-        [vuex.getters.PAGINATED_VALUES]: (state, getters) => (page = null) => {
+        [vuex.getters.PAGINATED_VALUES]: (state, getters) => (page = null, filters = null) => {
             const {
                 pagination,
                 sortedPaginateIndex
@@ -118,7 +119,13 @@ export default {
             const sortedIndex = sortedPaginateIndex.hasOwnProperty(page) ?
                 sortedPaginateIndex[page] : [];
 
-            return sortedIndex.map(key => getters[vuex.getters.BY_KEY](key));
+            let items = sortedIndex.map(key => getters[vuex.getters.BY_KEY](key));
+
+            if (filters) {
+                items = _.filter(items, filters);
+            }
+
+            return items;
         },
         [vuex.getters.BY_KEY]: (state) => (key) => {
             return state.collection.hasOwnProperty(key) ? state.collection[key] : null;
@@ -217,6 +224,8 @@ export default {
         [vuex.mutations.DELETE](state, {
             id
         }) {
+            id = _.toInteger(id);
+
             if (state.collection.hasOwnProperty(id)) {
                 const targetPage = state.paginateIndex[id];
 

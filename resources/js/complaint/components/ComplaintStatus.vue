@@ -38,13 +38,17 @@ export default {
     },
 
     statusText() {
-      let status = "";
+      let text = this.$t("general.anonymousStatus");
 
       if (this.$_complaint_item_mixin_complaint) {
-        status = this.$_complaint_item_mixin_complaint.currentStatus;
+        const { currentStatus = null } = this.$_complaint_item_mixin_complaint;
+
+        if (currentStatus && currentStatus.length) {
+          text = currentStatus;
+        }
       }
 
-      return status;
+      return text;
     }
   }
 };

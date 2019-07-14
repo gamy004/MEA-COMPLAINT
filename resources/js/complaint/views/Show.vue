@@ -63,7 +63,7 @@
               :managable-module="vuex.modules.ISSUE_NOTE"
               :managable-route-param="{ issue_note: note.id }"
               :managable-edit="$_issue_note_mixin_isEditingNote(note)"
-              @form:submitted="onNoteUpdated"
+              @updated="onNoteUpdated"
               @delete="onNoteDeleted"
               class="pl-5 pr-4"
             />
@@ -77,7 +77,7 @@
             :managable-route-param="{}"
             :managable-edit="false"
             :created-by="auth.group_id"
-            @form:submitted="onNoteCreated"
+            @updated="onNoteCreated"
             @remove="$_issue_note_mixin_setDialog(false)"
             class="pl-5 pr-4"
           />
@@ -157,7 +157,7 @@
       :managable-edit="hasEdittedComplaint"
       :full-screenable="false"
       :is-full-screen="true"
-      @form:submitted="onComplaintUpdated"
+      @form:updated="onComplaintUpdated"
     />
 
     <message-alert
@@ -440,6 +440,7 @@ export default {
     onNoteUpdated() {
       this.$_alertable_alert("edit_note_success");
       this.$_issue_note_mixin_setEdit(null);
+      this.$_issue_note_mixin_setDialog(false);
     },
 
     async onNoteDeleted({ id }) {

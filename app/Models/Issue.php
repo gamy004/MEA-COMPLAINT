@@ -18,6 +18,7 @@ class Issue extends Model
         DBCol::DESCRIPTION,
         DBCol::ISSUED_BY,
         DBCol::REFERENCED_TO,
+        DBCol::DRAFT,
         // IssueStatus::FK,
         IssueCategory::FK
     ];

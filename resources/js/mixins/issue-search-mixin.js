@@ -421,7 +421,6 @@ export const issueSearchMixin = {
                 key: "filter_groups",
                 value: []
             }, vuex.modules.ISSUE);
-            console.log("clear backup");
 
             this.$_vuexable_setState({
                 key: "backupFormdata",
@@ -437,10 +436,9 @@ export const issueSearchMixin = {
 
             if (!$_issue_search_mixin_searchFilters.length) {
                 this.issue_search_mixin_searchKeyword = "";
-                this.$_vuexable_setState({
-                    key: "searchKeyword",
-                    value: ""
-                }, vuex.modules.ISSUE);
+
+                this.$_issue_search_mixin_clearState();
+
                 this.$emit("alert:invalidSearchForm");
             } else {
                 this.$_issue_search_mixin_updateSearchKeywordFromFilters();

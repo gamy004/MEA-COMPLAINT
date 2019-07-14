@@ -7,17 +7,21 @@ export const th = {
         month: "เดือน",
         select: "เลือก",
         refresh: "รีเฟรช",
+        restore: "นำกลับมา",
         settings: "ตั้งค่า",
         newest: "ใหม่ล่าสุด",
         oldest: "เก่าที่สุด",
         export: "นำออก",
         save: "บันทึก",
+        savingDraft: "กำลังบันทึกแบบร่าง",
         archive: "จัดเก็บ",
         changeStatus: "เปลี่ยนสถานะ",
         create: "สร้าง",
         edit: "แก้ไข",
         update: "อัพเดต",
         delete: "ลบ",
+        forceDelete: "ลบออกจากระบบ",
+        moveToTrash: "ย้ายไปหน้าลบทิ้ง",
         uploadFile: "อัพโหลดไฟล์",
         formatOptions: "แสดงตัวเลือกการจัดรูปแบบข้อความ",
         discard: "ทิ้ง",
@@ -25,11 +29,12 @@ export const th = {
         close: "ปิด",
         send: "ส่ง",
         saveAndClose: "บันทึก & ปิด",
-        undo: "ย้อนกลับ",
+        undo: "คืนค่า",
         yes: "ใช่",
         no: "ไม่ใช่",
         admin: "ผู้ดูแลระบบ",
-        Anonymous: "ไม่ระบุ",
+        anonymous: "ไม่ระบุ",
+        anonymousStatus: "ไม่ระบุสถานะ",
         download: "ดาวน์โหลด",
         present: "ปัจจุบัน",
         start: "เริ่มต้น",
@@ -89,6 +94,10 @@ export const th = {
                 warningSubmit: {
                     title: "ส่งข้อร้องเรียนโดยไม่มีหัวข้อและคำอธิบาย?",
                     desc: "คุณต้องการส่งข้อร้องเรียนโดยไม่มีหัวข้อและคำอธิบาย"
+                },
+                warningForceDelete: {
+                    title: "ลบข้อร้องเรียน?",
+                    desc: "ข้อร้องเรียนนี้จะถูกลบออกจากระบบอย่างถาวร"
                 }
             }
         },
@@ -170,9 +179,12 @@ export const th = {
                 email: "อีเมล์",
                 phone: "เบอร์โทรศัพท์",
                 role: "สิทธิการใช้งาน",
-                group: "ผ่าย",
+                group: "ฝ่าย",
                 subGroup: "กอง",
                 groupAndSubGroup: "ฝ่าย & กอง"
+            },
+            warningGroupItem: {
+                term: "{item} จะถูกลบออกจากระบบอย่างถาวร ผู้ใช้งานภายใต้ {item} จะสูญเสียกอง/ฝ่ายของตนเอง"
             }
         }
     },
@@ -205,62 +217,81 @@ export const th = {
         }
     },
     alertMessages: {
-        undo: "Action undone",
+        undo: "คืนค่าเรียบร้อยแล้ว",
+        undo_error: "คืนค่าไม่สำเร็จ",
+        update_success: "แก้ไขเรียบร้อยแล้ว",
+        update_error: "แก้ไขไม่สำเร็จ",
+        delete_success: "ลบเรียบร้อยแล้ว",
+        delete_error: "ลบไม่สำเร็จ",
         searchComplaint: {
             invalidQuery: "การค้นหาไม่สมบูรณ์ ระบบจะแสดงข้อร้องเรียนทั้งหมด",
-            error: "การค้นหาผิดพลาด กรุณาลองใหม่อีกครั้ง"
+            error: "ค้นหาไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"
         },
         file: {
-            delete_success: "Attachment was deleted successfully",
-            delete_error: "Cannot delete file, please try again"
+            delete_success: "ไฟล์ถูกลบเรียบร้อยแล้ว",
+            delete_error: "ลบไฟล์ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"
         },
         uploadFile: {
-            delete_success: "Uploaded file was deleted successfully"
+            delete_success: "ไฟล์ที่ทำการอัพโหลดถูกลบเรียบร้อยแล้ว"
         },
         complaintForm: {
-            submit_error: "Cannot submit complaint, please check error message",
-            delete_error: "Cannot delete complaint, please try again",
-            archive_error: "Cannot archive complaint, please try again",
-            create_success: "Complaint was created successfully",
-            update_success: "Complaint was updated successfully",
-            delete_success: "Complaint moved to Trash",
-            archive_success: "Complaint moved to Archive"
+            submit_error: "บันทึกข้อมูลข้อร้องเรียนไม่สำเร็จ โปรดตรวจสอบข้อผิดพลาด",
+            delete_error: "ลบข้อร้องเรียนไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
+            archive_error: "จัดเก็บข้อร้องเรียนไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
+            create_success: "สร้างข้อร้องเรียนเรียบร้อยแล้ว",
+            update_success: "แก้ไขข้อร้องเรียนเรียบร้อยแล้ว",
+            delete_success: "ข้อร้องเรียนถูกย้ายไปหน้าลบทิ้งเรียบร้อยแล้ว",
+            archive_success: "ข้อร้องเรียนถูกย้ายไปหน้าจัดเก็บเรียบร้อยแล้ว",
+            restore_success: "ข้อร้องเรียนถูกนำกลับมาเรียบร้อยแล้ว",
+            force_delete_success: "ข้อร้องเรียนถูกลบเรียบร้อยแล้ว"
         },
         complaintStatus: {
-            update_success: "Complaint Status was updated successfully",
-            update_error: "Cannot update complaint status, please try again",
+            update_success: "อัพเดตสถานะข้อร้องเรียนเรียบร้อยแล้ว",
+            update_error: "อัพเดตสถานะข้อร้องเรียนไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
         },
         complaintNote: {
-            submit_error: "Cannot submit note, please check error message",
-            delete_error: "Cannot delete note, please try again",
-            create_success: "Note was created successfully",
-            update_success: "Note was updated successfully",
-            delete_success: "Note was deleted successfully"
+            submit_error: "บันทึกข้อมูลข้อคิดเห็นไม่สำเร็จ โปรดตรวจสอบข้อผิดพลาด",
+            delete_error: "ลบข้อคิดเห็นไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
+            create_success: "สร้างข้อคิดเห็นเรียบร้อยแล้ว",
+            update_success: "แก้ไขข้อคิดเห็นเรียบร้อยแล้ว",
+            delete_success: "ลบข้อคิดเห็นเรียบร้อยแล้ว"
         },
         issueCategory: {
-            submit_error: "Cannot submit category, please check error message",
-            edit_error: "Cannot load category data, please try again",
-            delete_error: "Cannot delete category, please try again",
-            create_success: "Category was created successfully",
-            update_success: "Category was updated successfully",
-            delete_success: "Category was deleted successfully"
+            submit_error: "บันทึกข้อมูลประเภทข้อร้องเรียนไม่สำเร็จ โปรดตรวจสอบข้อผิดพลาด",
+            edit_error: "โหลดข้อมูลประเภทข้อร้องเรียนไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
+            delete_error: "ลบประเภทข้อร้องเรียนไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
+            create_success: "สร้างประเภทข้อร้องเรียนเรียบร้อยแล้ว",
+            update_success: "แก้ไขประเภทข้อร้องเรียนเรียบร้อยแล้ว",
+            delete_success: "ลบประเภทข้อร้องเรียนเรียบร้อยแล้ว"
         },
         issueStatus: {
-            submit_error: "Cannot submit status, please check error message",
-            edit_error: "Cannot load status data, please try again",
-            delete_error: "Cannot delete status, please try again",
-            create_success: "Status was created successfully",
-            update_success: "Status was updated successfully",
-            delete_success: "Status was deleted successfully"
+            submit_error: "บันทึกข้อมูลสถานะข้อร้องเรียนไม่สำเร็จ โปรดตรวจสอบข้อผิดพลาด",
+            edit_error: "โหลดข้อมูลสถานะข้อร้องเรียนไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
+            delete_error: "ลบข้อมูลสถานะข้อร้องเรียนไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
+            create_success: "สร้างสถานะข้อร้องเรียนเรียบร้อยแล้ว",
+            update_success: "แก้ไขสถานะข้อร้องเรียนเรียบร้อยแล้ว",
+            delete_success: "ลบสถานะข้อร้องเรียนเรียบร้อยแล้ว"
         },
         userGroup: {
-            submit_error: "Cannot submit user, please check error message",
-            edit_error: "Cannot load user data, please try again",
-            delete_error: "Cannot delete user, please try again",
-            create_success: "User was created successfully",
-            update_success: "User was updated successfully",
-            delete_success: "User was deleted successfully"
+            submit_error: "บันทึกข้อมูลผู้ใช้งานไม่สำเร็จ โปรดตรวจสอบข้อผิดพลาด",
+            edit_error: "โหลดข้อมูลผู้ใช้งานไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
+            delete_error: "ลบข้อมูลผู้ใช้งานไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
+            create_success: "สร้างผู้ใช้งานเรียบร้อยแล้ว",
+            update_success: "แก้ไขผู้ใช้งานเรียบร้อยแล้ว",
+            delete_success: "ลบผู้ใช้งานเรียบร้อยแล้ว"
         },
+        group: {
+            update_success: "แก้ไขฝ่ายเรียบร้อยแล้ว",
+            update_error: "แก้ไขฝ่ายไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
+            delete_success: "ลบฝ่ายเรียบร้อยแล้ว",
+            delete_error: "ลบฝ่ายไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
+        },
+        subgroup: {
+            update_success: "แก้ไขกองเรียบร้อยแล้ว",
+            update_error: "แก้ไขกองไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
+            delete_success: "ลบกองเรียบร้อยแล้ว",
+            delete_error: "ลบกองไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
+        }
     },
     table: {
         noData: "ไม่พบข้อมูล",

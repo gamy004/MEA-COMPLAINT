@@ -38,6 +38,79 @@ class IssueApi extends BaseApi implements ApiInterface
         parent::__construct($model);
     }
 
+    private function parseAuth()
+    {
+        $modifiedOriginalModel = $this->getOriginalModel()->withTrashed();
+        $auth = auth()->user();
+        $request = request();
+        $type = $request->has(Data::TYPE) ? $request->{Data::TYPE} : "inbox";
+
+        if (!$auth->isAdmin() || !is_null($auth->{Group::FK})) {
+            $modifiedOriginalModel = $modifiedOriginalModel->where(
+                DBCol::ISSUED_BY,
+                $auth->{Group::FK}
+            );
+        }
+
+        switch ($type) {
+            case Data::ARCHIVE:
+                $modifiedOriginalModel = $modifiedOriginalModel
+                    ->where(DBCol::ARCHIVE, 1)
+                    ->where(DBCol::DRAFT, 0)
+                    ->whereNull(DBCol::DELETED_AT);
+                break;
+
+            case Data::DRAFT:
+                $modifiedOriginalModel = $modifiedOriginalModel
+                    ->where(DBCol::ARCHIVE, 0)
+                    ->where(DBCol::DRAFT, 1)
+                    ->whereNull(DBCol::DELETED_AT);
+                break;
+
+            case Data::TRASH:
+                $modifiedOriginalModel = $modifiedOriginalModel
+                    ->where(DBCol::ARCHIVE, 0)
+                    ->where(DBCol::DRAFT, 0)
+                    ->whereNotNull(DBCol::DELETED_AT);
+
+                break;
+            
+            default:
+            $modifiedOriginalModel = $modifiedOriginalModel
+                ->where(DBCol::ARCHIVE, 0)
+                ->where(DBCol::DRAFT, 0)
+                ->whereNull(DBCol::DELETED_AT);
+                break;
+        }
+
+        // dd(!$auth->isAdmin() || !is_null($auth->{Group::FK}), $modifiedOriginalModel->toSql());
+        $this->setOriginalModel($modifiedOriginalModel);
+    }
+
+    public function index()
+    {
+        try {
+            $this->parseAuth();
+            $data = $this->get();
+        } catch (Exception $e) {
+            throw $e;
+        }
+
+        return $data;
+    }
+
+    public function show($id)
+    {
+        try {
+            $this->parseAuth();
+            $data = $this->find($id);
+        } catch (Exception $e) {
+            throw $e;
+        }
+
+        return $data;
+    }
+
     public function fetchSearch()
     {
         $original_parser = $this->getParser();
@@ -110,6 +183,9 @@ class IssueApi extends BaseApi implements ApiInterface
 
     private function querySearch()
     {
+        $auth = auth()->user();
+        $request = request();
+        $type = $request->has(Data::TYPE) ? $request->{Data::TYPE} : Data::INBOX;
         $baseModel = $this->getOriginalModel();
         $baseTable = $this->getBaseBuilderTable();
         $groupTable = model_table(Group::class);
@@ -121,6 +197,7 @@ class IssueApi extends BaseApi implements ApiInterface
         $sub_status = 'subquery_'.DBCol::STATUS;
 
         return $this->getOriginalModel()
+            ->withTrashed()
             ->join(
                 $groupTable,
                 sprintf("%s.%s", $groupTable, DBCol::ID),
@@ -148,6 +225,64 @@ class IssueApi extends BaseApi implements ApiInterface
                     sprintf("%s.%s", $sub_recipients, DBCol::ID)
                 );
             })
+            ->when(!$auth->isAdmin() || !is_null($auth->{Group::FK}), function ($q) use ($baseTable, $auth) {
+                $q->whereRaw(
+                    sprintf("`%s`.`%s` = %s", $baseTable, DBCol::ISSUED_BY, $auth->{Group::FK})
+                );
+            })
+            ->when(!is_null($type), function ($q) use ($baseTable, $type) {
+                $archive = 0;
+                $draft = 0;
+                $deleted_at_is_null = true;
+
+                switch ($type) {
+                    case Data::ARCHIVE:
+                        $archive = 1;
+                        break;
+
+                    case Data::ARCHIVE:
+                        $draft = 1;
+                        break;
+        
+                    case Data::TRASH:
+                        $deleted_at_is_null = false;
+                        break;
+                }
+
+                $q->whereRaw(
+                    sprintf(
+                        "`%s`.`%s` = %s",
+                        $baseTable,
+                        DBCol::ARCHIVE,
+                        $archive
+                    )
+                )
+                ->whereRaw(
+                    sprintf(
+                        "`%s`.`%s` = %s",
+                        $baseTable,
+                        DBCol::DRAFT,
+                        $draft
+                    )
+                )
+                ->whereRaw(
+                    sprintf(
+                        "`%s`.`%s` %s",
+                        $baseTable,
+                        DBCol::DELETED_AT,
+                        $deleted_at_is_null ? "is null" : "is not null"
+                    )
+                );
+            })
+            // ->when($type === Data::INBOX, function($q) {
+            //     $q->where(DBCol::ARCHIVE, 0)->whereNull(DBCol::DELETED_AT);
+            // })
+            // ->when($type === Data::ARCHIVE, function($q) {
+            //     $q->where(DBCol::ARCHIVE, 1)->whereNull(DBCol::DELETED_AT);
+            // })
+            // ->when($type === Data::TRASH, function($q) {
+            //     $q->where(DBCol::ARCHIVE, 0)->whereNotNull(DBCol::DELETED_AT);
+            // })
             ->select(
             [
                 sprintf("%s.%s", $baseTable, DBCol::ID),
@@ -394,7 +529,9 @@ class IssueApi extends BaseApi implements ApiInterface
 
             $default_status = IssueStatus::default()->select([DBCol::ID])->first();
 
-            $raw[IssueStatus::FK] = $default_status->{DBCol::ID};
+            if (!is_null($default_status)) {
+                $raw[IssueStatus::FK] = $default_status->{DBCol::ID};
+            }
 
             $record = [
                 DBCol::ISSUED_BY => auth()->user()->{Group::FK}
@@ -420,7 +557,6 @@ class IssueApi extends BaseApi implements ApiInterface
         } catch (Exception $exception) {
             DB::rollback();
             Log::error($exception);
-            dd($exception);
             throw new Exception("Error Creating Issue Request", 1);
         }
     }
@@ -458,27 +594,47 @@ class IssueApi extends BaseApi implements ApiInterface
         }
     }
 
+    public function destroy(Model $issue)
+    {
+        try {
+            DB::beginTransaction();
+
+            if ($issue->{DBCol::ARCHIVE}) {
+                $issue->{DBCol::ARCHIVE} = 0;
+                $issue->save();
+            }
+
+            $issue->delete();
+
+            DB::commit();
+
+            return response()->json([
+                "message" => "destroy success",
+                "id" => $issue->{DBCol::ID}
+            ]);
+        } catch (Exception $exception) {
+            DB::rollback();
+
+            Log::error($exception);
+
+            throw new Exception("Error Handle Deleting Complaint Request");
+        }
+    }
+
     public function restore($id)
     {
         try {
             DB::beginTransaction();
             $originalModel = $this->getOriginalModel();
 
-            $issue = $originalModel->withTrashed()
-                ->where(DBCol::ID, $id)
-                ->first();
+            $issue = $originalModel->withTrashed()->findOrFail($id);
 
             if (!is_null($issue->{DBCol::DELETED_AT})) {
                 $issue->restore();
             }
 
-            if ($issue->{DBCol::ARCHIVE}) {
-                $issue->{DBCol::ARCHIVE} = 0;
-                $issue->save();
-            }
-            // $restore = $originalModel->withTrashed()
-            //     ->where(DBCol::ID, $id)
-            //     ->restore();
+            $issue->{DBCol::ARCHIVE} = 0;
+            $issue->save();
 
             DB::commit();
 
@@ -492,10 +648,15 @@ class IssueApi extends BaseApi implements ApiInterface
         }
     }
 
-    public function archive(Model $issue, array $raw)
+    public function archive($id, array $raw)
     {
         try {
             DB::beginTransaction();
+            $issue = Issue::withTrashed()->findOrFail($id);
+
+            if (!is_null($issue->{DBCol::DELETED_AT})) {
+                $issue->restore();
+            }
 
             $issue->{DBCol::ARCHIVE} = 1;
             $issue->save();
@@ -523,11 +684,18 @@ class IssueApi extends BaseApi implements ApiInterface
                 [
                     DBCol::SUBJECT,
                     DBCol::DESCRIPTION,
+                    DBCol::DRAFT,
                     IssueCategory::FK
                     // IssueStatus::FK
                 ]
             )
         );
+
+        if (!isset($record[DBCol::DESCRIPTION])
+            || !strlen($record[DBCol::DESCRIPTION])
+        ) {
+            $record[DBCol::DESCRIPTION] = "<p></p>";
+        }
 
         return $record;
     }
@@ -578,16 +746,19 @@ class IssueApi extends BaseApi implements ApiInterface
 
     private function syncAttachments(Issue $issue, $raw, array $uploaded_file_ids = [])
     {
-        if (isset($raw[Data::ATTACHMENTS])) {
-            $attachment_ids = $raw[Data::ATTACHMENTS];
+        $attachment_ids = isset($raw[Data::ATTACHMENTS]) ? $raw[Data::ATTACHMENTS] : [];
 
-            $result = $issue->attachments()->sync(array_merge(
-                $attachment_ids,
-                $uploaded_file_ids
-            ));
+        $file_ids = array_merge(
+            $attachment_ids,
+            $uploaded_file_ids
+        );
 
-            $this->parseSyncResult($result);
-        }
+        $result = $issue->attachments()->sync(array_merge(
+            $attachment_ids,
+            $uploaded_file_ids
+        ));
+
+        $this->parseSyncResult($result);
 
         return false;
     }

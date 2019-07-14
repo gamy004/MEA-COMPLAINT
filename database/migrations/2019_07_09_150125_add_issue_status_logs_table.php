@@ -18,7 +18,7 @@ class AddIssueStatusLogsTable extends Migration
             $table->timestamp("started_at")->nullable();
             $table->timestamp("ended_at")->nullable();
             $table->bigInteger('issue_id')->unsigned();
-            $table->bigInteger('issue_status_id')->unsigned();
+            $table->bigInteger('issue_status_id')->unsigned()->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -26,10 +26,13 @@ class AddIssueStatusLogsTable extends Migration
         Schema::table('issue_status_logs', function (Blueprint $table) {
             $table->foreign('issue_id')
                 ->references('id')
-                ->on('issues');
+                ->on('issues')
+                ->onDelete('cascade');
+
             $table->foreign('issue_status_id')
                 ->references('id')
-                ->on('issue_statuses');
+                ->on('issue_statuses')
+                ->onDelete('set null');
         });
     }
 

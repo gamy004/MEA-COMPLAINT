@@ -83,4 +83,15 @@ class GroupController extends BaseApiController
     {
         return $this->api->destroy($group);
     }
+
+    /**
+     * restore the specified resource from storage.
+     *
+     * @param  \App\Group  $group
+     * @return \Illuminate\Http\Response
+     */
+    public function restore($group)
+    {
+        return $this->api->restore($group);
+    }
 }

@@ -37,6 +37,7 @@ class DBCol
     const REFERENCED_TO = 'referenced_to';
     const RECIPIENT_ID = 'recipient_id';
     const ARCHIVE = 'archive';
+    const DRAFT = 'draft';
     /**
      * ISSUE_CATEGORY
      */

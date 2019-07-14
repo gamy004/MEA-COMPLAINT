@@ -234,6 +234,14 @@ export const paginatable = {
             }, this.$_paginatable_module);
         },
 
+        $_paginatable_getCurrentPaginatedList(filters = null) {
+            return this.$_vuexable_getPaginatedValues(
+                this.$_paginatable_currentPage,
+                this.$_paginatable_module,
+                filters
+            );
+        },
+
         $_paginatable_selectAll(value) {
             this.$_paginatable_currentPaginatedList.map(({
                 id = null
@@ -257,7 +265,7 @@ export const paginatable = {
         $_paginatable_updatedSelected() {
             this.$_paginatable_currentPaginatedList.map(({
                 id = null
-            }) => {
+            } = {}) => {
                 if (id) {
                     const stateSeletected = this.$_paginatable_selected.hasOwnProperty(id) ?
                         this.$_paginatable_selected[id] : false;

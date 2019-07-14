@@ -40,9 +40,9 @@
     <warning-dialog
       :dialogable-visible.sync="warning"
       @click:accept.prevent.stop="remove"
-      accept-text="delete"
+      :accept-text="$t('general.delete')"
     >
-      <template v-slot:header>Delete {{ item.text }}?</template>
+      <template v-slot:header>{{ $t('general.delete') }} {{ item.text }}?</template>
 
       <template v-slot:message>{{ warningMessage }}</template>
     </warning-dialog>
@@ -85,7 +85,9 @@ export default {
 
   computed: {
     warningMessage() {
-      return `${this.item.text} will be permanently deleted. All group's users will lost their group.`;
+      return this.$t("userGroup.index.warningGroupItem.term", {
+        item: this.item.text
+      });
     }
   },
 
@@ -102,7 +104,7 @@ export default {
       try {
         response = await this.$_managable_submitForm(this.form, ["id", "name"]);
       } catch (error) {
-        this.message = "Update fail";
+        this.message = this.$t("alertMessages.update_error");
         this.messageClass = "error--text";
         throw error;
       } finally {
@@ -113,7 +115,7 @@ export default {
       }
 
       this.editing = false;
-      this.message = "Update success";
+      this.message = this.$t("alertMessages.update_success");
       this.messageClass = "success--text";
 
       this.$emit("change", this.form.name);
@@ -124,14 +126,18 @@ export default {
 
       this.removing = true;
 
+      const data = this.form.getData(["id"]);
+
       try {
+        this.$emit("deleted", data);
+
         response = await this.$_vuexable_dispatch(
           vuex.actions.DELETE,
           this.managableModule,
-          this.form.getData(["id"])
+          data
         );
       } catch (error) {
-        this.message = "Delete fail";
+        this.message = this.$t("alertMessages.delete_error");
         this.messageClass = "error--text";
         throw error;
       } finally {
@@ -140,6 +146,7 @@ export default {
           this.updated = false;
         }, 700);
       }
+
       this.$emit("change", null);
       this.removing = false;
     }

@@ -196,6 +196,7 @@ class UserApi extends BaseApi implements ApiInterface
         } catch (Exception $exception) {
             DB::rollback();
             Log::error($exception);
+            dd($exception);
             throw new Exception("Error Updating User Request", 1);
         }
     }
@@ -280,15 +281,22 @@ class UserApi extends BaseApi implements ApiInterface
         $record[DBCol::GROUP_ID] = isset($raw[DBCol::GROUP_ID])
             ? $raw[DBCol::GROUP_ID]
             : null;
+            
         $record[DBCol::SUB_GROUP_ID] = isset($raw[DBCol::SUB_GROUP_ID])
             ? $raw[DBCol::SUB_GROUP_ID]
             : null;
 
-        if (isset($raw[Data::GROUP])) {
+        if (is_null($record[DBCol::GROUP_ID]) && isset($raw[Data::GROUP])) {
             $group = Group::create([
                 DBCol::NAME => $raw[Data::GROUP]
             ]);
+
             $record[DBCol::GROUP_ID] = $group->{DBCol::ID};
+        }
+
+        if (isset($record[DBCol::GROUP_ID])) {
+            $group = Group::findOrFail($record[DBCol::GROUP_ID]);
+            
             $record = $this->parseSubGroup($group, $record, $raw);
         }
 
@@ -297,7 +305,7 @@ class UserApi extends BaseApi implements ApiInterface
 
     private function parseSubGroup(Group $parentGroup, $record, array $raw = [])
     {
-        if (isset($raw[Data::SUB_GROUP])) {
+        if (is_null($record[DBCol::SUB_GROUP_ID]) && isset($raw[Data::SUB_GROUP])) {
             $subGroup = $parentGroup->subGroups()->create([
                 DBCol::NAME => $raw[Data::SUB_GROUP]
             ]);

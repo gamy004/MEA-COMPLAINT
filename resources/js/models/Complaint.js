@@ -22,6 +22,7 @@ class Complaint extends BaseVuexModel {
 
     static async [actions.ISSUE.FETCH](props = {}) {
         let response;
+
         try {
             response = await api.get('api:issues.index', {
                 includes: [
@@ -175,6 +176,20 @@ class Complaint extends BaseVuexModel {
 
         try {
             response = await api.delete('api:issues.destroy', {
+                ...data
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
+    static async [actions.ISSUE.FORCE_DELETE](data) {
+        let response;
+
+        try {
+            response = await api.delete('api:issues.force-delete', {
                 ...data
             });
         } catch (error) {
@@ -360,7 +375,7 @@ class Complaint extends BaseVuexModel {
     }
 
     get currentStatus() {
-        let currentStatus = '';
+        let currentStatus = "";
 
         const {
             vuex,

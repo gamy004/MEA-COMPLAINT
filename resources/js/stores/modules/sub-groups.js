@@ -58,7 +58,25 @@ const subGroupStore = {
             } catch (error) {
                 throw error;
             }
-        }
+        },
+
+        async [vuex.actions.SUB_GROUP.RESTORE](context, {
+            id: group
+        }) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'SUB_GROUP',
+                    action: 'RESTORE',
+                    params: {
+                        routeParam: {
+                            group
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
         // async [vuex.actions.ISSUE.FETCH]({
         //     state,
         //     commit

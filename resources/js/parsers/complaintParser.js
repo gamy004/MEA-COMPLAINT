@@ -192,7 +192,6 @@ function parseDelete(context, {
         rootCommit,
         vuex
     } = context;
-
     rootCommit(
         vuex.mutations.DELETE,
         vuex.modules.ISSUE, {
@@ -234,6 +233,7 @@ export default {
     [actions.ISSUE.UPDATE]: parseEdit,
     [actions.ISSUE.STORE]: parseStore,
     [actions.ISSUE.DELETE]: parseDelete,
+    [actions.ISSUE.FORCE_DELETE]: parseDelete,
     [actions.ISSUE.ARCHIVE]: parseDelete,
     [actions.ISSUE.RESTORE]: parseStore
 }

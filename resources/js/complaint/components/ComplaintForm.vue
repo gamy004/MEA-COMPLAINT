@@ -5,6 +5,10 @@
         <v-toolbar card dense color="blue-grey darken-4" dark class="complaint-form__head-toolbar">
           <v-toolbar-title v-t="'complaint.index.form.title'"></v-toolbar-title>
 
+          <transition name="fade-x-transition">
+            <span v-if="savingDraft" class="ml-1 body-1">{{ $t('general.savingDraft') }}</span>
+          </transition>
+
           <v-spacer></v-spacer>
 
           <v-tooltip v-if="!isMobile && fullScreenable" bottom>
@@ -28,7 +32,7 @@
                 @click.prevent.stop="closeComplaintForm"
               >close</v-icon>
             </template>
-            <span v-t="'general.close'"></span>
+            <span v-t="'general.saveAndClose'"></span>
           </v-tooltip>
         </v-toolbar>
 
@@ -83,7 +87,7 @@
             single-line
             full-width
             hide-details
-            @change="onChange"
+            @input="onChange"
           ></v-text-field>
 
           <v-divider></v-divider>
@@ -95,7 +99,7 @@
             @editor:drop="dropFiles"
             @editor:dragover="dragover"
             @editor:dragleave="dragleave"
-            @change="onChange"
+            @editor:input="onChange"
           >
             <!-- file list here -->
             <file-list
@@ -126,7 +130,7 @@
                       @click.prevent.stop="onSubmit"
                       :loading="form.isSubmitting"
                       :disabled="uploadable_uploading"
-                    >{{ $t(`general.${managableEdit ? "update" : "send"}`) }}</v-btn>
+                    >{{ submitBtnText }}</v-btn>
 
                     <v-tooltip top>
                       <template v-slot:activator="{ on }">
@@ -164,11 +168,13 @@
 
                     <v-spacer></v-spacer>
 
-                    <v-tooltip top v-if="!managableEdit">
+                    <v-tooltip top v-if="form.id && form.draft">
                       <template v-slot:activator="{ on }">
-                        <v-icon v-on="on" class="clickable">delete</v-icon>
+                        <v-btn icon>
+                          <v-icon v-on="on" class="clickable">delete</v-icon>
+                        </v-btn>
                       </template>
-                      <span v-t="'general.discard'"></span>
+                      <span v-t="'general.discardDraft'"></span>
                     </v-tooltip>
                   </template>
                 </custom-toolbar>
@@ -254,6 +260,7 @@ export default {
       form: vuex.models.FORM.make({
         subject: "",
         description: "",
+        draft: 0,
         issue_category_id: null,
         recipients: [],
         uploaded_files: []
@@ -261,11 +268,16 @@ export default {
       uploadable_uploaderRef: "complaintForm__uploadable_uploader",
       customToolbarItems: [],
       showFormatting: false,
+      savingDraft: false,
       fullScreen: this.isFullScreen,
       warning: false,
       warningSubmit: false,
       alertable_messages: {
         undo: this.$t("alertMessages.undo"),
+        restore_error: {
+          text: this.$t("alertMessages.undo_error"),
+          type: "error"
+        },
         error: this.$t("alertMessages.complaintForm.submit_error"),
         add_success: {
           text: this.$t("alertMessages.complaintForm.create_success"),
@@ -286,6 +298,10 @@ export default {
               }
             }
           ]
+        },
+        delete_file_error: {
+          text: this.$t("alertMessages.file.delete_error"),
+          type: "error"
         },
         delete_uploadfile_success: {
           text: this.$t("alertMessages.uploadFile.delete_success"),
@@ -412,10 +428,22 @@ export default {
       return {
         "is-fullscreen": this.fullScreen || this.isMobile
       };
+    },
+
+    submitBtnText() {
+      let action = "send";
+
+      if (this.managableEdit && !this.form.draft) {
+        action = "update";
+      }
+
+      return this.$t(`general.${action}`);
     }
   },
 
   methods: {
+    ...vuex.mapWaitingActions(vuex.modules.ISSUE, [vuex.actions.ISSUE.FETCH]),
+
     ...vuex.mapWaitingActions(vuex.modules.GROUP, {
       [vuex.actions.GROUP.FETCH]: "fetching form recipients"
     }),
@@ -439,15 +467,28 @@ export default {
       return this;
     },
 
-    closeComplaintForm() {
-      if (!this.form.id && this.form.isChanged) {
-        this.warning = true;
+    async closeComplaintForm() {
+      if ((!this.form.id && this.form.isChanged) || this.form.draft) {
+        await this.saveDraft();
 
-        return;
-      } else {
-        this.dialog = false;
-        this.form = null;
+        const { type = null } = this.$route.query;
+
+        if (type !== "draft") {
+          await this[vuex.actions.ISSUE.FETCH]();
+        }
       }
+
+      this.dialog = false;
+      this.form = null;
+
+      // if (!this.form.id && this.form.isChanged) {
+      //   this.warning = true;
+
+      //   return;
+      // } else {
+      //   this.dialog = false;
+      //   this.form = null;
+      // }
     },
 
     onDiscard() {
@@ -463,13 +504,11 @@ export default {
 
     async fetchRecipient() {
       let response,
-        filters = {},
         select = ["groups:id,name"],
         sort = ["name"];
 
       try {
         response = await this[vuex.actions.GROUP.FETCH]({
-          filters,
           select,
           sort
         });
@@ -480,7 +519,42 @@ export default {
       this.fetchCategory();
     },
 
-    onChange() {},
+    onChange() {
+      window.onbeforeunload = () => {
+        return "to remind that you made some change";
+      };
+    },
+
+    clearOnChange() {
+      window.onbeforeunload = null;
+    },
+
+    async saveDraft() {
+      let response;
+      if (this.form) {
+        if (this.form.id && !this.form.draft) return;
+
+        this.savingDraft = true;
+
+        try {
+          this.form.set("draft", 1);
+
+          ({ response } = await this.submitComplaintForm());
+        } catch (error) {
+          throw error;
+        } finally {
+          this.savingDraft = false;
+        }
+
+        const { issues: issue } = response.data;
+
+        this.$_vuexable_setEdit(issue.id, vuex.modules.ISSUE);
+
+        this.clearOnChange();
+
+        return response;
+      }
+    },
 
     async fetchCategory() {
       let response,
@@ -497,9 +571,22 @@ export default {
       } catch (error) {}
     },
 
-    onSubmit() {
+    async onSubmit() {
       if (this.validateSubjectAndDescription()) {
-        return this.submitComplaintForm();
+        this.form.set("draft", 0);
+
+        await this.submitComplaintForm();
+
+        this.$_alertable_alert(`${this.$_managable_action}_success`);
+
+        this.$emit("updated");
+
+        this.clearOnChange();
+
+        setTimeout(() => {
+          this.dialog = false;
+          this.resetComplaintForm();
+        }, 1000);
       }
     },
 
@@ -517,6 +604,7 @@ export default {
           "id",
           "subject",
           "description",
+          "draft",
           "issue_category_id",
           "recipients",
           "attachments",
@@ -528,13 +616,9 @@ export default {
         throw error;
       }
 
-      this.$_alertable_alert(`${this.$_managable_action}_success`);
+      this.$_uploadable_reset();
 
-      setTimeout(() => {
-        this.dialog = false;
-      }, 1000);
-
-      return this.resetComplaintForm();
+      return v;
     },
 
     validateSubjectAndDescription() {
@@ -551,8 +635,14 @@ export default {
     },
 
     resetComplaintForm() {
-      this.form.reset();
-      this.$_uploadable_reset();
+      this.form = vuex.models.FORM.make({
+        subject: "",
+        description: "",
+        draft: 0,
+        issue_category_id: null,
+        recipients: [],
+        uploaded_files: []
+      });
     },
 
     async onFileRemoved(file, index, files) {
@@ -581,11 +671,10 @@ export default {
             "includes"
           ]);
 
-          console.log(file);
-
           this.$_alertable_alert("delete_file_success", { file });
         } catch (error) {
-          console.log(error);
+          this.$_alertable_alert("delete_file_error");
+          throw error;
         }
       } else {
         const uploadedFileIndex = _.findIndex(this.uploadable_uploadedFiles, [
@@ -602,7 +691,12 @@ export default {
     async onFileRestore(file) {
       try {
         await this[vuex.actions.FILE.RESTORE](file);
+      } catch (error) {
+        this.$_alertable_alert("restore_error");
+        throw error;
+      }
 
+      try {
         const { form } = this;
 
         const attachments = [...form.attachments, file.id];
@@ -619,7 +713,8 @@ export default {
           "includes"
         ]);
       } catch (error) {
-        console.log(error);
+        this.$_alertable_alert("error");
+        throw error;
       }
     }
   }

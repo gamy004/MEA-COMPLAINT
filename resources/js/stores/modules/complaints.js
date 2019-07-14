@@ -16,12 +16,17 @@ const userStore = {
 
     actions: {
         async [vuex.actions.ISSUE.FETCH](context, params = {}) {
+            let {
+                type = null
+            } = context.state.base;
+
             try {
                 return await context.dispatch(vuex.actions.REQUEST, {
                     model: 'ISSUE',
                     action: 'FETCH',
                     params: {
                         pagination: context.state.base.pagination,
+                        type: type ? type : "inbox",
                         ...params
                     }
                 });
@@ -34,37 +39,37 @@ const userStore = {
             let response;
 
             let {
-                filter_groups = [], global_filters = []
+                filter_groups = [], type = null
             } = context.state.base;
 
-            let merged_filter_groups = [];
+            // let merged_filter_groups = [];
 
-            if (!filter_groups.length && global_filters.length) {
-                console.log(1);
+            // if (!filter_groups.length && global_filters.length) {
+            //     console.log(1);
 
-                merged_filter_groups = [{
-                    filters: [...global_filters]
-                }];
-            }
+            //     merged_filter_groups = [{
+            //         filters: [...global_filters]
+            //     }];
+            // }
 
-            if (filter_groups.length && global_filters.length) {
-                console.log(2);
+            // if (filter_groups.length && global_filters.length) {
+            //     console.log(2);
 
-                merged_filter_groups = filter_groups.map(({
-                    filters = [],
-                    ...props
-                }) => {
-                    return {
-                        ...props,
-                        filters: [
-                            ...filters,
-                            ...global_filters
-                        ]
-                    };
-                });
-            }
+            //     merged_filter_groups = filter_groups.map(({
+            //         filters = [],
+            //         ...props
+            //     }) => {
+            //         return {
+            //             ...props,
+            //             filters: [
+            //                 ...filters,
+            //                 ...global_filters
+            //             ]
+            //         };
+            //     });
+            // }
 
-            console.log(merged_filter_groups);
+            // console.log(merged_filter_groups);
 
             try {
                 response = await context.dispatch(vuex.actions.REQUEST, {
@@ -73,6 +78,7 @@ const userStore = {
                     params: {
                         pagination: context.state.base.pagination,
                         filter_groups,
+                        type: type ? type : "inbox",
                         ...params
                     }
                 });
@@ -169,6 +175,24 @@ const userStore = {
                 return await context.dispatch(vuex.actions.REQUEST, {
                     model: 'ISSUE',
                     action: 'DELETE',
+                    params: {
+                        routeParam: {
+                            issue
+                        }
+                    }
+                });
+            } catch (error) {
+                throw error;
+            }
+        },
+
+        async [vuex.actions.ISSUE.FORCE_DELETE](context, {
+            id: issue
+        }) {
+            try {
+                return await context.dispatch(vuex.actions.REQUEST, {
+                    model: 'ISSUE',
+                    action: 'FORCE_DELETE',
                     params: {
                         routeParam: {
                             issue

@@ -102,7 +102,6 @@
             @editor:drop="dropFiles"
             @editor:dragover="dragover"
             @editor:dragleave="dragleave"
-            @change="onChange"
           >
             <!-- file list here -->
             <file-list
@@ -243,10 +242,13 @@ export default {
       alertable_messages: {
         error: this.$t("alertMessages.complaintNote.submit_error"),
 
+        restore_error: {
+          text: this.$t("alertMessages.undo_error"),
+          type: "error"
+        },
+
         delete_file_success: {
           text: this.$t("alertMessages.file.delete_success"),
-          type: "success",
-          color: "white",
           actions: [
             {
               text: this.$t("general.undo"),
@@ -256,6 +258,12 @@ export default {
             }
           ]
         },
+
+        delete_file_error: {
+          text: this.$t("alertMessages.file.delete_error"),
+          type: "error"
+        },
+
         delete_uploadfile_success: {
           text: this.$t("alertMessages.uploadFile.delete_success"),
           type: "success"
@@ -292,7 +300,7 @@ export default {
   computed: {
     formDescription: {
       get(v) {
-        return this.form.description;
+        return this.form.description ? this.form.description : "";
       },
 
       set(v) {
@@ -331,8 +339,6 @@ export default {
   },
 
   methods: {
-    onChange() {},
-
     async onEdit() {
       this.form = vuex.models.FORM.make({
         ...this.$_issue_note_item_mixin_noteItem.data,
@@ -354,9 +360,11 @@ export default {
       this.$_issue_note_item_mixin_setEdit(null);
     },
 
-    onSubmit() {
+    async onSubmit() {
       if (this.canSubmitNote) {
-        return this.submitComplaintNote();
+        await this.submitComplaintNote();
+
+        this.$emit("updated");
       }
     },
 
@@ -425,7 +433,8 @@ export default {
 
           this.$_alertable_alert("delete_file_success", { file });
         } catch (error) {
-          console.log(error);
+          this.$_alertable_alert("delete_file_error");
+          throw error;
         }
       } else {
         const uploadedFileIndex = _.findIndex(this.uploadable_uploadedFiles, [
@@ -441,8 +450,13 @@ export default {
 
     async onFileRestore(file) {
       try {
-        await this[vuex.actions.FILE.RESTORE](file);
+        await this.$_issue_note_item_mixin_restoreFile(file);
+      } catch (error) {
+        this.$_alertable_alert("restore_error");
+        throw error;
+      }
 
+      try {
         const { form } = this;
 
         const attachments = [...form.attachments, file.id];
@@ -462,8 +476,11 @@ export default {
           "includes"
         ]);
       } catch (error) {
-        console.log(error);
+        this.$_alertable_alert("error");
+        throw error;
       }
+
+      this.$_alertable_alert("action_done");
     }
   }
 };

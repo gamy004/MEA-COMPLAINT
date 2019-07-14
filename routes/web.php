@@ -59,6 +59,7 @@ Route::group([
             Route::group(['as' => 'issues.', 'prefix' => 'issues/{issue}'], function () {
                 Route::post('/restore', 'IssueController@restore')->name('restore');
                 Route::put('/archive', 'IssueController@archive')->name('archive');
+                Route::delete('/force-delete', 'IssueController@forceDelete')->name('force-delete');
             });
 
             /**
@@ -88,6 +89,13 @@ Route::group([
             Route::group(['as' => 'users.', 'prefix' => 'users/{user}'], function () {
                 Route::put('/update-config', 'UserController@updateConfig')->name('update-config');
                 Route::post('/restore', 'UserController@restore')->name('restore');
+            });
+
+            /**
+             * Custom route IssueStatusController
+             */
+            Route::group(['as' => 'groups.', 'prefix' => 'groups/{group}'], function () {
+                Route::post('/restore', 'GroupController@restore')->name('restore');
             });
 
             Route::resources([

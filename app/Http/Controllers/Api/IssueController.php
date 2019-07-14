@@ -49,9 +49,9 @@ class IssueController extends BaseApiController
      * @param  \App\Issue  $issue
      * @return \Illuminate\Http\Response
      */
-    public function show(Issue $issue)
+    public function show($id)
     {
-        return $this->api->find($issue->{DBCol::ID});
+        return $this->api->show($id);
     }
 
     /**
@@ -92,6 +92,17 @@ class IssueController extends BaseApiController
     }
 
     /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Issue  $issue
+     * @return \Illuminate\Http\Response
+     */
+    public function forceDelete($issue)
+    {
+        return $this->api->forceDelete($issue);
+    }
+
+    /**
      * Restore the specified resource from storage.
      *
      * @param  \App\Issue  $issue
@@ -108,7 +119,7 @@ class IssueController extends BaseApiController
      * @param  \App\Issue  $issue
      * @return \Illuminate\Http\Response
      */
-    public function archive(Request $request, Issue $issue)
+    public function archive(Request $request, $issue)
     {
         return $this->api->archive($issue, $request->all());
     }

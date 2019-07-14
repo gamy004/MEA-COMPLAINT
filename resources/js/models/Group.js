@@ -14,12 +14,16 @@ class Group extends BaseVuexModel {
         this.$store = modules.GROUP;
     }
 
-    static async [actions.GROUP.FETCH](props) {
+    static async [actions.GROUP.FETCH]({
+        filters = {},
+        ...props
+    } = {}) {
         let response;
 
         try {
             response = await api.get('api:groups.index', {
                 filters: {
+                    ...filters,
                     parent_id: null
                 },
                 ...props
@@ -50,6 +54,20 @@ class Group extends BaseVuexModel {
 
         try {
             response = await api.delete('api:groups.destroy', {
+                ...data
+            });
+        } catch (error) {
+            throw error;
+        }
+
+        return response;
+    }
+
+    static async [actions.GROUP.RESTORE](data) {
+        let response;
+
+        try {
+            response = await api.post("api:groups.restore", {
                 ...data
             });
         } catch (error) {

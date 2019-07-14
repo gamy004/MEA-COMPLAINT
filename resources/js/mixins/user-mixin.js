@@ -18,6 +18,8 @@ export const userMixin = {
             $_user_mixin_fetchingRole: "userMixin fetch roles action",
             $_user_mixin_fetchingGroup: "userMixin fetch groups action",
             $_user_mixin_fetchingSubGroup: "userMixin fetch sub groups action",
+            $_user_mixin_restoringGroup: "userMixin restore group action",
+            $_user_mixin_restoringSubGroup: "userMixin restore subgroup action",
         }),
 
         $_user_mixin_statuses() {
@@ -138,14 +140,22 @@ export const userMixin = {
             $_user_mixin_fetchGroup: {
                 action: vuex.actions.GROUP.FETCH,
                 loader: "userMixin fetch groups action"
-            }
+            },
+            $_user_mixin_restoreGroup: {
+                action: vuex.actions.GROUP.RESTORE,
+                loader: "userMixin restore group action"
+            },
         }),
 
         ...vuex.mapWaitingActions(vuex.modules.SUB_GROUP, {
             $_user_mixin_fetchSubGroup: {
                 action: vuex.actions.SUB_GROUP.FETCH,
                 loader: "userMixin fetch sub groups action"
-            }
+            },
+            $_user_mixin_restoreSubGroup: {
+                action: vuex.actions.SUB_GROUP.RESTORE,
+                loader: "userMixin restore subgroup action"
+            },
         }),
 
         $_user_mixin_findRole(id) {
