@@ -147,8 +147,6 @@ function parseStore(context, {
     ](issue.id) || null;
 
     if (logStatuses.length) {
-        console.log("Logs statuses detected: ", logStatuses);
-
         parsers.ISSUE_STATUS[vuex.actions.ISSUE_STATUS.FETCH](context, {
             issue_statuses: logStatuses,
             strategy: 'merge'

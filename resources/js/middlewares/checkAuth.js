@@ -21,7 +21,7 @@ async function checkAuth(to, from, next) {
         });
     }
 
-    if (authUser) {
+    if (authUser && authUser.id) {
         next();
     } else {
         next({

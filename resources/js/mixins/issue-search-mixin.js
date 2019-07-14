@@ -738,8 +738,6 @@ export const issueSearchMixin = {
         } = this;
 
         if ($_issue_search_mixin_stateSearchKeyword === undefined) {
-            console.log("IssueSearchMixin: add state 'searchKeyword'");
-
             this.$_vuexable_setState({
                 key: "searchKeyword",
                 value: ""
@@ -747,8 +745,6 @@ export const issueSearchMixin = {
         }
 
         if ($_issue_search_mixin_stateBackupFormdata === undefined) {
-            console.log("IssueSearchMixin: add state 'backupFormdata'");
-
             this.$_vuexable_setState({
                 key: "backupFormdata",
                 value: {}

@@ -42,7 +42,6 @@ function parseFetch(context, {
 function parseStore(context, {
     groups: group
 } = {}) {
-    console.log('222');
     const {
         vuex,
         rootGetters

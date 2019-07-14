@@ -150,8 +150,6 @@ export default {
     const { selectAll } = this;
 
     if (selectAll === undefined) {
-      console.log("ComplaintSelectAllSearch: add state 'selectAll'");
-
       this.$_vuexable_setState(
         {
           key: "selectAll",

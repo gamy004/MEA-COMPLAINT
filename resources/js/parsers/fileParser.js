@@ -47,8 +47,6 @@ function parseStore(context, {
 
     const files = [file];
 
-    console.log(files);
-
     parseFetch(context, {
         files,
         total: rootGetters[

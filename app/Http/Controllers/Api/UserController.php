@@ -18,7 +18,11 @@ class UserController extends BaseApiController
      */
     public function auth(Request $request)
     {
-        $user = $request->user()->load('roles');
+        $user = $request->user();
+
+        if (!is_null($user)) {
+            $user->load('roles');
+        }
 
         return compact('user');
     }

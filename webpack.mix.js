@@ -47,8 +47,8 @@ mix.disableNotifications()
         },
         output: {
             publicPath: '/',
-            filename: mix.config.production ? '[name].[chunkhash].js' : '[name].js',
-            chunkFilename: mix.config.production ? 'js/chunks/[name].[chunkhash].js' : 'js/chunks/[name].js',
+            filename: mix.config.production ? '[name].js' : '[name].js',
+            chunkFilename: mix.config.production ? 'js/chunks/[name].js' : 'js/chunks/[name].js',
         },
         module: {
             rules: [
@@ -96,7 +96,7 @@ mix.disableNotifications()
     .js('resources/js/app.js', 'public/js/app.js')
     // .sass('resources/sass/auth.scss', 'public/css/auth.css')
     .sass('resources/sass/app.scss', 'public/css/app.css')
-    .sourceMaps()
+    // .sourceMaps()
     .browserSync({
         open: false,
         https: false,
