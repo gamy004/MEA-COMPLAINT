@@ -1,6 +1,7 @@
 import BaseVuexModel from './BaseVuexModel';
 import {
-    actions
+    actions,
+    modules
 } from '../constants';
 
 class SubGroup extends BaseVuexModel {
@@ -9,6 +10,8 @@ class SubGroup extends BaseVuexModel {
             name: '',
             ...data
         });
+
+        this.$store = modules.SUB_GROUP;
     }
 
     static async [actions.SUB_GROUP.FETCH]({

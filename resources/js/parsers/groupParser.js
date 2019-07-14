@@ -54,9 +54,10 @@ function parseEdit(context, {
         `${vuex.modules.GROUP}/${vuex.getters.BY_KEY}`
     ](group.id) || {};
 
-    const updatedGroup = _.merge({
-        ..._.cloneDeep(oldGroup.data)
-    }, group);
+    const updatedGroup = {
+        ..._.cloneDeep(oldGroup.data),
+        ...group
+    };
 
     rootCommit(
         vuex.mutations.UPDATE,

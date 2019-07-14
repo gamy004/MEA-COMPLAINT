@@ -94,6 +94,7 @@ class IssueStatusApi extends BaseApi implements ApiInterface
     {
         if (isset($raw[Data::CONFIGS])) {
             $configs = $raw[Data::CONFIGS];
+            $config_ids = [];
 
             foreach ($configs as $config_key => $config) {
                 $raw_record = Arr::only($config, [DBCol::DURATION, DBCol::UNIT, DBCol::COLOR]);
@@ -104,6 +105,18 @@ class IssueStatusApi extends BaseApi implements ApiInterface
                     $config = IssueStatusConfig::findOrFail($config[DBCol::ID]);
                     $config->update($raw_record);
                 }
+
+                array_push($config_ids, $config->{DBCol::ID});
+            }
+
+            $deleted_configs = $issue_status->configs()->whereNotIn(DBCol::ID, $config_ids);
+
+            if ($deleted_configs->exists()) {
+                $deleted_configs->each(
+                    function($c) {
+                        $c->delete();
+                    }
+                );
             }
         }
 

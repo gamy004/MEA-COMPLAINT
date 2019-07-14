@@ -81,9 +81,10 @@ function parseEdit(context, {
         `${vuex.modules.ISSUE_STATUS}/${vuex.getters.BY_KEY}`
     ](issue_status.id) || {};
 
-    const updatedStatus = _.merge({
-        ..._.cloneDeep(oldStatus.data)
-    }, issue_status);
+    const updatedStatus = {
+        ..._.cloneDeep(oldStatus.data),
+        ...issue_status
+    };
 
     rootCommit(
         vuex.mutations.UPDATE,

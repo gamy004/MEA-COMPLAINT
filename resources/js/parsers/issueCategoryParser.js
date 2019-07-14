@@ -80,9 +80,10 @@ function parseEdit(context, {
         `${vuex.modules.ISSUE_CATEGORY}/${vuex.getters.BY_KEY}`
     ](issue_category.id) || {};
 
-    const updatedCategory = _.merge({
-        ..._.cloneDeep(oldCategory.data)
-    }, issue_category);
+    const updatedCategory = {
+        ..._.cloneDeep(oldCategory.data),
+        ...issue_category
+    };
 
     rootCommit(
         vuex.mutations.UPDATE,

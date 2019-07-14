@@ -125,13 +125,15 @@ class IssueApi extends BaseApi implements ApiInterface
                 $groupTable,
                 sprintf("%s.%s", $groupTable, DBCol::ID),
                 "=",
-                sprintf("%s.%s", $baseTable, DBCol::ISSUED_BY)
+                sprintf("%s.%s", $baseTable, DBCol::ISSUED_BY),
+                "left"
             )
             ->join(
                 $issueStatusTable,
                 sprintf("%s.%s", $issueStatusTable, DBCol::ID),
                 "=",
-                sprintf("%s.%s", $baseTable, IssueStatus::FK)
+                sprintf("%s.%s", $baseTable, IssueStatus::FK),
+                "left"
             )
             ->join(
                 $issueCategoryTable,

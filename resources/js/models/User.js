@@ -1,6 +1,7 @@
 import BaseModel from './BaseModel';
 import {
-    actions
+    actions,
+    modules
 } from '../constants';
 
 // export const TOKEN_TYPE = 'token_type';
@@ -22,7 +23,7 @@ class User extends BaseModel {
             inbox_settings: null,
             ...data
         });
-
+        this.$store = modules.USER;
         this.$initRoleMapping();
     }
 

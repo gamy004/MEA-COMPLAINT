@@ -1,6 +1,7 @@
 import BaseVuexModel from './BaseVuexModel';
 import {
-    actions
+    actions,
+    modules
 } from '../constants';
 
 class Group extends BaseVuexModel {
@@ -9,6 +10,8 @@ class Group extends BaseVuexModel {
             name: '',
             ...data
         });
+
+        this.$store = modules.GROUP;
     }
 
     static async [actions.GROUP.FETCH](props) {

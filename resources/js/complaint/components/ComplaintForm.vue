@@ -164,7 +164,7 @@
 
                     <v-spacer></v-spacer>
 
-                    <v-tooltip top>
+                    <v-tooltip top v-if="!managableEdit">
                       <template v-slot:activator="{ on }">
                         <v-icon v-on="on" class="clickable">delete</v-icon>
                       </template>

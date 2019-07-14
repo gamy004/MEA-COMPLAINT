@@ -108,9 +108,10 @@ function parseEdit(context, {
         `${vuex.modules.ISSUE}/${vuex.getters.BY_KEY}`
     ](issue.id) || {};
 
-    const updatedCompaint = _.merge({
-        ..._.cloneDeep(oldComplaint.data)
-    }, issue);
+    const updatedCompaint = {
+        ..._.cloneDeep(oldComplaint.data),
+        ...issue
+    };
 
     rootCommit(
         vuex.mutations.UPDATE,

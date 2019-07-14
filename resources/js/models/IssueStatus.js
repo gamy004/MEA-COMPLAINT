@@ -1,6 +1,7 @@
 import BaseVuexModel from "./BaseVuexModel";
 import {
-    actions
+    actions,
+    modules
 } from "../constants";
 
 class Status extends BaseVuexModel {
@@ -9,6 +10,8 @@ class Status extends BaseVuexModel {
             status: "",
             ...data
         });
+
+        this.$store = modules.ISSUE_STATUS;
 
         this.groupedConfigs = [];
 

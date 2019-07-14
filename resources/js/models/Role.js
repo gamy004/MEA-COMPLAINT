@@ -1,6 +1,7 @@
 import BaseVuexModel from './BaseVuexModel';
 import {
-    actions
+    actions,
+    modules
 } from '../constants';
 
 class Role extends BaseVuexModel {
@@ -9,6 +10,8 @@ class Role extends BaseVuexModel {
             name: '',
             ...data
         });
+
+        this.$store = modules.ROLE;
     }
 
     static async [actions.ROLE.FETCH](props) {

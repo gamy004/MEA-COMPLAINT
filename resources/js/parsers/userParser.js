@@ -112,9 +112,10 @@ function parseEdit(context, {
         `${vuex.modules.USER}/${vuex.getters.BY_KEY}`
     ](user.id) || {};
 
-    const updatedUser = _.merge({
-        ..._.cloneDeep(oldUser.data)
-    }, user);
+    const updatedUser = {
+        ..._.cloneDeep(oldUser.data),
+        ...user
+    };
 
     parsers.ROLE[vuex.actions.ROLE.FETCH](context, {
         roles,
@@ -149,9 +150,10 @@ function parseUpdateConfig(context, {
     } = rootState;
 
     if (auth.id === user.id) {
-        const updatedAuth = _.merge({
-            ..._.cloneDeep(auth.data)
-        }, user);
+        const updatedAuth = {
+            ..._.cloneDeep(auth.data),
+            ...user
+        };
 
         rootCommit(vuex.mutations.SET_STATE, "", {
             key: 'auth',

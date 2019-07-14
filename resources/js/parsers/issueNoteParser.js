@@ -127,9 +127,10 @@ function parseEdit(context, {
         `${vuex.modules.ISSUE_NOTE}/${vuex.getters.BY_KEY}`
     ](issue_note.id) || {};
 
-    const updatedNote = _.merge({
-        ..._.cloneDeep(oldNote.data)
-    }, issue_note);
+    const updatedNote = {
+        ..._.cloneDeep(oldNote.data),
+        ...issue_note
+    };
 
     rootCommit(
         vuex.mutations.UPDATE,

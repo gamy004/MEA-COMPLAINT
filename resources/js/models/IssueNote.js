@@ -1,6 +1,7 @@
 import BaseVuexModel from './BaseVuexModel';
 import {
-    actions
+    actions,
+    modules
 } from '../constants';
 
 class IssueNote extends BaseVuexModel {
@@ -10,6 +11,8 @@ class IssueNote extends BaseVuexModel {
             attachments: [],
             ...data
         });
+
+        this.$store = modules.ISSUE_NOTE;
     }
 
     static async [actions.ISSUE_NOTE.FETCH](props) {
