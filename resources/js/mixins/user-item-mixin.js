@@ -22,15 +22,25 @@ export const userItemMixin = {
         size: {
             type: Number,
             default: 48
+        },
+
+        auth: {
+            type: Boolean,
+            default: false
         }
     },
 
     computed: {
+        ...vuex.mapState({
+            authUser: 'auth'
+        }),
+
         user() {
-            return this.$_vuexable_getByKey(
-                this.userId,
-                vuex.modules.USER
-            )
+            return this.auth ? this.authUser :
+                this.$_vuexable_getByKey(
+                    this.userId,
+                    vuex.modules.USER
+                )
         },
 
         userAvatar() {

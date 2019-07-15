@@ -11,6 +11,15 @@
       :width="256"
       :mobile-break-point="mobileBreakPoint"
     >
+      <div v-if="isMobile" class="avatar-container ml-3 mt-2 mb-4 align-center">
+        <avatar-user class="mr-4" auth :size="32" color="has-gradient" />
+
+        <v-layout column>
+          <span class="body-2">{{ auth.name }}</span>
+          <span class="caption">{{ auth.username }}</span>
+        </v-layout>
+      </div>
+
       <v-list dense class="grey lighten-4">
         <add-complaint-btn v-if="!isMobile" class="add-complaint__button--main" />
 
@@ -61,6 +70,15 @@
 
       <v-spacer></v-spacer>
 
+      <div v-if="!isMobile" class="avatar-container mr-2 align-center">
+        <avatar-user class="mr-2" auth :size="32" color="has-gradient" />
+
+        <v-layout column>
+          <span class="body-2">{{ auth.name }}</span>
+          <span class="caption">{{ auth.username }}</span>
+        </v-layout>
+      </div>
+
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn v-on="on" icon large :loading="isSigningOut" @click.prevent.stop="signOut">
@@ -107,6 +125,7 @@ import MessageAlert from "../components/MessageAlert";
 import { views } from "../constants";
 import { issueSearchMixin } from "../mixins/issue-search-mixin";
 import { vuex } from "../mixins/vuexable";
+import AvatarUser from "../user/components/AvatarUser";
 
 export default {
   mixins: [alertable, layoutable, complaintMixin, issueSearchMixin],
@@ -115,7 +134,8 @@ export default {
     AddComplaintBtn,
     ComplaintForm,
     ComplaintSearchFilter,
-    MessageAlert
+    MessageAlert,
+    AvatarUser
   },
 
   data() {
@@ -143,6 +163,8 @@ export default {
 
   computed: {
     ...vuex.mapState(["auth"]),
+
+    ...vuex.mapGetters(["isMobile"]),
 
     ...vuex.mapWaitingGetters({
       isSigningOut: vuex.actions.USER.SIGN_OUT
@@ -297,6 +319,10 @@ export default {
         left: -5px;
       }
     }
+  }
+
+  .avatar-container {
+    display: flex;
   }
 }
 </style>
