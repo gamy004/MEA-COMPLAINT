@@ -1,1 +1,113 @@
-@font-face{font-family:Material Design Icons;src:url(/fonts/vendor/@mdi/materialdesignicons-webfont.eot);src:url(/fonts/vendor/@mdi/materialdesignicons-webfont.eot?#iefix) format("embedded-opentype"),url(/fonts/vendor/@mdi/materialdesignicons-webfont.woff2) format("woff2"),url(/fonts/vendor/@mdi/materialdesignicons-webfont.woff) format("woff"),url(/fonts/vendor/@mdi/materialdesignicons-webfont.ttf) format("truetype"),url(/fonts/vendor/@mdi/materialdesignicons-webfont.svg#svgFontName) format("svg")}#app,body,html{height:100%}#app .application,#app .body-1,#app .body-2,#app .caption,#app .display-1,#app .display-2,#app .display-3,#app .display-4,#app .headline,#app .subheading,#app .title,#app div,#app p,#app span,body .application,body .body-1,body .body-2,body .caption,body .display-1,body .display-2,body .display-3,body .display-4,body .headline,body .subheading,body .title,body div,body p,body span,html .application,html .body-1,html .body-2,html .caption,html .display-1,html .display-2,html .display-3,html .display-4,html .headline,html .subheading,html .title,html div,html p,html span{font-family:Sarabun,Roboto,sans-serif!important}#app .v-input .v-label,body .v-input .v-label,html .v-input .v-label{height:24px;line-height:24px}.has-gradient{background:#f7700f 6.4%;background-image:linear-gradient(#f7700f 6.4%,#f83258 100.2%);background-repeat:no-repeat}.bg-transparent{background:transparent!important}.clickable{cursor:pointer!important}.loading__wrapper{position:absolute;left:50%;top:50%;transform:translate3d(-50%,-50%,0)}.v-btn.rounded-sm{border-radius:4px!important}.align-right .v-toolbar__content{justify-content:flex-end}.w-100{width:100%}.bdb-1{border-bottom:1px solid #c3c3c3}input:-webkit-autofill,input:-webkit-autofill:active,input:-webkit-autofill:focus,input:-webkit-autofill:hover{-webkit-box-shadow:0 0 0 30px #f8fafc inset!important}
+@font-face {
+  font-family: "Material Design Icons";
+  src: url("/fonts/vendor/@mdi/materialdesignicons-webfont.eot");
+  /* IE9 Compat Modes */
+  src: url("/fonts/vendor/@mdi/materialdesignicons-webfont.eot?#iefix") format("embedded-opentype"), url("/fonts/vendor/@mdi/materialdesignicons-webfont.woff2") format("woff2"), url("/fonts/vendor/@mdi/materialdesignicons-webfont.woff") format("woff"), url("/fonts/vendor/@mdi/materialdesignicons-webfont.ttf") format("truetype"), url("/fonts/vendor/@mdi/materialdesignicons-webfont.svg#svgFontName") format("svg");
+  /* Legacy iOS */
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+html span,
+html div,
+html p,
+html .application,
+html .display-4,
+html .display-3,
+html .display-2,
+html .display-1,
+html .headline,
+html .title,
+html .subheading,
+html .body-2,
+html .body-1,
+html .caption,
+body span,
+body div,
+body p,
+body .application,
+body .display-4,
+body .display-3,
+body .display-2,
+body .display-1,
+body .headline,
+body .title,
+body .subheading,
+body .body-2,
+body .body-1,
+body .caption,
+#app span,
+#app div,
+#app p,
+#app .application,
+#app .display-4,
+#app .display-3,
+#app .display-2,
+#app .display-1,
+#app .headline,
+#app .title,
+#app .subheading,
+#app .body-2,
+#app .body-1,
+#app .caption {
+  font-family: "Sarabun", "Roboto", sans-serif !important;
+}
+
+html .v-input .v-label,
+body .v-input .v-label,
+#app .v-input .v-label {
+  height: 24px;
+  line-height: 24px;
+}
+
+.has-gradient {
+  background: #f7700f 6.4%;
+  /* fallback for old browsers */
+  /* Chrome 10-25, Safari 5.1-6 */
+  background-image: linear-gradient(#f7700f 6.4%, #f83258 100.2%);
+  background-repeat: no-repeat;
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.bg-transparent {
+  background: transparent !important;
+}
+
+.clickable {
+  cursor: pointer !important;
+}
+
+.loading__wrapper {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate3d(-50%, -50%, 0);
+}
+
+.v-btn.rounded-sm {
+  border-radius: 4px !important;
+}
+
+.align-right .v-toolbar__content {
+  justify-content: flex-end;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.bdb-1 {
+  border-bottom: 1px solid #c3c3c3ff;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #f8fafc inset !important;
+}
+
