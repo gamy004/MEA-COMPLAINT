@@ -1922,6 +1922,9 @@ __webpack_require__.r(__webpack_exports__);
           }
         }, {
           text: this.$t("complaint.index.toolbar.generateReport.by.filter"),
+          disabled: function disabled() {
+            return _this3.$route.query.hasOwnProperty('type');
+          },
           onClick: function onClick() {
             _this3.$_issue_report_mixin_generateCurrentFilter();
           }

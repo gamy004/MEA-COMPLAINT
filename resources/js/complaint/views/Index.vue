@@ -324,6 +324,7 @@ export default {
             },
             {
               text: this.$t("complaint.index.toolbar.generateReport.by.filter"),
+              disabled: () => this.$route.query.hasOwnProperty('type'),
               onClick: () => {
                 this.$_issue_report_mixin_generateCurrentFilter();
               }

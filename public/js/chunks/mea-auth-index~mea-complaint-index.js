@@ -187,7 +187,7 @@ var IssueReportMixin = {
       var _$_issue_report_mixin_generateCurrentFilter = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
-        var filter_groups, pagination, sort;
+        var filter_groups, pagination, sort, search, params;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
@@ -195,17 +195,25 @@ var IssueReportMixin = {
                 filter_groups = this.$_vuexable_getState("filter_groups", _vuexable__WEBPACK_IMPORTED_MODULE_2__["vuex"].modules.ISSUE);
                 pagination = this.$_vuexable_getState("pagination", _vuexable__WEBPACK_IMPORTED_MODULE_2__["vuex"].modules.ISSUE);
                 sort = pagination.sortBy;
+                search = pagination.search;
+                params = {
+                  action: _vuexable__WEBPACK_IMPORTED_MODULE_2__["vuex"].actions.ISSUE.EXPORT_SEARCH
+                };
 
                 if (pagination.descending) {
                   sort = "-".concat(sort);
                 }
 
-                this.$_issue_report_mixin_export(filter_groups, {
-                  action: _vuexable__WEBPACK_IMPORTED_MODULE_2__["vuex"].actions.ISSUE.EXPORT_SEARCH,
-                  sort: [sort]
-                });
+                this.$set(params, 'sort', [sort]);
+                console.log(search);
 
-              case 5:
+                if (search.keyword) {
+                  this.$set(params, 'search', search);
+                }
+
+                this.$_issue_report_mixin_export(filter_groups, params);
+
+              case 10:
               case "end":
                 return _context2.stop();
             }
@@ -340,7 +348,10 @@ var IssueReportMixin = {
             action,
             _ref$sort,
             sort,
+            _ref$search,
+            search,
             content,
+            params,
             currentDate,
             _args6 = arguments;
 
@@ -349,38 +360,44 @@ var IssueReportMixin = {
             switch (_context6.prev = _context6.next) {
               case 0:
                 filter_groups = _args6.length > 0 && _args6[0] !== undefined ? _args6[0] : [];
-                _ref = _args6.length > 1 ? _args6[1] : undefined, _ref$fileName = _ref.fileName, fileName = _ref$fileName === void 0 ? null : _ref$fileName, _ref$action = _ref.action, action = _ref$action === void 0 ? _vuexable__WEBPACK_IMPORTED_MODULE_2__["vuex"].actions.ISSUE.EXPORT : _ref$action, _ref$sort = _ref.sort, sort = _ref$sort === void 0 ? ["-updated_at"] : _ref$sort;
+                _ref = _args6.length > 1 ? _args6[1] : undefined, _ref$fileName = _ref.fileName, fileName = _ref$fileName === void 0 ? null : _ref$fileName, _ref$action = _ref.action, action = _ref$action === void 0 ? _vuexable__WEBPACK_IMPORTED_MODULE_2__["vuex"].actions.ISSUE.EXPORT : _ref$action, _ref$sort = _ref.sort, sort = _ref$sort === void 0 ? ["-updated_at"] : _ref$sort, _ref$search = _ref.search, search = _ref$search === void 0 ? null : _ref$search;
                 this.$_issue_report_mixin_reportDialog = false;
                 this.$_issue_report_mixin_reportGenerate = true;
-                _context6.prev = 4;
-                _context6.next = 7;
-                return this[action]({
+                params = {
                   filter_groups: filter_groups,
                   sort: sort
-                });
+                };
 
-              case 7:
+                if (search) {
+                  this.$set(params, 'search', search);
+                }
+
+                _context6.prev = 6;
+                _context6.next = 9;
+                return this[action](params);
+
+              case 9:
                 content = _context6.sent;
-                _context6.next = 13;
+                _context6.next = 15;
                 break;
 
-              case 10:
-                _context6.prev = 10;
-                _context6.t0 = _context6["catch"](4);
+              case 12:
+                _context6.prev = 12;
+                _context6.t0 = _context6["catch"](6);
                 throw _context6.t0;
 
-              case 13:
+              case 15:
                 currentDate = new Date();
                 fileName = !_.isNull(fileName) ? fileName : "ComplaintReport_".concat(Object(_helpers__WEBPACK_IMPORTED_MODULE_3__["formatDateFile"])(currentDate));
                 file_saver__WEBPACK_IMPORTED_MODULE_1___default.a.saveAs(content.data, fileName);
                 this.$_issue_report_mixin_reportGenerate = false;
 
-              case 17:
+              case 19:
               case "end":
                 return _context6.stop();
             }
           }
-        }, _callee6, this, [[4, 10]]);
+        }, _callee6, this, [[6, 12]]);
       }));
 
       function $_issue_report_mixin_export() {

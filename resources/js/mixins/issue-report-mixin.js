@@ -197,16 +197,25 @@ const IssueReportMixin = {
             );
 
             let sort = pagination.sortBy;
+            let search = pagination.search;
+
+            const params = {
+                action: vuex.actions.ISSUE.EXPORT_SEARCH
+            };
 
             if (pagination.descending) {
                 sort = `-${sort}`;
             }
 
+            this.$set(params, 'sort', [sort]);
+            console.log(search);
+            
+            if (search.keyword) {
+                this.$set(params, 'search', search);
+            }
+
             this.$_issue_report_mixin_export(
-                filter_groups, {
-                    action: vuex.actions.ISSUE.EXPORT_SEARCH,
-                    sort: [sort]
-                }
+                filter_groups, params
             );
         },
 
@@ -252,18 +261,25 @@ const IssueReportMixin = {
         async $_issue_report_mixin_export(filter_groups = [], {
             fileName = null,
             action = vuex.actions.ISSUE.EXPORT,
-            sort = ["-updated_at"]
+            sort = ["-updated_at"],
+            search = null
         }) {
             this.$_issue_report_mixin_reportDialog = false;
             this.$_issue_report_mixin_reportGenerate = true;
 
             let content;
 
+            let params = {
+                filter_groups,
+                sort
+            };
+
+            if (search) {
+                this.$set(params, 'search', search);
+            }
+
             try {
-                content = await this[action]({
-                    filter_groups,
-                    sort
-                });
+                content = await this[action](params);
             } catch (error) {
                 throw error;
             }
