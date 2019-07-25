@@ -1,0 +1,19 @@
+FROM meacomplaintdockerhub/mea_app:prod AS app
+
+FROM meacomplaintdockerhub/mea_nginx:prod
+
+###########################################################################
+# Copy directories
+###########################################################################
+
+WORKDIR /var/www
+
+COPY --from=app /var/www .
+
+RUN chown -R www-data:www-data \
+        /var/www/storage \
+        /var/www/bootstrap/cache
+
+CMD ["/bin/bash", "/opt/startup.sh"]
+
+EXPOSE 80 443

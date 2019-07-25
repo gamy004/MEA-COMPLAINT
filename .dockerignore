@@ -1,8 +1,12 @@
 .git
 .idea
 .env
+.env.*
+laradock
 node_modules
 vendor
+Dockerfile
+Dockerfile-*
 storage/framework/cache/**
 storage/framework/sessions/**
 storage/framework/views/**
