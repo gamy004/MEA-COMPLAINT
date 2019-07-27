@@ -106,7 +106,7 @@
         class="complaint-list__action-right complaint-list__action-right--hover"
         :class="isMobileClasses"
       >
-        <v-tooltip v-if="archived || trashed" bottom>
+        <v-tooltip v-if="canRestore" bottom>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon @click.prevent.stop="onRestoreItem" class="mr-2">
               <v-icon color="grey darken-1">history</v-icon>
@@ -115,7 +115,7 @@
           <span v-t="'general.restore'"></span>
         </v-tooltip>
 
-        <v-tooltip v-if="canManage && !drafted && !archived" bottom>
+        <v-tooltip v-if="canArchive" bottom>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon @click.prevent.stop="onArchiveItem" class="mr-2">
               <v-icon color="grey darken-1">archive</v-icon>
@@ -125,7 +125,7 @@
         </v-tooltip>
 
         <v-menu
-          v-if="canChangeStatus && !drafted && !archived && !trashed"
+          v-if="canChangeStatus"
           :min-width="200"
           offset-y
           origin="top right"
@@ -176,7 +176,7 @@
           <span>Change Status</span>
         </v-tooltip>-->
 
-        <v-tooltip v-if="canManage && !archived && !trashed" bottom>
+        <v-tooltip v-if="canEdit" bottom>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon @click.prevent.stop="onEditItem" class="mr-2">
               <v-icon color="grey darken-1">edit</v-icon>
@@ -185,7 +185,7 @@
           <span v-t="'general.edit'"></span>
         </v-tooltip>
 
-        <v-tooltip v-if="canManage && !trashed && !drafted" bottom>
+        <v-tooltip v-if="canSoftDelete" bottom>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon @click.prevent.stop="onDeleteItem">
               <v-icon color="grey darken-1">delete</v-icon>
@@ -194,7 +194,7 @@
           <span v-t="'general.delete'"></span>
         </v-tooltip>
 
-        <v-tooltip v-if="canManage && trashed || drafted" bottom>
+        <v-tooltip v-if="canHardDelete" bottom>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon @click.prevent.stop="onForceDeleteItem">
               <v-icon color="grey darken-1">delete</v-icon>
@@ -363,12 +363,32 @@ export default {
     },
 
     canManage() {
-      return this.auth.isAdmin || this.item.canManage(this.auth.group_id);
+      return this.item.canManage(this.auth);
+    },
+
+    canEdit() {
+      return this.item.canEdit(this.auth);
+    },
+
+    canSoftDelete() {
+      return this.item.canSoftDelete(this.auth);
+    },
+
+    canHardDelete() {
+      return this.item.canHardDelete(this.auth);
     },
 
     canChangeStatus() {
-      return this.auth.isAdmin ||this.item.canChangeStatus(this.auth.group_id);
-    }
+      return this.item.canChangeStatus(this.auth);
+    },
+
+    canArchive() {
+      return this.item.canArchive(this.auth);
+    },
+
+    canRestore() {
+      return this.item.canRestore(this.auth);
+    },
 
     // statusStyles() {
     //   return {

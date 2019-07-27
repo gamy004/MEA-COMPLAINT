@@ -1181,16 +1181,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return this.item.draft || this.item.deleted_at !== null;
     },
     canManage: function canManage() {
-      return this.auth.isAdmin || this.item.canManage(this.auth.group_id);
+      return this.item.canManage(this.auth);
+    },
+    canEdit: function canEdit() {
+      return this.item.canEdit(this.auth);
+    },
+    canSoftDelete: function canSoftDelete() {
+      return this.item.canSoftDelete(this.auth);
+    },
+    canHardDelete: function canHardDelete() {
+      return this.item.canHardDelete(this.auth);
     },
     canChangeStatus: function canChangeStatus() {
-      return this.auth.isAdmin || this.item.canChangeStatus(this.auth.group_id);
-    } // statusStyles() {
-    //   return {
-    //     color: getCorrectTextColor(this.item.statusColor)
-    //   };
-    // }
-
+      return this.item.canChangeStatus(this.auth);
+    },
+    canArchive: function canArchive() {
+      return this.item.canArchive(this.auth);
+    },
+    canRestore: function canRestore() {
+      return this.item.canRestore(this.auth);
+    }
   }),
   methods: {
     getItemCLasses: function getItemCLasses(hover) {
@@ -2759,7 +2769,7 @@ var render = function() {
                       class: _vm.isMobileClasses
                     },
                     [
-                      _vm.archived || _vm.trashed
+                      _vm.canRestore
                         ? _c(
                             "v-tooltip",
                             {
@@ -2826,7 +2836,7 @@ var render = function() {
                           )
                         : _vm._e(),
                       _vm._v(" "),
-                      _vm.canManage && !_vm.drafted && !_vm.archived
+                      _vm.canArchive
                         ? _c(
                             "v-tooltip",
                             {
@@ -2893,10 +2903,7 @@ var render = function() {
                           )
                         : _vm._e(),
                       _vm._v(" "),
-                      _vm.canChangeStatus &&
-                      !_vm.drafted &&
-                      !_vm.archived &&
-                      !_vm.trashed
+                      _vm.canChangeStatus
                         ? _c(
                             "v-menu",
                             {
@@ -3042,7 +3049,7 @@ var render = function() {
                           )
                         : _vm._e(),
                       _vm._v(" "),
-                      _vm.canManage && !_vm.archived && !_vm.trashed
+                      _vm.canEdit
                         ? _c(
                             "v-tooltip",
                             {
@@ -3107,7 +3114,7 @@ var render = function() {
                           )
                         : _vm._e(),
                       _vm._v(" "),
-                      _vm.canManage && !_vm.trashed && !_vm.drafted
+                      _vm.canSoftDelete
                         ? _c(
                             "v-tooltip",
                             {
@@ -3173,7 +3180,7 @@ var render = function() {
                           )
                         : _vm._e(),
                       _vm._v(" "),
-                      (_vm.canManage && _vm.trashed) || _vm.drafted
+                      _vm.canHardDelete
                         ? _c(
                             "v-tooltip",
                             {

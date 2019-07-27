@@ -403,16 +403,60 @@ class Complaint extends BaseVuexModel {
         // send request update
     }
 
-    canManage(groupId) {
-        const { issued_by = null } = this;
+    get isDrafted() {
+        const { draft = 1 } = this;
 
-        return issued_by && issued_by == groupId;
+        return draft !== 0;
     }
 
-    canChangeStatus(groupId) {
+    get isArchived() {
+        const { archive = 0 } = this;
+
+        return archive !== 0;
+    }
+
+    get isTrashed() {
+        const { deleted_at = null } = this;
+
+        return deleted_at !== null;
+    }
+
+    canManage(user) {
+        const { issued_by = null } = this;
+        console.log(user.isAdmin, issued_by, user.group_id);
+
+        return user.isAdmin || (issued_by && issued_by == user.group_id);
+    }
+
+    canEdit(user) {
+        return this.canManage(user) && !this.isArchived && !this.isTrashed;
+    }
+
+    canSoftDelete(user) {
+        return this.canManage(user) && !this.isDrafted && !this.isTrashed;
+    }
+
+    canHardDelete(user) {
+        return this.canManage(user) && (this.isDrafted || this.isTrashed);
+    }
+
+    canRestore(user) {
+        console.log(this.canManage(user), this.isArchived , this.isTrashed);
+
+        return this.canManage(user) && (this.isArchived || this.isTrashed);
+    }
+
+    canArchive(user) {
+        return this.canManage(user) && !this.isDrafted && !this.isArchived;
+    }
+
+    canChangeStatus(user) {
         const { recipients = [] } = this;
 
-        return recipients.indexOf(groupId) !== -1;
+        return (user.isAdmin || recipients.indexOf(user.group_id) !== -1)
+            && !this.isDrafted
+            && !this.isArchived
+            && !this.isTrashed;
     }
 }
 
