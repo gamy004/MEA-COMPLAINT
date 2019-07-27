@@ -127,7 +127,7 @@ export default {
           text: this.$t("alertMessages.complaintForm.archive_success"),
           actions: [
             {
-              text: "Undo",
+              text: this.$t("general.undo"),
               handler: async ({ item, itemIndex }) => {
                 this.onRestoreAlert(item);
                 // await this[vuex.actions.ISSUE.RESTORE](item);

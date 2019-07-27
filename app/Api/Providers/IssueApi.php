@@ -43,18 +43,21 @@ class IssueApi extends BaseApi implements ApiInterface
         $modifiedOriginalModel = $this->getOriginalModel()->withTrashed();
         $auth = auth()->user();
 
-        if (!$auth->isAdmin() || !is_null($auth->{Group::FK})) {
-            $modifiedOriginalModel = $modifiedOriginalModel->where(
-                DBCol::ISSUED_BY,
-                $auth->{Group::FK}
-            );
-        }
+        // if (!$auth->isAdmin() || !is_null($auth->{Group::FK})) {
+        //     $modifiedOriginalModel = $modifiedOriginalModel->where(
+        //         DBCol::ISSUED_BY,
+        //         $auth->{Group::FK}
+        //     );
+        // }
+
         $this->setOriginalModel($modifiedOriginalModel);
     }
 
     private function parseType()
     {
+        $auth = auth()->user();
         $modifiedOriginalModel = $this->getOriginalModel()->withTrashed();
+        $baseTable = $this->getBaseBuilderTable();
         $request = request();
         $type = $request->has(Data::TYPE) ? $request->{Data::TYPE} : "inbox";
 
@@ -70,6 +73,14 @@ class IssueApi extends BaseApi implements ApiInterface
                 $modifiedOriginalModel = $modifiedOriginalModel
                     ->where(DBCol::ARCHIVE, 0)
                     ->where(DBCol::DRAFT, 1)
+                    ->whereRaw(
+                        sprintf(
+                            "`%s`.`%s` = %s",
+                            $baseTable,
+                            DBCol::ISSUED_BY,
+                            $auth->{Group::FK}
+                        )
+                    )
                     ->whereNull(DBCol::DELETED_AT);
                 break;
 
@@ -80,7 +91,7 @@ class IssueApi extends BaseApi implements ApiInterface
                     ->whereNotNull(DBCol::DELETED_AT);
 
                 break;
-            
+
             default:
             $modifiedOriginalModel = $modifiedOriginalModel
                 ->where(DBCol::ARCHIVE, 0)
@@ -229,12 +240,12 @@ class IssueApi extends BaseApi implements ApiInterface
                     sprintf("%s.%s", $sub_recipients, DBCol::ID)
                 );
             })
-            ->when(!$auth->isAdmin() || !is_null($auth->{Group::FK}), function ($q) use ($baseTable, $auth) {
-                $q->whereRaw(
-                    sprintf("`%s`.`%s` = %s", $baseTable, DBCol::ISSUED_BY, $auth->{Group::FK})
-                );
-            })
-            ->when(!is_null($type), function ($q) use ($baseTable, $type) {
+            // ->when(!$auth->isAdmin() || !is_null($auth->{Group::FK}), function ($q) use ($baseTable, $auth) {
+                // $q->whereRaw(
+                //     sprintf("`%s`.`%s` = %s", $baseTable, DBCol::ISSUED_BY, $auth->{Group::FK})
+                // );
+            // })
+            ->when(!is_null($type), function ($q) use ($auth, $baseTable, $type) {
                 $archive = 0;
                 $draft = 0;
                 $deleted_at_is_null = true;
@@ -244,10 +255,19 @@ class IssueApi extends BaseApi implements ApiInterface
                         $archive = 1;
                         break;
 
-                    case Data::ARCHIVE:
+                    case DBCol::DRAFT:
                         $draft = 1;
+
+                        $q->whereRaw(
+                            sprintf(
+                                "`%s`.`%s` = %s",
+                                $baseTable,
+                                DBCol::ISSUED_BY,
+                                $auth->{Group::FK}
+                            )
+                        );
                         break;
-        
+
                     case Data::TRASH:
                         $deleted_at_is_null = false;
                         break;
@@ -571,7 +591,7 @@ class IssueApi extends BaseApi implements ApiInterface
     {
         try {
             DB::beginTransaction();
-            
+
             $default_status = IssueStatus::default()->select([DBCol::ID])->first();
 
             if (!is_null($default_status) && is_null($issue->{IssueStatus::FK})) {

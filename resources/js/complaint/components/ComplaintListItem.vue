@@ -26,7 +26,7 @@
       </v-list-tile-action>-->
 
       <v-list-tile-content class="complaint-list__content" :class="isMobileClasses">
-        <v-tooltip top v-if="auth.isAdmin">
+        <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-list-tile-sub-title
               v-on="on"
@@ -115,7 +115,7 @@
           <span v-t="'general.restore'"></span>
         </v-tooltip>
 
-        <v-tooltip v-if="!drafted && !archived" bottom>
+        <v-tooltip v-if="canManage && !drafted && !archived" bottom>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon @click.prevent.stop="onArchiveItem" class="mr-2">
               <v-icon color="grey darken-1">archive</v-icon>
@@ -125,7 +125,7 @@
         </v-tooltip>
 
         <v-menu
-          v-if="!drafted && !archived && !trashed"
+          v-if="canChangeStatus && !drafted && !archived && !trashed"
           :min-width="200"
           offset-y
           origin="top right"
@@ -176,7 +176,7 @@
           <span>Change Status</span>
         </v-tooltip>-->
 
-        <v-tooltip v-if="!archived && !trashed" bottom>
+        <v-tooltip v-if="canManage && !archived && !trashed" bottom>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon @click.prevent.stop="onEditItem" class="mr-2">
               <v-icon color="grey darken-1">edit</v-icon>
@@ -185,7 +185,7 @@
           <span v-t="'general.edit'"></span>
         </v-tooltip>
 
-        <v-tooltip v-if="!trashed && !drafted" bottom>
+        <v-tooltip v-if="canManage && !trashed && !drafted" bottom>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon @click.prevent.stop="onDeleteItem">
               <v-icon color="grey darken-1">delete</v-icon>
@@ -194,7 +194,7 @@
           <span v-t="'general.delete'"></span>
         </v-tooltip>
 
-        <v-tooltip v-if="trashed || drafted" bottom>
+        <v-tooltip v-if="canManage && trashed || drafted" bottom>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon @click.prevent.stop="onForceDeleteItem">
               <v-icon color="grey darken-1">delete</v-icon>
@@ -360,6 +360,14 @@ export default {
 
     cannotSee() {
       return this.item.draft || this.item.deleted_at !== null;
+    },
+
+    canManage() {
+      return this.auth.isAdmin || this.item.canManage(this.auth.group_id);
+    },
+
+    canChangeStatus() {
+      return this.auth.isAdmin ||this.item.canChangeStatus(this.auth.group_id);
     }
 
     // statusStyles() {

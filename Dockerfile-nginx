@@ -6,9 +6,7 @@ FROM meacomplaintdockerhub/mea_nginx:prod
 # Copy directories
 ###########################################################################
 
-WORKDIR /var/www
-
-COPY --from=app /var/www .
+COPY --from=app /var/www /var/www
 
 RUN chown -R www-data:www-data \
         /var/www/storage \

@@ -10,7 +10,7 @@ WORKDIR /var/www
 
 COPY . /var/www
 
-COPY env.prod .env
+COPY .env.prod .env
 ###########################################################################
 # Set owner www-data
 ###########################################################################
@@ -42,5 +42,7 @@ RUN npm run production
 RUN php artisan optimize
 
 RUN php artisan config:cache
+
+USER root
 
 WORKDIR /var/www

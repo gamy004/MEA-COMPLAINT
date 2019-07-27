@@ -402,6 +402,18 @@ class Complaint extends BaseVuexModel {
 
         // send request update
     }
+
+    canManage(groupId) {
+        const { issued_by = null } = this;
+
+        return issued_by && issued_by == groupId;
+    }
+
+    canChangeStatus(groupId) {
+        const { recipients = [] } = this;
+
+        return recipients.indexOf(groupId) !== -1;
+    }
 }
 
 export default Complaint;

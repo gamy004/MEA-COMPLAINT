@@ -13,7 +13,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class UpdateIssueRequest extends FormRequest
 {
     use HasFile;
-    
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -21,7 +21,12 @@ class UpdateIssueRequest extends FormRequest
      */
     public function authorize()
     {
-        return $this->user()->isAdmin() || $this->user()->{Group::FK} === $this->issue->{DBCol::ISSUED_BY};
+        $group_id = $this->user()->{Group::FK};
+        $isAdmin = $this->user()->isAdmin();
+        $isIssuer = $this->issue->isIssuer($group_id);
+        $isRecipient = $this->issue->isRecipient($group_id);
+
+        return $isAdmin || $isIssuer || $isRecipient;
     }
 
     /**
@@ -37,7 +42,7 @@ class UpdateIssueRequest extends FormRequest
                 Data::RECIPIENTS => 'sometimes|array',
                 Data::RECIPIENTS.'.*' => 'required|numeric|exists:groups,id',
                 IssueCategory::FK => 'nullable|exists:issue_categories,id',
-                IssueStatus::FK => 'sometimes|exists:issue_statuses,id', 
+                IssueStatus::FK => 'sometimes|exists:issue_statuses,id',
             ],
             $this->uploadedFilesRules()
         );

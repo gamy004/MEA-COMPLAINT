@@ -15,12 +15,15 @@ class ShowIssueRequest extends FormRequest
      */
     public function authorize()
     {
-        $auth = auth()->user();
+        // $auth = auth()->user();
 
-        return ($auth->isAdmin() || $auth->{Group::FK} === $this->issue->{DBCol::ISSUED_BY}) && (
-            !$this->issue->{DBCol::DRAFT} &&
-            $this->issue->{DBCol::DELETED_AT} === null
-        );
+        // return ($auth->isAdmin() || $auth->{Group::FK} === $this->issue->{DBCol::ISSUED_BY}) && (
+        //     !$this->issue->{DBCol::DRAFT} &&
+        //     $this->issue->{DBCol::DELETED_AT} === null
+        // );
+        return !$this->issue->{DBCol::DRAFT} &&
+            $this->issue->{DBCol::DELETED_AT} === null;
+
     }
 
     /**

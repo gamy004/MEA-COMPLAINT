@@ -73,4 +73,17 @@ class Issue extends Model
     {
         return $this->hasMany(IssueStatusLog::class, self::FK);
     }
+
+    public function isIssuer($issuer_id)
+    {
+        return $this->{DBCol::ISSUED_BY} == $issuer_id;
+    }
+
+    public function isRecipient($recipient_id)
+    {
+        return $this->recipients()->where(
+            DBCol::RECIPIENT_ID,
+            $recipient_id
+        )->exists();
+    }
 }

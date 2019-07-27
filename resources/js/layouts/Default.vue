@@ -285,7 +285,7 @@ export default {
         name: views.USER.LOGIN
       });
 
-      window.location = href;
+      window.location.reload();
     }
   }
 };

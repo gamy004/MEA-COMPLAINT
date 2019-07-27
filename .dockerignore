@@ -1,7 +1,6 @@
 .git
 .idea
 .env
-.env.*
 laradock
 node_modules
 vendor
