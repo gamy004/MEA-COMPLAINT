@@ -247,9 +247,12 @@ export default {
           actions: [
             {
               text: this.$t("general.undo"),
-              handler: async ({ id, archive = 0, deleted_at = null } = {}) => {
+              handler: async item => {
                 clearTimeout(this.gobackTimer);
-                await this.$_complaint_item_mixin_restoreComplaint({ id });
+                this.onRestoreAlert(item);
+
+                // await this.$_complaint_item_mixin_restoreComplaint({ id });
+
                 // if (archive) {
                 //   await this.$_complaint_item_mixin_onArchiveComplaint({ id });
                 // } else if (deleted_at !== null) {
@@ -258,7 +261,7 @@ export default {
                 //   await this.$_complaint_item_mixin_restoreComplaint({ id });
                 // }
 
-                this.$_alertable_alert("action_done");
+                // this.$_alertable_alert("action_done");
               }
             }
           ]
@@ -271,10 +274,10 @@ export default {
           actions: [
             {
               text: this.$t("general.undo"),
-              handler: async ({ id }) => {
+              handler: async item => {
                 clearTimeout(this.gobackTimer);
-                await this.$_complaint_item_mixin_restoreComplaint({ id });
-                this.$_alertable_alert("action_done");
+                this.onRestoreAlert(item);
+                // this.$_alertable_alert("action_done");
               }
             }
           ]
@@ -327,38 +330,37 @@ export default {
         {
           icon: "archive",
           text: this.$t("general.archive"),
-          disabled: () => this.$_complaint_item_mixin_complaint.archive == 1,
+          disabled: () =>
+            !this.$_complaint_item_mixin_complaint.canArchive(this.auth),
           onClick: async () => {
             // archive complaint
             // go back
 
             try {
-              const { id } = this.$_complaint_item_mixin_complaint;
+              const archivedItem = _.cloneDeep(
+                this.$_complaint_item_mixin_complaint
+              );
 
               await this.$_complaint_item_mixin_onArchiveComplaint(
                 this.$_complaint_item_mixin_complaint
               );
 
-              this.$_alertable_alert("archive_complaint_success", {
-                id
-              });
+              this.$_alertable_alert("archive_complaint_success", archivedItem);
             } catch (error) {
               this.$_alertable_alert("archive_complaint_fail");
             }
 
-            this.gobackTimer = setTimeout(() => {
-              this.$router.go(-1);
-            }, 5000);
+            // this.gobackTimer = setTimeout(() => {
+            //   this.$router.go(-1);
+            // }, 5000);
           }
         },
         {
           icon: "restore",
           text: this.$t("general.restore"),
-          disabled: () => this.$_complaint_item_mixin_complaint.archive == 0,
+          disabled: () =>
+            !this.$_complaint_item_mixin_complaint.canRestore(this.auth),
           onClick: async () => {
-            // archive complaint
-            // go back
-
             try {
               const { id } = this.$_complaint_item_mixin_complaint;
 
@@ -381,6 +383,8 @@ export default {
         {
           icon: "edit",
           text: this.$t("general.edit"),
+          disabled: () =>
+            !this.$_complaint_item_mixin_complaint.canEdit(this.auth),
           onClick: async () => {
             // delete complaint
             // go back
@@ -392,31 +396,35 @@ export default {
         {
           icon: "delete",
           text: this.$t("general.delete"),
+          disabled: () =>
+            !this.$_complaint_item_mixin_complaint.canSoftDelete(this.auth),
           onClick: async () => {
             // delete complaint
             try {
-              const { id } = this.$_complaint_item_mixin_complaint;
+              const removedItem = _.cloneDeep(
+                this.$_complaint_item_mixin_complaint
+              );
 
               await this.$_complaint_item_mixin_onDeleteComplaint(
                 this.$_complaint_item_mixin_complaint
               );
 
-              this.$_alertable_alert("remove_complaint_success", {
-                id
-              });
+              this.$_alertable_alert("remove_complaint_success", removedItem);
             } catch (error) {
               this.$_alertable_alert("remove_complaint_fail");
             }
             // go back
-            this.gobackTimer = setTimeout(() => {
-              this.$router.go(-1);
-            }, 5000);
+            // this.gobackTimer = setTimeout(() => {
+            //   this.$router.go(-1);
+            // }, 5000);
           }
         },
         { divider: true },
         {
           menu: true,
           component: () => ComplaintStatus,
+          disabled: () =>
+            !this.$_complaint_item_mixin_complaint.canChangeStatus(this.auth),
           componentProps: () => {
             return {
               statusId: this.$_complaint_item_mixin_complaint
@@ -504,6 +512,20 @@ export default {
       this.$_alertable_alert("edit_complaint_success");
       this.$_complaint_mixin_setEdit(null);
       this.$_complaint_mixin_setDialog(false);
+    },
+
+    async onRestoreAlert(item) {
+      const { id, archive = 0, deleted_at = null } = item;
+
+      if (archive) {
+        await this.$_complaint_item_mixin_onArchiveComplaint({ id });
+      } else if (deleted_at !== null) {
+        await this.$_complaint_item_mixin_onDeleteComplaint({ id });
+      } else {
+        await this.$_complaint_item_mixin_restoreComplaint({ id });
+      }
+
+      this.$_alertable_alert("action_done");
     }
   },
 

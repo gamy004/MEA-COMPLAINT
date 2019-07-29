@@ -205,7 +205,6 @@ var IssueReportMixin = {
                 }
 
                 this.$set(params, 'sort', [sort]);
-                console.log(search);
 
                 if (search.keyword) {
                   this.$set(params, 'search', search);
@@ -213,7 +212,7 @@ var IssueReportMixin = {
 
                 this.$_issue_report_mixin_export(filter_groups, params);
 
-              case 10:
+              case 9:
               case "end":
                 return _context2.stop();
             }
@@ -350,6 +349,7 @@ var IssueReportMixin = {
             sort,
             _ref$search,
             search,
+            type,
             content,
             params,
             currentDate,
@@ -363,41 +363,43 @@ var IssueReportMixin = {
                 _ref = _args6.length > 1 ? _args6[1] : undefined, _ref$fileName = _ref.fileName, fileName = _ref$fileName === void 0 ? null : _ref$fileName, _ref$action = _ref.action, action = _ref$action === void 0 ? _vuexable__WEBPACK_IMPORTED_MODULE_2__["vuex"].actions.ISSUE.EXPORT : _ref$action, _ref$sort = _ref.sort, sort = _ref$sort === void 0 ? ["-updated_at"] : _ref$sort, _ref$search = _ref.search, search = _ref$search === void 0 ? null : _ref$search;
                 this.$_issue_report_mixin_reportDialog = false;
                 this.$_issue_report_mixin_reportGenerate = true;
+                type = this.$route.query.hasOwnProperty('type') ? this.$route.query.type : 'inbox';
                 params = {
                   filter_groups: filter_groups,
-                  sort: sort
+                  sort: sort,
+                  type: type
                 };
 
                 if (search) {
                   this.$set(params, 'search', search);
                 }
 
-                _context6.prev = 6;
-                _context6.next = 9;
+                _context6.prev = 7;
+                _context6.next = 10;
                 return this[action](params);
 
-              case 9:
+              case 10:
                 content = _context6.sent;
-                _context6.next = 15;
+                _context6.next = 16;
                 break;
 
-              case 12:
-                _context6.prev = 12;
-                _context6.t0 = _context6["catch"](6);
+              case 13:
+                _context6.prev = 13;
+                _context6.t0 = _context6["catch"](7);
                 throw _context6.t0;
 
-              case 15:
+              case 16:
                 currentDate = new Date();
                 fileName = !_.isNull(fileName) ? fileName : "ComplaintReport_".concat(Object(_helpers__WEBPACK_IMPORTED_MODULE_3__["formatDateFile"])(currentDate));
                 file_saver__WEBPACK_IMPORTED_MODULE_1___default.a.saveAs(content.data, fileName);
                 this.$_issue_report_mixin_reportGenerate = false;
 
-              case 19:
+              case 20:
               case "end":
                 return _context6.stop();
             }
           }
-        }, _callee6, this, [[6, 12]]);
+        }, _callee6, this, [[7, 13]]);
       }));
 
       function $_issue_report_mixin_export() {

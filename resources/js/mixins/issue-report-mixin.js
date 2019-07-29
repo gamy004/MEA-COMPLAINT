@@ -208,8 +208,7 @@ const IssueReportMixin = {
             }
 
             this.$set(params, 'sort', [sort]);
-            console.log(search);
-            
+
             if (search.keyword) {
                 this.$set(params, 'search', search);
             }
@@ -267,11 +266,16 @@ const IssueReportMixin = {
             this.$_issue_report_mixin_reportDialog = false;
             this.$_issue_report_mixin_reportGenerate = true;
 
+            const type = this.$route.query.hasOwnProperty('type') ?
+                this.$route.query.type :
+                'inbox';
+
             let content;
 
             let params = {
                 filter_groups,
-                sort
+                sort,
+                type
             };
 
             if (search) {

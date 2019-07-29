@@ -38,10 +38,10 @@ class IssueApi extends BaseApi implements ApiInterface
         parent::__construct($model);
     }
 
-    private function parseAuth()
+    public function parseAuth()
     {
         $modifiedOriginalModel = $this->getOriginalModel()->withTrashed();
-        $auth = auth()->user();
+        // $auth = auth()->user();
 
         // if (!$auth->isAdmin() || !is_null($auth->{Group::FK})) {
         //     $modifiedOriginalModel = $modifiedOriginalModel->where(
@@ -51,16 +51,18 @@ class IssueApi extends BaseApi implements ApiInterface
         // }
 
         $this->setOriginalModel($modifiedOriginalModel);
+
+        return $this;
     }
 
-    private function parseType()
+    public function parseType()
     {
         $auth = auth()->user();
-        $modifiedOriginalModel = $this->getOriginalModel()->withTrashed();
+        $modifiedOriginalModel = $this->getOriginalModel();
         $baseTable = $this->getBaseBuilderTable();
         $request = request();
         $type = $request->has(Data::TYPE) ? $request->{Data::TYPE} : "inbox";
-
+        
         switch ($type) {
             case Data::ARCHIVE:
                 $modifiedOriginalModel = $modifiedOriginalModel
@@ -74,7 +76,12 @@ class IssueApi extends BaseApi implements ApiInterface
                     ->where(DBCol::ARCHIVE, 0)
                     ->where(DBCol::DRAFT, 1)
                     ->whereRaw(
-                        sprintf(
+                        is_null($auth->{Group::FK})
+                        ? sprintf(
+                            "`%s`.`%s` is null",
+                            $baseTable,
+                            DBCol::ISSUED_BY
+                        ) : sprintf(
                             "`%s`.`%s` = %s",
                             $baseTable,
                             DBCol::ISSUED_BY,
@@ -99,6 +106,10 @@ class IssueApi extends BaseApi implements ApiInterface
                 ->whereNull(DBCol::DELETED_AT);
                 break;
         }
+        
+        $this->setOriginalModel($modifiedOriginalModel);
+
+        return $this;
     }
 
     public function index()
@@ -106,6 +117,7 @@ class IssueApi extends BaseApi implements ApiInterface
         try {
             $this->parseAuth();
             $this->parseType();
+            
             $data = $this->get();
         } catch (Exception $e) {
             throw $e;
@@ -163,7 +175,7 @@ class IssueApi extends BaseApi implements ApiInterface
     {
         $original_parser = $this->getParser();
         $search_result = $this->fetchSearch($raw);
-        // dd($search_result);
+
         $key = $this->getArchitectKey();
         $data = $search_result->get($key);
         $total = $search_result->get(Data::TOTAL);
@@ -189,7 +201,7 @@ class IssueApi extends BaseApi implements ApiInterface
                 ]
             ]);
 
-            $search_result = $this->get();
+            $search_result = $this->parseAuth()->parseType()->get();
             $search_result->put(Data::TOTAL, $total);
         }
 
@@ -210,7 +222,7 @@ class IssueApi extends BaseApi implements ApiInterface
         $recipients = $this->getQueryRecipient();
         $sub_recipients = 'subquery_'.Data::RECIPIENTS;
         $sub_status = 'subquery_'.DBCol::STATUS;
-
+        
         return $this->getOriginalModel()
             ->withTrashed()
             ->join(
@@ -259,7 +271,12 @@ class IssueApi extends BaseApi implements ApiInterface
                         $draft = 1;
 
                         $q->whereRaw(
-                            sprintf(
+                            is_null($auth->{Group::FK})
+                            ? sprintf(
+                                "`%s`.`%s` is null",
+                                $baseTable,
+                                DBCol::ISSUED_BY
+                            ) : sprintf(
                                 "`%s`.`%s` = %s",
                                 $baseTable,
                                 DBCol::ISSUED_BY,
@@ -642,7 +659,8 @@ class IssueApi extends BaseApi implements ApiInterface
 
             return response()->json([
                 "message" => "destroy success",
-                "id" => $issue->{DBCol::ID}
+                DBCol::ID => $issue->{DBCol::ID},
+                DBCol::DELETED_AT => $issue->{DBCol::DELETED_AT},
             ]);
         } catch (Exception $exception) {
             DB::rollback();
@@ -828,11 +846,11 @@ class IssueApi extends BaseApi implements ApiInterface
 
         $data = $search_result->get($this->getArchitectKey());
         $ids = [];
-
+        
         if (count($data)) {
             $ids = $data->pluck("id")->toArray();
         }
-
+        
         $original_parser->setResult("select", []);
         $original_parser->setResult("search", ["keyword" => "", "fields" => []]);
         // $original_parser->setResult("sort", []);
@@ -853,7 +871,7 @@ class IssueApi extends BaseApi implements ApiInterface
 
         $this->setParser($original_parser);
         $this->setCustomQuery(null);
-
+        
         return $this->export($raw);
     }
 }

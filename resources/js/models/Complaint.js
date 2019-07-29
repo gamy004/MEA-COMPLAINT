@@ -404,26 +404,33 @@ class Complaint extends BaseVuexModel {
     }
 
     get isDrafted() {
-        const { draft = 1 } = this;
+        const {
+            draft = 1
+        } = this;
 
         return draft !== 0;
     }
 
     get isArchived() {
-        const { archive = 0 } = this;
+        const {
+            archive = 0
+        } = this;
 
         return archive !== 0;
     }
 
     get isTrashed() {
-        const { deleted_at = null } = this;
+        const {
+            deleted_at = null
+        } = this;
 
         return deleted_at !== null;
     }
 
     canManage(user) {
-        const { issued_by = null } = this;
-        console.log(user.isAdmin, issued_by, user.group_id);
+        const {
+            issued_by = null
+        } = this;
 
         return user.isAdmin || (issued_by && issued_by == user.group_id);
     }
@@ -441,8 +448,6 @@ class Complaint extends BaseVuexModel {
     }
 
     canRestore(user) {
-        console.log(this.canManage(user), this.isArchived , this.isTrashed);
-
         return this.canManage(user) && (this.isArchived || this.isTrashed);
     }
 
@@ -451,12 +456,13 @@ class Complaint extends BaseVuexModel {
     }
 
     canChangeStatus(user) {
-        const { recipients = [] } = this;
-
-        return (user.isAdmin || recipients.indexOf(user.group_id) !== -1)
-            && !this.isDrafted
-            && !this.isArchived
-            && !this.isTrashed;
+        const {
+            recipients = []
+        } = this;
+        return (user.isAdmin || recipients.indexOf(user.group_id) !== -1) &&
+            !this.isDrafted &&
+            !this.isArchived &&
+            !this.isTrashed;
     }
 }
 

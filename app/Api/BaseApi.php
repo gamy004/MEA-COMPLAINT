@@ -166,7 +166,8 @@ abstract class BaseApi
 
             return response()->json([
                 "message" => "destroy success",
-                "id" => $model->{DBCol::ID}
+                "id" => $model->{DBCol::ID},
+                "deleted_at" => $model->{DBCol::DELETED_AT}
             ]);
         } catch (Exception $exception) {
             DB::rollback();
@@ -964,7 +965,7 @@ abstract class BaseApi
         return $this;
     }
 
-    protected function getParser()
+    public function getParser()
     {
         return $this->parser;
     }

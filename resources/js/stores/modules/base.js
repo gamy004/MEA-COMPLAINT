@@ -419,6 +419,8 @@ export default {
             if (!updateState && state.collection.hasOwnProperty(key)) {
                 if (attr !== null) {
                     Vue.set(state.collection[key], attr, value);
+                    console.log(state.collection[key][attr], attr, value);
+
                 } else {
                     Vue.set(state.collection, key, value);
                 }

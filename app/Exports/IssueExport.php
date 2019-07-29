@@ -63,7 +63,10 @@ class IssueExport implements FromQuery, WithEvents, WithColumnFormatting, WithMa
     */
     public function query()
     {
-        $baseBuilder = $this->api->getBaseBuilder();
+        $baseBuilder = $this->api
+            ->parseAuth()
+            ->parseType()
+            ->getBaseBuilder();
         
         return $baseBuilder;
     }

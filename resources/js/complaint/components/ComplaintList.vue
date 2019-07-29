@@ -276,11 +276,16 @@ export default {
     ]),
 
     callFetch() {
-      return this[vuex.actions.ISSUE.FETCH]();
+      if (this.$_issue_search_mixin_searchFiltersVuex.length) {
+        return this.$_issue_search_mixin_searchComplaint();
+      } else {
+        return this[vuex.actions.ISSUE.FETCH]();
+      }
     },
 
     async onArchiveItem(item, itemIndex) {
       const { id } = item;
+      const archivedItem = _.cloneDeep(item);
 
       try {
         await this[vuex.actions.ISSUE.ARCHIVE](item);
@@ -288,7 +293,10 @@ export default {
         throw error;
       }
 
-      this.$_alertable_alert("archive_success", { item, itemIndex });
+      this.$_alertable_alert("archive_success", {
+        item: archivedItem,
+        itemIndex
+      });
 
       this.clearEditState(item);
     },
@@ -304,7 +312,7 @@ export default {
 
       this.$_alertable_alert("restore_success");
 
-      return this.callFetch();
+      // return this.callFetch();
     },
 
     async onEditItem(item, itemIndex) {
@@ -337,9 +345,11 @@ export default {
 
     async onDeleteItem(item, itemIndex) {
       try {
+        const removedItem = _.cloneDeep(item);
+
         await this[vuex.actions.ISSUE.DELETE](item);
 
-        this.$_alertable_alert("remove", { item, itemIndex });
+        this.$_alertable_alert("remove", { item: removedItem, itemIndex });
       } catch (error) {
         this.$_alertable_alert("error");
 
@@ -351,8 +361,9 @@ export default {
 
     warnForceDelete(item, itemIndex) {
       this.warningForceDelete = true;
-
-      this.warningForceDeleteCb = () => this.onForceDeleteItem(item, itemIndex);
+      const removedItem = _.cloneDeep(item);
+      this.warningForceDeleteCb = () =>
+        this.onForceDeleteItem(removedItem, itemIndex);
     },
 
     async callWarnForceDelete() {
@@ -384,10 +395,10 @@ export default {
 
       if (archive) {
         await this[vuex.actions.ISSUE.ARCHIVE](item);
-        await this.callFetch();
+        // await this.callFetch();
       } else if (deleted_at !== null) {
         await this[vuex.actions.ISSUE.DELETE](item);
-        await this.callFetch();
+        // await this.callFetch();
       } else {
         await this[vuex.actions.ISSUE.RESTORE](item);
       }

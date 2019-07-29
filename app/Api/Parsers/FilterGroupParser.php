@@ -50,7 +50,7 @@ class FilterGroupParser extends BaseParser implements ParserInterface {
                 self::PARAMS['OR'] => false
             ];
         }
-        
+
         return $this;
     }
 
@@ -72,7 +72,7 @@ class FilterGroupParser extends BaseParser implements ParserInterface {
         return array_map(
             function ($filter) {
                 $value = isset($filter[self::PARAMS['VALUE']]) ? $filter[self::PARAMS['VALUE']] : 'null';
-
+                
                 $filter[self::PARAMS['VALUE']] = $value;
 
                 $this->result[self::PARAMS['FILTER_MAPPING']][$filter[self::PARAMS['KEY']]] = $value;

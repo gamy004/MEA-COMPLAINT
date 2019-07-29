@@ -189,6 +189,9 @@ export default {
             query: {
               type: "draft"
             }
+          },
+          onClick: item => {
+            this.resetStateAndGotoRoute(item);
           }
         },
         {

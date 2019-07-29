@@ -917,7 +917,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* WEBPACK VAR INJECTION */(function(_) {/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _mixins_vuexable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../mixins/vuexable */ "./resources/js/mixins/vuexable.js");
 /* harmony import */ var _mixins_alertable__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../mixins/alertable */ "./resources/js/mixins/alertable.js");
@@ -1182,27 +1182,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             handler: function () {
               var _handler = _asyncToGenerator(
               /*#__PURE__*/
-              _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-                var _ref,
-                    id,
-                    _ref$archive,
-                    archive,
-                    _ref$deleted_at,
-                    deleted_at,
-                    _args = arguments;
-
+              _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(item) {
                 return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
                   while (1) {
                     switch (_context.prev = _context.next) {
                       case 0:
-                        _ref = _args.length > 0 && _args[0] !== undefined ? _args[0] : {}, id = _ref.id, _ref$archive = _ref.archive, archive = _ref$archive === void 0 ? 0 : _ref$archive, _ref$deleted_at = _ref.deleted_at, deleted_at = _ref$deleted_at === void 0 ? null : _ref$deleted_at;
                         clearTimeout(_this.gobackTimer);
-                        _context.next = 4;
-                        return _this.$_complaint_item_mixin_restoreComplaint({
-                          id: id
-                        });
 
-                      case 4:
+                        _this.onRestoreAlert(item); // await this.$_complaint_item_mixin_restoreComplaint({ id });
                         // if (archive) {
                         //   await this.$_complaint_item_mixin_onArchiveComplaint({ id });
                         // } else if (deleted_at !== null) {
@@ -1210,9 +1197,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                         // } else {
                         //   await this.$_complaint_item_mixin_restoreComplaint({ id });
                         // }
-                        _this.$_alertable_alert("action_done");
+                        // this.$_alertable_alert("action_done");
 
-                      case 5:
+
+                      case 2:
                       case "end":
                         return _context.stop();
                     }
@@ -1220,7 +1208,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 }, _callee);
               }));
 
-              function handler() {
+              function handler(_x) {
                 return _handler.apply(this, arguments);
               }
 
@@ -1236,23 +1224,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             handler: function () {
               var _handler2 = _asyncToGenerator(
               /*#__PURE__*/
-              _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(_ref2) {
-                var id;
+              _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(item) {
                 return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
                   while (1) {
                     switch (_context2.prev = _context2.next) {
                       case 0:
-                        id = _ref2.id;
                         clearTimeout(_this.gobackTimer);
-                        _context2.next = 4;
-                        return _this.$_complaint_item_mixin_restoreComplaint({
-                          id: id
-                        });
 
-                      case 4:
-                        _this.$_alertable_alert("action_done");
+                        _this.onRestoreAlert(item); // this.$_alertable_alert("action_done");
 
-                      case 5:
+
+                      case 2:
                       case "end":
                         return _context2.stop();
                     }
@@ -1260,7 +1242,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 }, _callee2);
               }));
 
-              function handler(_x) {
+              function handler(_x2) {
                 return _handler2.apply(this, arguments);
               }
 
@@ -1275,13 +1257,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             handler: function () {
               var _handler3 = _asyncToGenerator(
               /*#__PURE__*/
-              _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(_ref3) {
+              _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(_ref) {
                 var id;
                 return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
                   while (1) {
                     switch (_context3.prev = _context3.next) {
                       case 0:
-                        id = _ref3.id;
+                        id = _ref.id;
                         _context3.next = 3;
                         return _this.$_issue_note_item_mixin_restoreIssueNote({
                           id: id
@@ -1298,7 +1280,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 }, _callee3);
               }));
 
-              function handler(_x2) {
+              function handler(_x3) {
                 return _handler3.apply(this, arguments);
               }
 
@@ -1367,26 +1349,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         icon: "archive",
         text: this.$t("general.archive"),
         disabled: function disabled() {
-          return _this2.$_complaint_item_mixin_complaint.archive == 1;
+          return !_this2.$_complaint_item_mixin_complaint.canArchive(_this2.auth);
         },
         onClick: function () {
           var _onClick = _asyncToGenerator(
           /*#__PURE__*/
           _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5() {
-            var id;
+            var archivedItem;
             return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
               while (1) {
                 switch (_context5.prev = _context5.next) {
                   case 0:
                     _context5.prev = 0;
-                    id = _this2.$_complaint_item_mixin_complaint.id;
+                    archivedItem = _.cloneDeep(_this2.$_complaint_item_mixin_complaint);
                     _context5.next = 4;
                     return _this2.$_complaint_item_mixin_onArchiveComplaint(_this2.$_complaint_item_mixin_complaint);
 
                   case 4:
-                    _this2.$_alertable_alert("archive_complaint_success", {
-                      id: id
-                    });
+                    _this2.$_alertable_alert("archive_complaint_success", archivedItem);
 
                     _context5.next = 10;
                     break;
@@ -1398,11 +1378,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                     _this2.$_alertable_alert("archive_complaint_fail");
 
                   case 10:
-                    _this2.gobackTimer = setTimeout(function () {
-                      _this2.$router.go(-1);
-                    }, 5000);
-
-                  case 11:
                   case "end":
                     return _context5.stop();
                 }
@@ -1420,7 +1395,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         icon: "restore",
         text: this.$t("general.restore"),
         disabled: function disabled() {
-          return _this2.$_complaint_item_mixin_complaint.archive == 0;
+          return !_this2.$_complaint_item_mixin_complaint.canRestore(_this2.auth);
         },
         onClick: function () {
           var _onClick2 = _asyncToGenerator(
@@ -1467,6 +1442,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, {
         icon: "edit",
         text: this.$t("general.edit"),
+        disabled: function disabled() {
+          return !_this2.$_complaint_item_mixin_complaint.canEdit(_this2.auth);
+        },
         onClick: function () {
           var _onClick3 = _asyncToGenerator(
           /*#__PURE__*/
@@ -1496,24 +1474,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }, {
         icon: "delete",
         text: this.$t("general.delete"),
+        disabled: function disabled() {
+          return !_this2.$_complaint_item_mixin_complaint.canSoftDelete(_this2.auth);
+        },
         onClick: function () {
           var _onClick4 = _asyncToGenerator(
           /*#__PURE__*/
           _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee8() {
-            var id;
+            var removedItem;
             return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee8$(_context8) {
               while (1) {
                 switch (_context8.prev = _context8.next) {
                   case 0:
                     _context8.prev = 0;
-                    id = _this2.$_complaint_item_mixin_complaint.id;
+                    removedItem = _.cloneDeep(_this2.$_complaint_item_mixin_complaint);
                     _context8.next = 4;
                     return _this2.$_complaint_item_mixin_onDeleteComplaint(_this2.$_complaint_item_mixin_complaint);
 
                   case 4:
-                    _this2.$_alertable_alert("remove_complaint_success", {
-                      id: id
-                    });
+                    _this2.$_alertable_alert("remove_complaint_success", removedItem);
 
                     _context8.next = 10;
                     break;
@@ -1525,12 +1504,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                     _this2.$_alertable_alert("remove_complaint_fail");
 
                   case 10:
-                    // go back
-                    _this2.gobackTimer = setTimeout(function () {
-                      _this2.$router.go(-1);
-                    }, 5000);
-
-                  case 11:
                   case "end":
                     return _context8.stop();
                 }
@@ -1550,6 +1523,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         menu: true,
         component: function component() {
           return _components_ComplaintStatus__WEBPACK_IMPORTED_MODULE_8__["default"];
+        },
+        disabled: function disabled() {
+          return !_this2.$_complaint_item_mixin_complaint.canChangeStatus(_this2.auth);
         },
         componentProps: function componentProps() {
           return {
@@ -1618,13 +1594,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     onNoteDeleted: function () {
       var _onNoteDeleted = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee9(_ref4) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee9(_ref2) {
         var id;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee9$(_context9) {
           while (1) {
             switch (_context9.prev = _context9.next) {
               case 0:
-                id = _ref4.id;
+                id = _ref2.id;
                 _context9.prev = 1;
                 _context9.next = 4;
                 return this.$_issue_note_item_mixin_onDeleteIssueNote({
@@ -1651,7 +1627,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee9, this, [[1, 7]]);
       }));
 
-      function onNoteDeleted(_x3) {
+      function onNoteDeleted(_x4) {
         return _onNoteDeleted.apply(this, arguments);
       }
 
@@ -1661,7 +1637,71 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.$_alertable_alert("edit_complaint_success");
       this.$_complaint_mixin_setEdit(null);
       this.$_complaint_mixin_setDialog(false);
-    }
+    },
+    onRestoreAlert: function () {
+      var _onRestoreAlert = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee10(item) {
+        var id, _item$archive, archive, _item$deleted_at, deleted_at;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee10$(_context10) {
+          while (1) {
+            switch (_context10.prev = _context10.next) {
+              case 0:
+                id = item.id, _item$archive = item.archive, archive = _item$archive === void 0 ? 0 : _item$archive, _item$deleted_at = item.deleted_at, deleted_at = _item$deleted_at === void 0 ? null : _item$deleted_at;
+
+                if (!archive) {
+                  _context10.next = 6;
+                  break;
+                }
+
+                _context10.next = 4;
+                return this.$_complaint_item_mixin_onArchiveComplaint({
+                  id: id
+                });
+
+              case 4:
+                _context10.next = 13;
+                break;
+
+              case 6:
+                if (!(deleted_at !== null)) {
+                  _context10.next = 11;
+                  break;
+                }
+
+                _context10.next = 9;
+                return this.$_complaint_item_mixin_onDeleteComplaint({
+                  id: id
+                });
+
+              case 9:
+                _context10.next = 13;
+                break;
+
+              case 11:
+                _context10.next = 13;
+                return this.$_complaint_item_mixin_restoreComplaint({
+                  id: id
+                });
+
+              case 13:
+                this.$_alertable_alert("action_done");
+
+              case 14:
+              case "end":
+                return _context10.stop();
+            }
+          }
+        }, _callee10, this);
+      }));
+
+      function onRestoreAlert(_x5) {
+        return _onRestoreAlert.apply(this, arguments);
+      }
+
+      return onRestoreAlert;
+    }()
   }),
   created: function created() {
     this.$_issue_status_mixin_fetchStatuses();
@@ -1672,6 +1712,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }
   }
 });
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js")))
 
 /***/ }),
 
@@ -3492,8 +3533,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ComplaintDetailCard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ComplaintDetailCard.vue?vue&type=script&lang=js& */ "./resources/js/complaint/components/ComplaintDetailCard.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _ComplaintDetailCard_vue_vue_type_style_index_0_id_09e70655_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ComplaintDetailCard.vue?vue&type=style&index=0&id=09e70655&lang=scss&scoped=true& */ "./resources/js/complaint/components/ComplaintDetailCard.vue?vue&type=style&index=0&id=09e70655&lang=scss&scoped=true&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-/* harmony import */ var _Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
-/* harmony import */ var _Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
+/* harmony import */ var _D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var vuetify_lib__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib */ "./node_modules/vuetify/lib/index.js");
 
 
@@ -3526,7 +3567,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 
 
-_Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default()(component, {VCard: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VCard"],VCardText: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VCardText"],VCardTitle: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VCardTitle"],VChip: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VChip"],VDivider: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VDivider"],VIcon: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VIcon"],VLayout: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VLayout"],VSheet: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSheet"],VSpacer: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSpacer"],VSubheader: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSubheader"]})
+_D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default()(component, {VCard: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VCard"],VCardText: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VCardText"],VCardTitle: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VCardTitle"],VChip: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VChip"],VDivider: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VDivider"],VIcon: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VIcon"],VLayout: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VLayout"],VSheet: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSheet"],VSpacer: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSpacer"],VSubheader: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSubheader"]})
 
 
 /* hot reload */
@@ -3597,8 +3638,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ComplaintNoteCard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ComplaintNoteCard.vue?vue&type=script&lang=js& */ "./resources/js/complaint/components/ComplaintNoteCard.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _ComplaintNoteCard_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ComplaintNoteCard.vue?vue&type=style&index=0&lang=scss& */ "./resources/js/complaint/components/ComplaintNoteCard.vue?vue&type=style&index=0&lang=scss&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-/* harmony import */ var _Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
-/* harmony import */ var _Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
+/* harmony import */ var _D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var vuetify_lib__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib */ "./node_modules/vuetify/lib/index.js");
 
 
@@ -3635,7 +3676,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 
 
-_Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default()(component, {VBtn: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VBtn"],VCard: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VCard"],VCardActions: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VCardActions"],VCardText: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VCardText"],VCardTitle: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VCardTitle"],VDivider: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VDivider"],VFlex: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VFlex"],VIcon: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VIcon"],VLayout: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VLayout"],VProgressLinear: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VProgressLinear"],VSheet: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSheet"],VSpacer: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSpacer"],VSubheader: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSubheader"],VTooltip: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VTooltip"]})
+_D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default()(component, {VBtn: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VBtn"],VCard: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VCard"],VCardActions: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VCardActions"],VCardText: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VCardText"],VCardTitle: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VCardTitle"],VDivider: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VDivider"],VFlex: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VFlex"],VIcon: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VIcon"],VLayout: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VLayout"],VProgressLinear: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VProgressLinear"],VSheet: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSheet"],VSpacer: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSpacer"],VSubheader: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSubheader"],VTooltip: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VTooltip"]})
 
 
 /* hot reload */
@@ -3705,8 +3746,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ComplaintStatus_vue_vue_type_template_id_23350674___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ComplaintStatus.vue?vue&type=template&id=23350674& */ "./resources/js/complaint/components/ComplaintStatus.vue?vue&type=template&id=23350674&");
 /* harmony import */ var _ComplaintStatus_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ComplaintStatus.vue?vue&type=script&lang=js& */ "./resources/js/complaint/components/ComplaintStatus.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-/* harmony import */ var _Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
-/* harmony import */ var _Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
+/* harmony import */ var _D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var vuetify_lib__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/lib */ "./node_modules/vuetify/lib/index.js");
 
 
@@ -3732,7 +3773,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 
 
-_Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VAvatar: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VAvatar"],VFlex: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VFlex"],VLayout: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VLayout"],VProgressCircular: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VProgressCircular"]})
+_D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VAvatar: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VAvatar"],VFlex: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VFlex"],VLayout: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VLayout"],VProgressCircular: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VProgressCircular"]})
 
 
 /* hot reload */
@@ -3786,8 +3827,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _StatusLogItem_vue_vue_type_template_id_553bcea4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./StatusLogItem.vue?vue&type=template&id=553bcea4& */ "./resources/js/complaint/components/StatusLogItem.vue?vue&type=template&id=553bcea4&");
 /* harmony import */ var _StatusLogItem_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./StatusLogItem.vue?vue&type=script&lang=js& */ "./resources/js/complaint/components/StatusLogItem.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-/* harmony import */ var _Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
-/* harmony import */ var _Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
+/* harmony import */ var _D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var vuetify_lib__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/lib */ "./node_modules/vuetify/lib/index.js");
 
 
@@ -3812,7 +3853,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 
 
-_Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VFlex: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VFlex"],VLayout: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VLayout"],VTimelineItem: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VTimelineItem"]})
+_D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VFlex: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VFlex"],VLayout: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VLayout"],VTimelineItem: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VTimelineItem"]})
 
 
 /* hot reload */
@@ -3867,8 +3908,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Show_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Show.vue?vue&type=script&lang=js& */ "./resources/js/complaint/views/Show.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _Show_vue_vue_type_style_index_0_id_b32a3300_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Show.vue?vue&type=style&index=0&id=b32a3300&lang=scss&scoped=true& */ "./resources/js/complaint/views/Show.vue?vue&type=style&index=0&id=b32a3300&lang=scss&scoped=true&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-/* harmony import */ var _Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
-/* harmony import */ var _Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
+/* harmony import */ var _D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var vuetify_lib__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib */ "./node_modules/vuetify/lib/index.js");
 
 
@@ -3902,7 +3943,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 
 
-_Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default()(component, {VBtn: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VBtn"],VDivider: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VDivider"],VFlex: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VFlex"],VIcon: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VIcon"],VLayout: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VLayout"],VList: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VList"],VNavigationDrawer: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VNavigationDrawer"],VProgressLinear: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VProgressLinear"],VSpacer: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSpacer"],VSubheader: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSubheader"],VTimeline: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VTimeline"]})
+_D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default()(component, {VBtn: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VBtn"],VDivider: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VDivider"],VFlex: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VFlex"],VIcon: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VIcon"],VLayout: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VLayout"],VList: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VList"],VNavigationDrawer: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VNavigationDrawer"],VProgressLinear: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VProgressLinear"],VSpacer: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSpacer"],VSubheader: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSubheader"],VTimeline: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VTimeline"]})
 
 
 /* hot reload */
@@ -3973,8 +4014,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _FileSheetItem_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./FileSheetItem.vue?vue&type=script&lang=js& */ "./resources/js/components/FileSheetItem.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _FileSheetItem_vue_vue_type_style_index_0_id_a9b668ca_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./FileSheetItem.vue?vue&type=style&index=0&id=a9b668ca&lang=scss&scoped=true& */ "./resources/js/components/FileSheetItem.vue?vue&type=style&index=0&id=a9b668ca&lang=scss&scoped=true&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-/* harmony import */ var _Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
-/* harmony import */ var _Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
+/* harmony import */ var _D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var vuetify_lib__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib */ "./node_modules/vuetify/lib/index.js");
 
 
@@ -4003,7 +4044,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 
 
-_Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default()(component, {VBtn: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VBtn"],VHover: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VHover"],VIcon: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VIcon"],VLayout: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VLayout"],VSheet: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSheet"],VTooltip: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VTooltip"]})
+_D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default()(component, {VBtn: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VBtn"],VHover: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VHover"],VIcon: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VIcon"],VLayout: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VLayout"],VSheet: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VSheet"],VTooltip: vuetify_lib__WEBPACK_IMPORTED_MODULE_5__["VTooltip"]})
 
 
 /* hot reload */
@@ -4073,8 +4114,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _MoreVertMenu_vue_vue_type_template_id_45fbca10___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./MoreVertMenu.vue?vue&type=template&id=45fbca10& */ "./resources/js/components/MoreVertMenu.vue?vue&type=template&id=45fbca10&");
 /* harmony import */ var _MoreVertMenu_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./MoreVertMenu.vue?vue&type=script&lang=js& */ "./resources/js/components/MoreVertMenu.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-/* harmony import */ var _Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
-/* harmony import */ var _Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
+/* harmony import */ var _D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var vuetify_lib__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/lib */ "./node_modules/vuetify/lib/index.js");
 
 
@@ -4103,7 +4144,7 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 
 
-_Users_admin_Sites_mea_complaint_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBtn: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VBtn"],VIcon: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VIcon"],VList: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VList"],VListTile: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VListTile"],VListTileTitle: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VListTileTitle"],VMenu: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VMenu"],VTooltip: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VTooltip"]})
+_D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBtn: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VBtn"],VIcon: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VIcon"],VList: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VList"],VListTile: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VListTile"],VListTileTitle: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VListTileTitle"],VMenu: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VMenu"],VTooltip: vuetify_lib__WEBPACK_IMPORTED_MODULE_4__["VTooltip"]})
 
 
 /* hot reload */

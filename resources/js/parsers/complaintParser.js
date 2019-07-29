@@ -190,10 +190,76 @@ function parseDelete(context, {
         rootCommit,
         vuex
     } = context;
+
     rootCommit(
         vuex.mutations.DELETE,
         vuex.modules.ISSUE, {
             id
+        }
+    );
+};
+
+function parseSoftDelete(context, {
+    id,
+    deleted_at
+} = {}) {
+    const {
+        rootGetters,
+        rootCommit,
+        vuex,
+        models,
+    } = context;
+
+    const oldComplaint = rootGetters[
+        `${vuex.modules.ISSUE}/${vuex.getters.BY_KEY}`
+    ](id) || {};
+
+    const updatedCompaint = {
+        ..._.cloneDeep(oldComplaint.data),
+        archive: 0,
+        deleted_at: deleted_at
+    };
+
+    rootCommit(
+        vuex.mutations.UPDATE,
+        vuex.modules.ISSUE, {
+            key: id,
+            value: new models.ISSUE({
+                ...updatedCompaint,
+                context
+            })
+        }
+    );
+};
+
+function parseArchive(context, {
+    id
+} = {}) {
+    const {
+        rootGetters,
+        rootCommit,
+        vuex,
+        models,
+    } = context;
+
+    const oldComplaint = rootGetters[
+        `${vuex.modules.ISSUE}/${vuex.getters.BY_KEY}`
+    ](id) || {};
+
+    const updatedCompaint = {
+        ..._.cloneDeep(oldComplaint.data),
+        archive: 1,
+        deleted_at: null
+    };
+
+    rootCommit(
+        vuex.mutations.UPDATE,
+        vuex.modules.ISSUE, {
+            key: id,
+            value: new models.ISSUE({
+                ...updatedCompaint,
+                context
+            })
         }
     );
 };
@@ -230,8 +296,8 @@ export default {
     [actions.ISSUE.EDIT]: parseEdit,
     [actions.ISSUE.UPDATE]: parseEdit,
     [actions.ISSUE.STORE]: parseStore,
-    [actions.ISSUE.DELETE]: parseDelete,
+    [actions.ISSUE.DELETE]: parseSoftDelete,
     [actions.ISSUE.FORCE_DELETE]: parseDelete,
-    [actions.ISSUE.ARCHIVE]: parseDelete,
+    [actions.ISSUE.ARCHIVE]: parseArchive,
     [actions.ISSUE.RESTORE]: parseStore
 }

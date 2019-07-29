@@ -27,12 +27,13 @@
         :open-on-hover="item.hover"
         :min-width="item.minwidth || 200"
         offset-y
+        :disabled="getDisabledAttribute(item)"
       >
         <template v-slot:activator="{ on }">
           <v-tooltip
             v-if="item.icon && item.text"
-            :key="i"
-            v-bind="item.tooltipAttr ? item.tooltipAttr : { bottom: true }"
+            :key="`tooltip-menu-${i}`"
+            v-bind="item.tooltipAttr ? item.tooltipAttr : { top: true }"
           >
             <template v-slot:activator="{ on: tooltip }">
               <v-btn v-on="{ ...on, ...tooltip }" icon small :disabled="getDisabledAttribute(item)">
@@ -98,8 +99,8 @@
 
       <v-tooltip
         v-else-if="item.icon && item.text"
-        :key="i"
-        v-bind="item.tooltipAttr ? item.tooltipAttr : { bottom: true }"
+        :key="`tooltip-menu-${i}`"
+        v-bind="item.tooltipAttr ? item.tooltipAttr : { top: true }"
       >
         <template v-slot:activator="{ on }">
           <v-btn

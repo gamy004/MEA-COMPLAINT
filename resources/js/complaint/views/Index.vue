@@ -179,7 +179,7 @@ export default {
 
   computed: {
     checkBoxItem() {
-      return !this.$route.query.type
+      return this.$route.query.type !== "draft"
         ? {
             select: true,
             selected: false,
@@ -324,7 +324,7 @@ export default {
             },
             {
               text: this.$t("complaint.index.toolbar.generateReport.by.filter"),
-              disabled: () => this.$route.query.hasOwnProperty('type'),
+              // disabled: () => this.$route.query.hasOwnProperty("type"),
               onClick: () => {
                 this.$_issue_report_mixin_generateCurrentFilter();
               }
@@ -421,6 +421,22 @@ export default {
         {
           key: "global_filters",
           value: global_filters
+        },
+        vuex.modules.ISSUE
+      );
+
+      this.$_vuexable_setState(
+        {
+          key: "selected",
+          value: {}
+        },
+        vuex.modules.ISSUE
+      );
+
+      this.$_vuexable_setState(
+        {
+          key: "selectAll",
+          value: false
         },
         vuex.modules.ISSUE
       );

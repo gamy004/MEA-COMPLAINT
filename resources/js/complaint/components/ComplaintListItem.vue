@@ -141,7 +141,7 @@
                   class="mr-2"
                   @click.prevent.stop="onClickChangeStatus(menu)"
                 >
-                  <v-icon color="grey darken-1">mdi-update</v-icon>
+                  <v-icon color="grey darken-1">bookmark</v-icon>
                 </v-btn>
               </template>
               <span v-t="'general.changeStatus'"></span>
@@ -359,7 +359,8 @@ export default {
     },
 
     cannotSee() {
-      return this.item.draft || this.item.deleted_at !== null;
+      // return this.item.draft || this.item.deleted_at !== null;
+      return this.item.draft;
     },
 
     canManage() {
@@ -388,7 +389,7 @@ export default {
 
     canRestore() {
       return this.item.canRestore(this.auth);
-    },
+    }
 
     // statusStyles() {
     //   return {
