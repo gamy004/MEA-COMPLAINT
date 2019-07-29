@@ -427,6 +427,10 @@ class Complaint extends BaseVuexModel {
         return deleted_at !== null;
     }
 
+    get canSeeDetail() {
+        return !(this.isDrafted || this.isTrashed);
+    }
+
     canManage(user) {
         const {
             issued_by = null

@@ -426,7 +426,7 @@ export default {
     },
 
     onClick() {
-      if (this.cannotSee) return;
+      if (!this.item.canSeeDetail) return;
 
       this.$router.push({
         name: views.ISSUE.SHOW,

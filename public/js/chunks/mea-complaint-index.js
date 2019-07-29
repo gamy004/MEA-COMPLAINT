@@ -1230,7 +1230,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.$emit("forceDelete", this.item);
     },
     onClick: function onClick() {
-      if (this.cannotSee) return;
+      if (!this.item.canSeeDetail) return;
       this.$router.push({
         name: _constants__WEBPACK_IMPORTED_MODULE_2__["views"].ISSUE.SHOW,
         params: {
@@ -4089,14 +4089,15 @@ __webpack_require__.r(__webpack_exports__);
 /*!*****************************************************************!*\
   !*** ./resources/js/complaint/components/ComplaintListItem.vue ***!
   \*****************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ComplaintListItem_vue_vue_type_template_id_33e26725_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ComplaintListItem.vue?vue&type=template&id=33e26725&scoped=true& */ "./resources/js/complaint/components/ComplaintListItem.vue?vue&type=template&id=33e26725&scoped=true&");
 /* harmony import */ var _ComplaintListItem_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ComplaintListItem.vue?vue&type=script&lang=js& */ "./resources/js/complaint/components/ComplaintListItem.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _ComplaintListItem_vue_vue_type_style_index_0_id_33e26725_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ComplaintListItem.vue?vue&type=style&index=0&id=33e26725&lang=scss&scoped=true& */ "./resources/js/complaint/components/ComplaintListItem.vue?vue&type=style&index=0&id=33e26725&lang=scss&scoped=true&");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _ComplaintListItem_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _ComplaintListItem_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _ComplaintListItem_vue_vue_type_style_index_0_id_33e26725_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ComplaintListItem.vue?vue&type=style&index=0&id=33e26725&lang=scss&scoped=true& */ "./resources/js/complaint/components/ComplaintListItem.vue?vue&type=style&index=0&id=33e26725&lang=scss&scoped=true&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 /* harmony import */ var _D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
 /* harmony import */ var _D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_D_Sites_laragon_www_MEA_COMPLAINT_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_4__);
@@ -4150,7 +4151,7 @@ component.options.__file = "resources/js/complaint/components/ComplaintListItem.
 /*!******************************************************************************************!*\
   !*** ./resources/js/complaint/components/ComplaintListItem.vue?vue&type=script&lang=js& ***!
   \******************************************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
